@@ -51,4 +51,5 @@ public class BuildInfo {
 	public void setBuildScript(BuildScript mBuildScript) {
 		this.mBuildScript = mBuildScript;
 	}
+	
 }

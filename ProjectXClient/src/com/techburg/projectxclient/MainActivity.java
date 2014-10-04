@@ -11,11 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.techburg.projectxclient.app.ProjectXClientApp;
 import com.techburg.projectxclient.service.abstr.AbstractFetchBuildInfoService;
 
 public class MainActivity extends ActionBarActivity {
 
-	private static final String FETCH_URL = "http://192.168.11.4:8080/autospring/buildlist";
+	private static final String FETCH_URL = ProjectXClientApp.WEB_URL + "/autospring/buildlist";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class ProjectXClientApp extends Application {
+	public static final String WEB_URL = "http://192.168.11.4:8080";
 	public static final String PREFERENCE_LAST_RECEIVED_BUILD_ID = "lastReceivedBuildId";
 	
 	private static Context mContext;
