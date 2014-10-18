@@ -16,7 +16,7 @@ public class BuildInfoDataDelegateDBImpl implements IBuildInfoDataDelegate {
 
 	@Override
 	public void loadBuildInfoData(List<BuildInfo> buildInfoList, long startIndex, long endIndex) {
-		String selectSQL = SQLUtil.createSelectFromSQL(startIndex, endIndex);
+		String selectSQL = SQLUtil.createSelectFromSQLReverse(startIndex, endIndex);
 		loadDataFromSQL(selectSQL, buildInfoList);
 	}
 
@@ -62,10 +62,14 @@ public class BuildInfoDataDelegateDBImpl implements IBuildInfoDataDelegate {
 
 	private void setDataFromCursor(BuildInfo buildInfo, SQLiteCursor cursor) throws Exception {
 		buildInfo.setId(cursor.getLong(BuildInfoSQL.COLUMN_ID_INDEX));
-		buildInfo.setBeginTimeStamp(new Date(cursor.getLong(BuildInfoSQL.COLUMN_BEGIN_BUILD_TIME_INDEX)));
-		buildInfo.setEndTimeStamp(new Date(cursor.getLong(BuildInfoSQL.COLUMN_END_BUILD_TIME_INDEX)));
+		buildInfo.setBeginTimeStamp(getDateFromTimeStamp(cursor.getLong(BuildInfoSQL.COLUMN_BEGIN_BUILD_TIME_INDEX)));
+		buildInfo.setEndTimeStamp(getDateFromTimeStamp(cursor.getLong(BuildInfoSQL.COLUMN_END_BUILD_TIME_INDEX)));
 		buildInfo.setLogFilePath(cursor.getString(BuildInfoSQL.COLUMN_LOG_FILE_PATH_INDEX));
 		buildInfo.setStatus(cursor.getInt(BuildInfoSQL.COLUMN_STATUS_INDEX));
 		buildInfo.setBuildScript(null);
+	}
+	
+	private Date getDateFromTimeStamp(long time) {
+		return time == 0 ? null : new Date(time);
 	}
 }

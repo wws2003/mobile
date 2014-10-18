@@ -36,9 +36,9 @@ public class BuildInfoActivity extends AbstractDataLoadActivity {
 			TextView tvBuildStatus = (TextView) findViewById(R.id.tvBuildStatusValue);
 			tvBuildStatus.setText(BuildInfoUtil.getBuildStatusString(buildInfo));
 			TextView tvBuildStartTime = (TextView) findViewById(R.id.tvBuildStartTimeValue);
-			tvBuildStartTime.setText(buildInfo.getBeginTimeStamp().toString());
+			tvBuildStartTime.setText(BuildInfoUtil.getTimeStampString(buildInfo.getBeginTimeStamp()));
 			TextView tvBuildEndTime = (TextView) findViewById(R.id.tvBuildEndTimeValue);
-			tvBuildEndTime.setText(buildInfo.getEndTimeStamp().toString());
+			tvBuildEndTime.setText(BuildInfoUtil.getTimeStampString(buildInfo.getEndTimeStamp()));
 			TextView tvBuildLogUrl = (TextView) findViewById(R.id.tvBuildLogUrlValue);
 			tvBuildLogUrl.setText(ProjectXClientApp.WEB_URL + "/autospring/log/" + buildInfo.getId());
 			Linkify.addLinks(tvBuildLogUrl, Linkify.ALL);

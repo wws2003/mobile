@@ -8,6 +8,7 @@
     <string name="stop_service">Stop fetch build info</string>
     <string name="to_listscreen">Go to build info list</string>
     <string name="service_status_default">No service info</string>
+    <string name="btn_load_more">Load more </string>
     <string name="build_info_list_title">Build info</string>
     <string name="build_info_status_success">Successful</string>
     <string name="build_info_status_failed">Failed</string>

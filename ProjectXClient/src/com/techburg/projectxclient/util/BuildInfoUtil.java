@@ -1,5 +1,7 @@
 package com.techburg.projectxclient.util;
 
+import java.util.Date;
+
 import com.techburg.projectxclient.R;
 import com.techburg.projectxclient.app.ProjectXClientApp;
 import com.techburg.projectxclient.model.BuildInfo;
@@ -18,5 +20,9 @@ public class BuildInfoUtil {
 				return ProjectXClientApp.getContext().getResources().getString(R.string.build_info_status_cancelled);
 			}
 		}
+	}
+	
+	public static String getTimeStampString(Date date) {
+		return date == null ? "N/I" : date.toString();
 	}
 }

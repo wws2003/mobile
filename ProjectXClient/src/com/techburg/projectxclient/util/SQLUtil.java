@@ -50,6 +50,23 @@ public class SQLUtil {
 		return selectSQL;
 	}
 	
+	public static String createSelectFromSQLReverse(long startId, long endId) {
+		gStringBuilder.setLength(0);
+		
+		gStringBuilder.append("SELECT * FROM ")
+		.append("(")
+		.append(CommonSQL.BuildInfoSQL.SELECT_SQL_PREFIX)
+		.append(" ORDER BY id DESC LIMIT ")
+		.append(endId)
+		.append(")")
+		.append("ORDER BY id ASC LIMIT ")
+		.append(endId - startId + 1)
+		.append(";");
+		
+		String selectSQL = gStringBuilder.toString();
+		return selectSQL;
+	}
+	
 	public static String createSelectFromSQL(long id) {
 		gStringBuilder.setLength(0);
 		

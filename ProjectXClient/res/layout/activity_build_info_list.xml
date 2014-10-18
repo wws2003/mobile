@@ -8,15 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="18sp"
-        android:text="@string/build_info_list_title" />
+        android:text="@string/build_info_list_title"
+        android:textSize="18sp" />
 
     <ListView
         android:id="@+id/lstViewBuildInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
+        android:layout_height="wrap_content"
         android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true">
+        android:headerDividersEnabled="true" >
     </ListView>
 
 </LinearLayout>
