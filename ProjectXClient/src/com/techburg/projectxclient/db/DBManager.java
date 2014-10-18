@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DBManager {
 	private static DBManager gInstance = null;
-	private static final int DB_VERSION = 11;
+	private static final int DB_VERSION = 13;
 	private BuildInfoDBHelper mDBHelper;
 	
 	public static synchronized DBManager getInstance() {

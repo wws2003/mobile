@@ -58,8 +58,8 @@ public class MainActivity extends ActionBarActivity {
 		Log.i("MainActivity onBtnStartService", "To start service");
 		Intent serviceIntent = new Intent(this, com.techburg.projectxclient.service.impl.FetchBuildInfoServiceStdImpl.class);
 		serviceIntent.putExtra(AbstractFetchBuildInfoService.FETCH_ADDRESS_EXTRA_NAME, FETCH_URL);
-		serviceIntent.putExtra(AbstractFetchBuildInfoService.FETCH_INTERVAL_EXTRA_NAME, 20);
-		serviceIntent.putExtra(AbstractFetchBuildInfoService.FETCH_ALL, true);
+		serviceIntent.putExtra(AbstractFetchBuildInfoService.FETCH_INTERVAL_EXTRA_NAME, 90);
+		serviceIntent.putExtra(AbstractFetchBuildInfoService.FETCH_ALL, false);
 		ComponentName componentName = startService(serviceIntent);
 		TextView tvServiceStatus = (TextView) mPlaceHolderFragement.getView().findViewById(R.id.tv_service_status);
 		tvServiceStatus.setText(componentName != null ? componentName.toShortString() : "Can't start service properly !");
