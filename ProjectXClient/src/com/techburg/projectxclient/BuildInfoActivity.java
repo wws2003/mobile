@@ -6,16 +6,16 @@ import android.text.util.Linkify;
 import android.widget.TextView;
 
 import com.techburg.projectxclient.app.ProjectXClientApp;
+import com.techburg.projectxclient.delegate.abstr.DelegateLocator;
+import com.techburg.projectxclient.delegate.abstr.IBuildInfoDataDelegate;
 import com.techburg.projectxclient.model.BuildInfo;
-import com.techburg.projectxclient.service.abstr.IBuildInfoDataService;
 import com.techburg.projectxclient.util.BuildInfoUtil;
 
 public class BuildInfoActivity extends AbstractDataLoadActivity {
 
 	public static final String EXTRA_BUILD_ID = "buildId";
 	
-	//TODO Get concrete instance of mBuildInfoDataService
-	private IBuildInfoDataService mBuildInfoDataService = null;
+	private IBuildInfoDataDelegate mBuildInfoDataDelegate = null;
 
 	private long mBuildInfoId;
 	private BuildInfo mBuildInfo = null;
@@ -25,6 +25,7 @@ public class BuildInfoActivity extends AbstractDataLoadActivity {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		mBuildInfoId = intent.getLongExtra(EXTRA_BUILD_ID, 1);
+		mBuildInfoDataDelegate = DelegateLocator.getInstance().getBuildInfoDataDelegate();
 		setContentView(R.layout.activity_build_info);
 	}
 
@@ -51,7 +52,7 @@ public class BuildInfoActivity extends AbstractDataLoadActivity {
 
 	@Override
 	public Long onDataBackgroundLoad() {
-		mBuildInfo = mBuildInfoDataService.getBuildInfoById(mBuildInfoId);
+		mBuildInfo = mBuildInfoDataDelegate.getBuildInfoById(mBuildInfoId);
 		return 0L;
 	}
 

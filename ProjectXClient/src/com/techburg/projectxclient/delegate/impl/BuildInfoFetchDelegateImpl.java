@@ -28,7 +28,7 @@ public class BuildInfoFetchDelegateImpl implements IBuildInfoFetchDelegate {
 	}
 
 	@Override
-	public long getLastReceivedBuildId() {
+	public synchronized long getLastReceivedBuildId() {
 		long id = mSharedPreferences.getLong(ProjectXClientApp.PREFERENCE_LAST_RECEIVED_BUILD_ID, -1);
 		if(id < 0) {
 			id = 0;
@@ -38,7 +38,7 @@ public class BuildInfoFetchDelegateImpl implements IBuildInfoFetchDelegate {
 	}
 
 	@Override
-	public void getNewBuildInfoListFromURL(String fetchUrl,
+	public synchronized void getNewBuildInfoListFromURL(String fetchUrl,
 			List<BuildInfo> newBuildInfoList) {
 		newBuildInfoList.clear();
 		try {
@@ -59,7 +59,7 @@ public class BuildInfoFetchDelegateImpl implements IBuildInfoFetchDelegate {
 	}
 
 	@Override
-	public void updateLastReceivedId() {
+	public synchronized void updateLastReceivedId() {
 		Editor editor = mSharedPreferences.edit();
 		editor.putLong(ProjectXClientApp.PREFERENCE_LAST_RECEIVED_BUILD_ID, mLastReceivedBuildId);
 		editor.commit();

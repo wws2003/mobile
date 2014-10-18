@@ -16,21 +16,40 @@
 
     <Button
         android:id="@+id/btn_startservice"
-        android:text="@string/start_service"
         android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@+id/tv_helloworld"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_helloworld"
         android:layout_below="@+id/tv_helloworld"
-        android:onClick="onBtnStartService" />
+        android:layout_marginTop="20dp"
+        android:onClick="onBtnStartService"
+        android:text="@string/start_service" />
 
     <Button
-        android:text="@string/stop_service"
+        android:id="@+id/btn_stopservice"
         android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@+id/btn_startservice"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_startservice"
         android:layout_below="@+id/btn_startservice"
-        android:onClick="onBtnStopService" />
+        android:layout_marginTop="20dp"
+        android:onClick="onBtnStopService"
+        android:text="@string/stop_service" />
+
+    <Button
+        android:id="@+id/btn_to_listscreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_stopservice"
+        android:layout_below="@+id/btn_stopservice"
+        android:layout_marginTop="20dp"
+        android:onClick="onBtnToListScreen"
+        android:text="@string/to_listscreen" />
     
+    <TextView
+        android:id="@+id/tv_service_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_to_listscreen"
+        android:layout_marginTop="20dp"
+        android:text="@string/service_status_default" />
+
 </RelativeLayout>

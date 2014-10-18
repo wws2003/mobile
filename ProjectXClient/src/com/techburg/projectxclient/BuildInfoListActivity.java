@@ -10,24 +10,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.techburg.projectxclient.adapter.BuildInfoListAdapter;
+import com.techburg.projectxclient.delegate.abstr.DelegateLocator;
 import com.techburg.projectxclient.delegate.abstr.IAsyncTaskDelegate;
+import com.techburg.projectxclient.delegate.abstr.IBuildInfoDataDelegate;
 import com.techburg.projectxclient.model.BuildInfo;
-import com.techburg.projectxclient.service.abstr.IBuildInfoDataService;
-import com.techburg.projectxclient.view.BuildInfoItemView;
+import com.techburg.projectxclient.view.BuildInfoItemViewHolder;
 
 public class BuildInfoListActivity extends AbstractDataLoadActivity implements View.OnClickListener, IAsyncTaskDelegate {
 	
-	public static final long BUILD_INFO_LIST_INITIAL_SIZE = 100; 
+	public static final long BUILD_INFO_LIST_INITIAL_SIZE = 50; 
 	
 	private ListView mLstViewBuildInfo;
 	private ArrayAdapter<BuildInfo> mLstBuildInfoAdapter;
 	private List<BuildInfo> mBuildInfoList;
+	private List<BuildInfo> mBuildInfoListBuffer;
 	
 	private long mBuildInfoLoadStartIndex;
 	private long mBuildInfoLoadEndIndex;
 	
-	//TODO Get concrete instance of mBuildInfoDataService
-	private IBuildInfoDataService mBuildInfoDataService = null;
+	private IBuildInfoDataDelegate mBuildInfoDataDelegate = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,11 @@ public class BuildInfoListActivity extends AbstractDataLoadActivity implements V
 	
 	private void initComponents() {
 		mBuildInfoList = new ArrayList<BuildInfo>();
+		mBuildInfoListBuffer = new ArrayList<BuildInfo>();
 		mLstViewBuildInfo = (ListView) findViewById(R.id.lstViewBuildInfo);
 		mLstBuildInfoAdapter = new BuildInfoListAdapter(this, this, mBuildInfoList);
 		mLstViewBuildInfo.setAdapter(mLstBuildInfoAdapter);
+		mBuildInfoDataDelegate = DelegateLocator.getInstance().getBuildInfoDataDelegate();
 	}
 	
 	private void updateBuildInfoListView() {
@@ -51,8 +54,8 @@ public class BuildInfoListActivity extends AbstractDataLoadActivity implements V
 	@Override
 	public void onClick(View v) {
 		try {
-			BuildInfoItemView buildInfoItemView = (BuildInfoItemView) v;
-			long buildId = buildInfoItemView.getBuildInfoId();
+			BuildInfoItemViewHolder buildInfoItemViewHolder = (BuildInfoItemViewHolder) v.getTag();
+			long buildId = buildInfoItemViewHolder.buildId;
 			Intent intent = new Intent(this, com.techburg.projectxclient.BuildInfoActivity.class);
 			intent.putExtra(BuildInfoActivity.EXTRA_BUILD_ID, buildId);
 			startActivity(intent);
@@ -67,19 +70,21 @@ public class BuildInfoListActivity extends AbstractDataLoadActivity implements V
 	public void onDataLoadStart() {
 		mBuildInfoLoadStartIndex = 1;
 		mBuildInfoLoadEndIndex = BUILD_INFO_LIST_INITIAL_SIZE;
-		mBuildInfoList.clear();
+		mBuildInfoListBuffer.clear();
 	}
 
 	@Override
 	public Long onDataBackgroundLoad() {
-		if(mBuildInfoDataService != null) {
-			mBuildInfoDataService.loadBuildInfoData(mBuildInfoList, mBuildInfoLoadStartIndex, mBuildInfoLoadEndIndex);
+		if(mBuildInfoDataDelegate != null) {
+			mBuildInfoDataDelegate.loadBuildInfoData(mBuildInfoListBuffer, mBuildInfoLoadStartIndex, mBuildInfoLoadEndIndex);
 		}
 		return 0L;
 	}
 
 	@Override
 	public void onDataLoadEnd(Long result) {
+		mBuildInfoList.clear();
+		mBuildInfoList.addAll(mBuildInfoListBuffer);
 		updateBuildInfoListView();
 	}
 

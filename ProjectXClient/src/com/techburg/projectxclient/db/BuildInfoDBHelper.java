@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.util.Log;
 
 public class BuildInfoDBHelper extends SQLiteOpenHelper {
 
@@ -17,10 +18,13 @@ public class BuildInfoDBHelper extends SQLiteOpenHelper {
 		super(context, name, factory, version, errorHandler);
 	}
 
+	//Do not touch the build script in android client !
+	
+	//Not effectively called until getWritableDatabase() is called
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		try {
-			db.execSQL(CommonSQL.BuildScriptSQL.CREATE_TABLE);
+			Log.i("BuildInfoDBHelper onCreate", "DB is being created");
 			db.execSQL(CommonSQL.BuildInfoSQL.CREATE_TABLE);
 		}
 		catch(Exception e) {
@@ -30,8 +34,9 @@ public class BuildInfoDBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.i("BuildInfoDBHelper onUpgrade", "DB is being upgraded");
 		try {
-			db.execSQL(CommonSQL.BuildScriptSQL.DROP_TABLE);
+			//db.execSQL(CommonSQL.BuildScriptSQL.DROP_TABLE);
 			db.execSQL(CommonSQL.BuildInfoSQL.DROP_TABLE);
 		}
 		catch(Exception e) {
@@ -39,7 +44,7 @@ public class BuildInfoDBHelper extends SQLiteOpenHelper {
 			return;
 		}
 		try {
-			db.execSQL(CommonSQL.BuildScriptSQL.CREATE_TABLE);
+			//db.execSQL(CommonSQL.BuildScriptSQL.CREATE_TABLE);
 			db.execSQL(CommonSQL.BuildInfoSQL.CREATE_TABLE);
 		}
 		catch(Exception e) {

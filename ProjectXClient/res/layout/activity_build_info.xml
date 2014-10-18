@@ -17,7 +17,8 @@
         android:id="@+id/tvBuildIdValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/tvBuildIdTitle" />
+        android:layout_toRightOf="@+id/tvBuildIdTitle"
+        android:layout_alignBaseline="@+id/tvBuildIdTitle" />
 
     <TextView
         android:id="@+id/tvBuildStatusTitle"
