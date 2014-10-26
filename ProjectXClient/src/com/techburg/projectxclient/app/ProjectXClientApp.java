@@ -11,9 +11,11 @@ import com.techburg.projectxclient.db.DBManager;
 import com.techburg.projectxclient.delegate.abstr.DelegateLocator;
 import com.techburg.projectxclient.delegate.abstr.IBuildInfoDataDelegate;
 import com.techburg.projectxclient.delegate.abstr.IBuildInfoDatabaseDelegate;
+import com.techburg.projectxclient.delegate.abstr.INotificationDelegate;
 import com.techburg.projectxclient.delegate.impl.BuildInfoDataDelegateDBImpl;
 import com.techburg.projectxclient.delegate.impl.BuildInfoDatabaseDelegateImpl;
 import com.techburg.projectxclient.delegate.impl.BuildInfoFetchDelegateImpl;
+import com.techburg.projectxclient.delegate.impl.NotificationDelegateStdImpl;
 
 public class ProjectXClientApp extends Application {
 	public static final String WEB_URL = "http://54.201.201.43:8080";
@@ -49,6 +51,8 @@ public class ProjectXClientApp extends Application {
 		delegateLocator.setBuildInfoDatabaseDelegate(databaseDelegate);
 		IBuildInfoDataDelegate buildInfoDataDelegate = new BuildInfoDataDelegateDBImpl();
 		delegateLocator.setBuildInfoDataDelegate(buildInfoDataDelegate);
+		INotificationDelegate notificationDelegate = new NotificationDelegateStdImpl();
+		delegateLocator.setNotificationDelegate(notificationDelegate);
 	}
 	
 	private void initDatabase() {
