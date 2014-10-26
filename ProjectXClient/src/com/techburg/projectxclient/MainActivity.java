@@ -74,8 +74,7 @@ public class MainActivity extends ActionBarActivity {
 
 	public void onBtnToListScreen(View v) {
 		Log.i("MainActivity onBtnToListScreen", "To list screen");
-		Intent intent = new Intent(this, com.techburg.projectxclient.BuildInfoListActivity.class);
-		startActivity(intent);
+		finish();
 	}
 	
 	/**

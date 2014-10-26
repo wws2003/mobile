@@ -5,6 +5,9 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,6 +42,25 @@ public class BuildInfoListActivity extends AbstractDataLoadActivity implements V
 		setContentView(R.layout.activity_build_info_list);
 		initComponents();
 		initLoadScope();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.list, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_manage_service) {
+			Log.i("BuildInfoListActivity onOptionsItemSelected", "To manage screen");
+			Intent intent = new Intent(this, com.techburg.projectxclient.MainActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private void initComponents() {

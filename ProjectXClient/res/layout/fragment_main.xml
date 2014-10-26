@@ -21,6 +21,7 @@
         android:layout_alignLeft="@+id/tv_helloworld"
         android:layout_below="@+id/tv_helloworld"
         android:layout_marginTop="20dp"
+        android:background="@drawable/btn_shape"
         android:onClick="onBtnStartService"
         android:text="@string/start_service" />
 
@@ -31,6 +32,7 @@
         android:layout_alignLeft="@+id/btn_startservice"
         android:layout_below="@+id/btn_startservice"
         android:layout_marginTop="20dp"
+        android:background="@drawable/btn_shape"
         android:onClick="onBtnStopService"
         android:text="@string/stop_service" />
 
@@ -41,9 +43,10 @@
         android:layout_alignLeft="@+id/btn_stopservice"
         android:layout_below="@+id/btn_stopservice"
         android:layout_marginTop="20dp"
+        android:background="@drawable/btn_shape"
         android:onClick="onBtnToListScreen"
         android:text="@string/to_listscreen" />
-    
+
     <TextView
         android:id="@+id/tv_service_status"
         android:layout_width="wrap_content"
