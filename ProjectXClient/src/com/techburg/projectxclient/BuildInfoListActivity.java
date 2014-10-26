@@ -60,6 +60,11 @@ public class BuildInfoListActivity extends AbstractDataLoadActivity implements V
 			startActivity(intent);
 			return true;
 		}
+		if (id == R.id.action_quit) {
+			Log.i("BuildInfoListActivity onOptionsItemSelected", "To quit");
+			finish();
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 	

@@ -1001,7 +1001,8 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050051;
+        public static final int action_quit=0x7f050051;
+        public static final int action_settings=0x7f050052;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1174,23 +1175,24 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_manage_service=0x7f0a0010;
+        public static final int action_quit=0x7f0a0011;
         public static final int action_settings=0x7f0a000f;
         public static final int app_name=0x7f0a000d;
-        public static final int btn_load_more=0x7f0a0015;
-        public static final int build_info_build_end_time_title=0x7f0a001d;
-        public static final int build_info_build_id_title=0x7f0a001a;
-        public static final int build_info_build_log_url_title=0x7f0a001e;
-        public static final int build_info_build_start_time_title=0x7f0a001c;
-        public static final int build_info_build_status_title=0x7f0a001b;
-        public static final int build_info_list_title=0x7f0a0016;
-        public static final int build_info_status_cancelled=0x7f0a0019;
-        public static final int build_info_status_failed=0x7f0a0018;
-        public static final int build_info_status_success=0x7f0a0017;
+        public static final int btn_load_more=0x7f0a0016;
+        public static final int build_info_build_end_time_title=0x7f0a001e;
+        public static final int build_info_build_id_title=0x7f0a001b;
+        public static final int build_info_build_log_url_title=0x7f0a001f;
+        public static final int build_info_build_start_time_title=0x7f0a001d;
+        public static final int build_info_build_status_title=0x7f0a001c;
+        public static final int build_info_list_title=0x7f0a0017;
+        public static final int build_info_status_cancelled=0x7f0a001a;
+        public static final int build_info_status_failed=0x7f0a0019;
+        public static final int build_info_status_success=0x7f0a0018;
         public static final int hello_world=0x7f0a000e;
-        public static final int service_status_default=0x7f0a0014;
-        public static final int start_service=0x7f0a0011;
-        public static final int stop_service=0x7f0a0012;
-        public static final int to_listscreen=0x7f0a0013;
+        public static final int service_status_default=0x7f0a0015;
+        public static final int start_service=0x7f0a0012;
+        public static final int stop_service=0x7f0a0013;
+        public static final int to_listscreen=0x7f0a0014;
     }
     public static final class style {
         /** 

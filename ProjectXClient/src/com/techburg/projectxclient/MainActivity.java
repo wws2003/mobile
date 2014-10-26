@@ -1,6 +1,9 @@
 package com.techburg.projectxclient;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,9 +34,14 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 			.add(R.id.container, mPlaceHolderFragement).commit();
 		}
-
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		initServiceStatus();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -75,6 +83,23 @@ public class MainActivity extends ActionBarActivity {
 	public void onBtnToListScreen(View v) {
 		Log.i("MainActivity onBtnToListScreen", "To list screen");
 		finish();
+	}
+	
+	private void initServiceStatus() {
+		TextView tvServiceStatus = (TextView) mPlaceHolderFragement.getView().findViewById(R.id.tv_service_status);
+		if(tvServiceStatus != null) {
+			tvServiceStatus.setText(isFetchServiceRunning(com.techburg.projectxclient.service.impl.FetchBuildInfoServiceStdImpl.class) ? "Service is running" : "Service is not running");
+		}
+	}
+	
+	private boolean isFetchServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 	
 	/**
