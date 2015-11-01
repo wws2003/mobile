@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_light"
+    tools:context="com.tbg.simplestvallet.activity.InputFragment">
+
+    <TextView android:id="@+id/tv_input_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="@string/fragment_input_title" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:ems="10"
+        android:id="@+id/et_date"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_input_title" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="@string/et_hint_amount"
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/et_amount"
+        android:layout_below="@id/et_date"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/et_note"
+        android:hint="@string/et_hint_note"
+        android:layout_below="@+id/et_amount"
+        android:layout_alignStart="@+id/et_amount"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_load_saved_entry"
+        android:id="@+id/tv_load_saved_entry"
+        android:layout_below="@+id/et_note"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/et_saved_entry_name"
+        android:layout_below="@+id/tv_load_saved_entry"
+        android:layout_alignStart="@+id/et_amount"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_add_entry"
+        android:id="@+id/btn_add_entry"
+        android:layout_below="@+id/et_saved_entry_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        />
+
+</RelativeLayout>

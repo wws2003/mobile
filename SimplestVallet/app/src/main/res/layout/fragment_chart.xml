@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tbg.simplestvallet.activity.ChartFragment">
+
+    <TextView
+        android:id="@+id/tv_chart_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_chart_title" />
+
+    <TextView android:id="@+id/tv_spent_amount_lb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_spent_amount"
+        android:layout_below="@id/tv_chart_title"
+        android:layout_marginTop="12dp"/>
+
+    <TextView android:id="@+id/tv_spent_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_alignBaseline="@id/tv_spent_amount_lb"
+        android:layout_toRightOf="@id/tv_spent_amount_lb"
+        android:layout_marginLeft="10dp"/>
+
+</RelativeLayout>

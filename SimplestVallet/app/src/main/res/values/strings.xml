@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Simplest Valet</string>
+
+    <string name="hello_world">Login</string>
+    <string name="action_settings">Settings</string>
+    <string name="choose_account">Choose Google Account</string>
+    <string name="done">Done</string>
+    <string name="selected_email">Selected email</string>
+    <string name="title_activity_main">Simplest Valet</string>
+
+    <string name="title_activity_input">InputActivity</string>
+    <string name="title_activity_chart">ChartActivity</string>
+
+    <string name="title_input">Input new expense</string>
+
+    <string name="fragment_input_title">Input new entry</string>
+    <string name="fragment_chart_title">This will be chart screen</string>
+    <string name="fragment_pending_title">Pending Entries</string>
+
+    <string name="tab_input_title">New entry</string>
+    <string name="tab_chart_title">Spending chart</string>
+    <string name="tab_pending_title">Pending entries</string>
+
+
+    <string name="tv_load_saved_entry">Or load from saved entries</string>
+
+    <string name="et_hint_amount">Amount</string>
+    <string name="et_hint_note">Note</string>
+
+    <string name="btn_add_entry">Add entry</string>
+    <string name="dlg_add_entry_message">Adding entry</string>
+
+
+    <string name="tv_spent_amount">Spent amount</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
