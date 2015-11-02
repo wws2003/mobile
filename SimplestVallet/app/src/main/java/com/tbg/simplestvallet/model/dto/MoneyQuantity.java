@@ -20,7 +20,12 @@ public class MoneyQuantity {
     }
 
     public MoneyQuantity add(MoneyQuantity quantity) {
-        checkCurrency(quantity);
+        if(mCurrency == null) {
+            mCurrency = quantity.mCurrency;
+        }
+        else {
+            checkCurrency(quantity);
+        }
         return new MoneyQuantity(mAmount + quantity.mAmount, mCurrency);
     }
 

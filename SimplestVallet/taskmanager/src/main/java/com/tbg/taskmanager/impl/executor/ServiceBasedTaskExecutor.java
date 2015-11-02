@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
@@ -37,7 +36,9 @@ public class ServiceBasedTaskExecutor implements ITaskExecutor {
 
     @Override
     public <T> void executeTask(ITask<T> task, ITaskDelegate<T> taskDelegate) {
-        taskDelegate.onTaskToBeExecuted();
+        if(taskDelegate != null) {
+            taskDelegate.onTaskToBeExecuted();
+        }
 
         registerTaskListener(task, taskDelegate);
 
@@ -58,6 +59,12 @@ public class ServiceBasedTaskExecutor implements ITaskExecutor {
     @Override
     public <T> void tryToCancelTask(long taskId, ITaskDelegate<T> taskDelegate) {
         //TODO Implement
+    }
+
+    @Override
+    public <T> Result<T> executeBackgroundTaskForResult(ITask<T> task) {
+        //TODO Implement
+        return null;
     }
 
     private <T> void registerTaskListener(ITask<T> task, ITaskDelegate<T> taskDelegate) {
@@ -94,7 +101,9 @@ public class ServiceBasedTaskExecutor implements ITaskExecutor {
             long taskId = intent.getExtras().getLong(AbstractTaskService.TASK_RESULT_IDENTIFIER_KEY);
             if(taskId == mTaskId) {
                 Result taskResult = mTaskResultLocator.getItem(taskId);
-                mTaskDelegate.onTaskExecuted(taskResult);
+                if(mTaskDelegate != null) {
+                    mTaskDelegate.onTaskExecuted(taskResult);
+                }
                 try {
                     mTaskResultLocator.removeItem(taskId);
                 } catch (Exception e) {

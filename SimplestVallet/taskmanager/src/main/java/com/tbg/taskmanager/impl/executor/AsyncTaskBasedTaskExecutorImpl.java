@@ -38,6 +38,20 @@ public class AsyncTaskBasedTaskExecutorImpl implements ITaskExecutor {
         }
     }
 
+    @Override
+    public <T> Result<T> executeBackgroundTaskForResult(ITask<T> task) {
+        InternalAsyncTask<T> asyncTask = new InternalAsyncTask<T>(mTaskMap, task, null);
+
+        asyncTask.execute();
+        try {
+            Result<T> taskResult = asyncTask.get();
+            return taskResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private class InternalAsyncTask<T> extends AsyncTask<Void, Integer, Result<T> > {
 
         private ITask<T> mTask;
@@ -63,7 +77,9 @@ public class AsyncTaskBasedTaskExecutorImpl implements ITaskExecutor {
         protected void onPreExecute() {
             super.onPreExecute();
             mTaskMap.append(mTask.getId(), this);
-            mTaskDelegate.onTaskToBeExecuted();
+            if(mTaskDelegate != null) {
+                mTaskDelegate.onTaskToBeExecuted();
+            }
         }
 
         @Override
@@ -76,7 +92,9 @@ public class AsyncTaskBasedTaskExecutorImpl implements ITaskExecutor {
         protected void onPostExecute(Result<T> result) {
             super.onPostExecute(result);
             mTaskMap.remove(result.getTaskId());
-            mTaskDelegate.onTaskExecuted(result);
+            if(mTaskDelegate != null) {
+                mTaskDelegate.onTaskExecuted(result);
+            }
         }
     }
 }

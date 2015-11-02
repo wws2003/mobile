@@ -18,6 +18,8 @@ public interface IAuthenticationManager {
     //Select an account name to login
     void loginByAccountName(String selectedAccountName);
 
+    void setServiceAccessToken(String serviceName, String serviceAccessToken);
+
     //Retrieve the current credential object
     Credential getCredential();
 

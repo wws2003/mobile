@@ -4,8 +4,8 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,17 +14,18 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.AccountPicker;
 import com.tbg.simplestvallet.R;
+import com.tbg.simplestvallet.app.SimplestValetApp;
+import com.tbg.simplestvallet.app.authen.Credential;
 import com.tbg.simplestvallet.app.authen.abstr.IAuthenticationManager;
-import com.tbg.simplestvallet.app.authen.impl.SampleAuthenticationManager;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CONFIRM_PERMISSION_GET_ACCOUNTS = 1;
     private static final int REQUEST_CODE_CHOOSE_GOOGLE_ACCOUNT = 2;
 
-    private IAuthenticationManager mAuthenticationManager = SampleAuthenticationManager.newAuthenticationManager();
+    private static final int REQUEST_CODE_INIT_GOOGLE_SHEET = 3;
 
-    private String mSelectedAccountName;
+    private IAuthenticationManager mAuthenticationManager = null;
 
     private Button mDoneButton;
 
@@ -33,13 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initViews();
+        mAuthenticationManager = SimplestValetApp.getAuthenticationManagerContainer().getAuthenticationManager();
         confirmGetAccountsPermission();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        tryToLogin();
     }
 
     @Override
@@ -64,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void initViews() {
+        mDoneButton = (Button)findViewById(R.id.btn_done);
+        mDoneButton.setEnabled(false);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -72,7 +73,13 @@ public class LoginActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK) {
                     String selectedAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     onAccountNameSelected(selectedAccountName);
-                    onLoggedIn();
+                }
+                break;
+            case REQUEST_CODE_INIT_GOOGLE_SHEET:
+                if(resultCode == RESULT_OK) {
+                    String spreadSheetId = data.getStringExtra(InitialSettingActivity.RESULT_KEY_SPREAD_SHEET_ID);
+                    String googleDriveAccessToken = data.getStringExtra(InitialSettingActivity.RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN);
+                    onSpreadSheetInitializedForAccount(spreadSheetId, googleDriveAccessToken);
                 }
                 break;
             default:
@@ -108,29 +115,46 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onAccountNameSelected(String selectedAccountName) {
-        mSelectedAccountName = selectedAccountName;
         TextView tvSelectedAccountName = (TextView)findViewById(R.id.tv_selected_email);
         tvSelectedAccountName.setText(selectedAccountName);
         mDoneButton.setEnabled(true);
 
-        //TODO Review
         mAuthenticationManager.loginByAccountName(selectedAccountName);
     }
 
-    private void initViews() {
-        mDoneButton = (Button)findViewById(R.id.btn_done);
-        mDoneButton.setEnabled(false);
+    private void onSpreadSheetInitializedForAccount(String spreadSheetId, String googleDriveAccessToken) {
+        mAuthenticationManager.setServiceAccessToken(Credential.SERVICE_NAME_GOOGLE_DRIVE, googleDriveAccessToken);
+        Credential credential = mAuthenticationManager.getCredential();
+        SimplestValetApp.reloadEntrySheetForCredential(credential, spreadSheetId);
+        toMainScreen();
     }
 
-    private void tryToLogin() {
-        String authToken = "sss";//TODO Retrieve token
+    /*private void tryToLogin() {
+        String authToken = mAuthenticationManager.getCredential().getAuthToken();
         int resultCode = mAuthenticationManager.loginByToken(authToken);
         if(resultCode == IAuthenticationManager.LOGIN_RESULT_OK) {
             onLoggedIn();
         }
-    }
+    }*/
 
     private void onLoggedIn() {
+        boolean hasInitialSettingDone = false; //TODO Evaluate this value
+
+        if(hasInitialSettingDone) {
+            toMainScreen();
+        }
+        else {
+            toInitialSettingScreen();
+        }
+    }
+
+    private void toInitialSettingScreen() {
+        Intent initialSettingIntent = new Intent(this, InitialSettingActivity.class);
+        initialSettingIntent.putExtra(InitialSettingActivity.KEY_GOOGLE_ACCOUNT_NAME, mAuthenticationManager.getCredential().getSelectedAccountName());
+        startActivityForResult(initialSettingIntent, REQUEST_CODE_INIT_GOOGLE_SHEET);
+    }
+
+    private void toMainScreen() {
         Intent mainIntent = new Intent();
         mainIntent.setClass(getApplicationContext(), MainActivity.class);
         startActivity(mainIntent);

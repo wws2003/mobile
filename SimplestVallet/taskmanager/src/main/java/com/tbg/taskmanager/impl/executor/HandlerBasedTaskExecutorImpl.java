@@ -25,7 +25,8 @@ public class HandlerBasedTaskExecutorImpl implements ITaskExecutor {
 
         preExecute(taskDelegate);
 
-        waitToExecuteTask();
+        //What for?
+        waitBeforeExecuteTask();
 
         startExecuteTask(task, taskDelegate);
     }
@@ -35,16 +36,33 @@ public class HandlerBasedTaskExecutorImpl implements ITaskExecutor {
         //TODO Implement or at least throw some kind of run time exception to notice
     }
 
+    @Override
+    public <T> Result<T> executeBackgroundTaskForResult(final ITask<T> task) {
+        ResultStoreRunnable<T> resultStore = new ResultStoreRunnable<>(task);
+        mTaskExecutingHandler.post(new ResultStoreRunnable<>(task));
+
+        try {
+            mTaskExecutingHandler.wait();
+            return resultStore.getTaskResult();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private <T> void preExecute(final ITaskDelegate<T> taskDelegate) {
         mTaskDelegateHandler.post(new Runnable() {
             @Override
             public void run() {
-                taskDelegate.onTaskToBeExecuted();
+                if(taskDelegate != null) {
+                    taskDelegate.onTaskToBeExecuted();
+                }
             }
         });
     }
 
-    private void waitToExecuteTask() {
+    private void waitBeforeExecuteTask() {
+        //FIXME: This is apparently not the correct solution
         try {
             mTaskDelegateHandler.wait();
         } catch (InterruptedException e) {
@@ -60,11 +78,32 @@ public class HandlerBasedTaskExecutorImpl implements ITaskExecutor {
                 mTaskDelegateHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        taskDelegate.onTaskExecuted(taskResult);
+                        if(taskDelegate != null) {
+                            taskDelegate.onTaskToBeExecuted();
+                        }
                     }
                 });
             }
         });
+    }
+
+    private class ResultStoreRunnable<T> implements Runnable {
+
+        private Result<T> mTaskResult;
+        private ITask<T> mTask;
+
+        public ResultStoreRunnable(ITask<T> task) {
+            mTask = task;
+        }
+
+        @Override
+        public void run() {
+            mTaskResult = mTask.execute();
+        }
+
+        public Result<T> getTaskResult() {
+            return mTaskResult;
+        }
     }
 
 }

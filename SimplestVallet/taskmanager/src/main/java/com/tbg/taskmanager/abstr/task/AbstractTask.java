@@ -9,6 +9,14 @@ public abstract class AbstractTask<T> implements ITask<T> {
     private long mId;
     private int mStatus = TaskStatus.WAITING;
 
+    public AbstractTask() {
+
+    }
+
+    public AbstractTask(long id) {
+        mId = id;
+    }
+
     @Override
     public synchronized int getStatus() {
         return mStatus;

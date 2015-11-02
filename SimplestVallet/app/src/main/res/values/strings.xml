@@ -34,4 +34,13 @@
     <string name="tv_spent_amount">Spent amount</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_initial_setting">Initial setting</string>
+
+    <string name="tv_initial_setting_header">Choose a way to setup your sheet</string>
+
+    <string name="btn_choose_sheet">Choose Google Sheet</string>
+
+    <string name="btn_create_sheet">Create Google Sheet</string>
+
 </resources>

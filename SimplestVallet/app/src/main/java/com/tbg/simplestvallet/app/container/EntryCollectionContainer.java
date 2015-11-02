@@ -29,8 +29,4 @@ public class EntryCollectionContainer {
         return mPendingEntryStore;
     }
 
-    public void reloadEntryForCredential(Credential credential) {
-        //TODO Implement
-    }
-
 }

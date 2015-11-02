@@ -1,5 +1,7 @@
 package com.tbg.simplestvallet.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -22,4 +24,15 @@ public class DateUtil {
                 .append(String.format(Locale.US, "%02d", calendar.get(Calendar.DATE)));
         return ymdStringBuilder.toString();
     }
+
+    public static Date getDateFromString(String date, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

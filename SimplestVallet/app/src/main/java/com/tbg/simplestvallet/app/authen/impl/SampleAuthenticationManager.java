@@ -10,6 +10,8 @@ public class SampleAuthenticationManager implements IAuthenticationManager {
 
     private SampleAuthenticationManager(){};
 
+    private Credential mCredential;
+
     public static IAuthenticationManager newAuthenticationManager() {
         return new SampleAuthenticationManager();
     }
@@ -21,11 +23,24 @@ public class SampleAuthenticationManager implements IAuthenticationManager {
 
     @Override
     public void loginByAccountName(String selectedAccountName) {
-        //TODO Implements
+        String token = "DFSDSDF"; //TODO Generate token
+        mCredential = new Credential.Builder()
+                .setAuthToken(token)
+                .setSelectedAccountName(selectedAccountName)
+                .build();
+    }
+
+    @Override
+    public void setServiceAccessToken(String serviceName, String serviceAccessToken) {
+        mCredential = new Credential.Builder(mCredential)
+                .setSelectedAccountName(mCredential.getSelectedAccountName())
+                .setAuthToken(mCredential.getAuthToken())
+                .setServiceAccessToken(serviceName, serviceAccessToken)
+                .build();
     }
 
     @Override
     public Credential getCredential() {
-        return null;
+        return mCredential;
     }
 }
