@@ -14,7 +14,7 @@
     <string name="title_input">Input new expense</string>
 
     <string name="fragment_input_title">Input new entry</string>
-    <string name="fragment_chart_title">This will be chart screen</string>
+    <string name="fragment_chart_title">THIS WILL BE CHART SCREEN</string>
     <string name="fragment_pending_title">Pending Entries</string>
 
     <string name="tab_input_title">New entry</string>
@@ -31,7 +31,8 @@
     <string name="dlg_add_entry_message">Adding entry</string>
 
 
-    <string name="tv_spent_amount">Spent amount</string>
+    <string name="tv_spent_amount_so_far">Spent amount so far</string>
+    <string name="tv_spent_amount_this_month">Spent amount this month</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

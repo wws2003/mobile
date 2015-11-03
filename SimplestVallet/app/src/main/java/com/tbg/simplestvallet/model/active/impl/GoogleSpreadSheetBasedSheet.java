@@ -1,5 +1,7 @@
 package com.tbg.simplestvallet.model.active.impl;
 
+import android.util.Log;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -19,6 +21,7 @@ import com.tbg.simplestvallet.util.DateUtil;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -159,35 +162,42 @@ public class GoogleSpreadSheetBasedSheet implements IEntrySheet {
 
     //Try to set header for worksheet before attempt inserting row again
     private void insertWorksheetHeader(WorksheetEntry worksheetEntry) {
-        //Set header (any differences in the first time ?)
+        //Set header row for sheet
         URL cellFeedUrl = worksheetEntry.getCellFeedUrl();
         try {
             CellFeed cellFeed = mService.getFeed(cellFeedUrl, CellFeed.class);
-            CellEntry cellEntry = new CellEntry(1, 1, DATE_HEADER);
-            cellFeed.insert(cellEntry);
-            cellEntry = new CellEntry(1, 2, TYPE_HEADER);
-            cellFeed.insert(cellEntry);
-            cellEntry = new CellEntry(1, 3, AMOUNT_HEADER);
-            cellFeed.insert(cellEntry);
-            cellEntry = new CellEntry(1, 4, NOTE_HEADER);
-            cellFeed.insert(cellEntry);
+            List<String> sheetHeaders = new ArrayList<>();
+            getSheetHeaders(sheetHeaders);
+
+            for(int i = 0; i < sheetHeaders.size(); i++) {
+                CellEntry cellEntry = new CellEntry(1, i + 1, sheetHeaders.get(i));
+                cellFeed.insert(cellEntry);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    //Should delegate the following 2 methods ?
+    //Should delegate the following 3 methods for genericalness ?
+    private void getSheetHeaders(List<String> sheetHeaders) {
+        sheetHeaders.clear();
+        sheetHeaders.add(DATE_HEADER);
+        sheetHeaders.add(TYPE_HEADER);
+        sheetHeaders.add(AMOUNT_HEADER);
+        sheetHeaders.add(NOTE_HEADER);
+    }
+
     private ListEntry getRowFromEntry(Entry entry) {
         ListEntry row = new ListEntry();
         row.getCustomElements().setValueLocal(DATE_HEADER, DateUtil.getYMDString(entry.getCreatedAt()));
         row.getCustomElements().setValueLocal(TYPE_HEADER, entry.getType());
-        row.getCustomElements().setValueLocal(AMOUNT_HEADER, String.valueOf(entry.getMoneyQuantity().getAmount()));
+        row.getCustomElements().setValueLocal(AMOUNT_HEADER, String.valueOf((int)entry.getMoneyQuantity().getAmount()));
         row.getCustomElements().setValueLocal(NOTE_HEADER, entry.getNote());
         return row;
     }
 
     private Entry getEntryFromRow(ListEntry row) {
-        //TODO Handle currency
+
         return new Entry(DateUtil.getDateFromString(row.getCustomElements().getValue(DATE_HEADER), "dd/MM/yyyy"),
                 new MoneyQuantity(Double.valueOf(row.getCustomElements().getValue(AMOUNT_HEADER))),
                 row.getCustomElements().getValue(TYPE_HEADER),

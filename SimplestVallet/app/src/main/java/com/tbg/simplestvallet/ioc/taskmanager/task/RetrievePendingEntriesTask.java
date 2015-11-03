@@ -25,7 +25,7 @@ public class RetrievePendingEntriesTask extends AbstractTask<List<LocalEntry>> {
     public Result<List<LocalEntry>> doExecute() {
         List<LocalEntry> pendingEntries = new ArrayList<>();
         int resultCode = mPendingEntryStore.getAllPendingEntries(pendingEntries);
-        Result<List<LocalEntry>> result = new Result<>(pendingEntries, getId(), resultCode);
+        Result<List<LocalEntry>> result = generateResult(pendingEntries, resultCode);
         return result;
     }
 }

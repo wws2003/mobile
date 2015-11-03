@@ -23,13 +23,7 @@ public class AddEntryTask extends AbstractTask<Entry> {
 
     @Override
     public Result<Entry> doExecute() {
-        //Sleep to test task delegate
-        try {
-            Thread.sleep(2000,0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         int resultCode = mSheet != null ?  mSheet.addEntry(mEntry) : EntryActionResult.ADD_RESULT_PENDED;
-        return new Result<Entry>(mEntry, getId(), resultCode);
+        return generateResult(mEntry, resultCode);
     }
 }

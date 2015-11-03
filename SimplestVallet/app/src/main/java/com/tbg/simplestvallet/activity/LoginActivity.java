@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,6 +81,9 @@ public class LoginActivity extends AppCompatActivity {
                     String spreadSheetId = data.getStringExtra(InitialSettingActivity.RESULT_KEY_SPREAD_SHEET_ID);
                     String googleDriveAccessToken = data.getStringExtra(InitialSettingActivity.RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN);
                     onSpreadSheetInitializedForAccount(spreadSheetId, googleDriveAccessToken);
+                }
+                else {
+                    Log.d("Login.onActivityResult","Can't retrieve spreadsheet");
                 }
                 break;
             default:

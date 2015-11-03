@@ -29,6 +29,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
+import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
 import com.tbg.taskmanager.abstr.task.AbstractTask;
@@ -112,7 +113,9 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
                     DriveId fileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                     onSpreadSheetConnected(fileDriveId.getResourceId());
                 }
-                finish();
+                else {
+                    returnError();
+                }
                 break;
             default:
                 break;
@@ -177,34 +180,46 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
     //Call back when spreadsheet specified and connected
     private void onSpreadSheetConnected(String spreadSheetId) {
         Log.d("onSpreadSheetConnected", "Connected to spreadsheet " + spreadSheetId);
-        Intent resultIntent = generateResultIntent(spreadSheetId);
-        setResult(RESULT_OK, resultIntent);
+        returnResult(spreadSheetId);
     }
 
-    private Intent generateResultIntent(String spreadSheetId) {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(RESULT_KEY_SPREAD_SHEET_ID, spreadSheetId);
-        resultIntent.putExtra(RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN, getGoogleCredentialToken());
-        return resultIntent;
-    }
-
-    private String getGoogleCredentialToken() {
+    private void returnResult(final String spreadSheetId) {
         ITask<String> getGoogleTokenTask = new AbstractTask<String>() {
             @Override
             public Result<String> doExecute() {
                 try {
                     String googleToken = mGoogleCredential.getToken();
-                    return new Result<>(googleToken, getId(), 0);
+                    return generateResult(googleToken, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (GoogleAuthException e) {
                     e.printStackTrace();
                 }
-                return new Result<>(null, getId(), 0);
+                return generateResult(null, 0);
             }
         };
+        ITaskDelegate<String> getGoogleTokenTaskDelegate = new AbstractTaskResultListener<String>() {
+            @Override
+            public void onTaskExecuted(Result<String> taskResult) {
+                Intent resultIntent = new Intent();
+                if(taskResult.getElement() != null) {
+                    resultIntent.putExtra(RESULT_KEY_SPREAD_SHEET_ID, spreadSheetId);
+                    resultIntent.putExtra(RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN, taskResult.getElement());
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
+                else {
+                    returnError();
+                }
+            }
+        };
+        mTaskExecutor.executeTask(getGoogleTokenTask, getGoogleTokenTaskDelegate);
+    }
 
-        return mTaskExecutor.executeBackgroundTaskForResult(getGoogleTokenTask).getElement();
+    private void returnError() {
+        Intent resultIntent = new Intent();
+        setResult(RESULT_CANCELED, resultIntent);
+        finish();
     }
 
     /*----------------------Initial setup for Google Drive Api Client----------------------*/
@@ -255,21 +270,16 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
                 } catch (IOException iae) {
                     if (iae.getClass() == UserRecoverableAuthIOException.class) {
                         UserRecoverableAuthIOException urae = (UserRecoverableAuthIOException) iae;
-                        return new Result<>(urae, getId(), ACCESS_RESULT_NOT_AUTHORIZED);
+                        return generateResult(urae, ACCESS_RESULT_NOT_AUTHORIZED);
                     }
                     else {
-                        return new Result<>(null, getId(), ACCESS_RESULT_NOT_AUTHORIZED);
+                        return generateResult(null, ACCESS_RESULT_NOT_AUTHORIZED);
                     }
                 }
-                return new Result<>(null, getId(), ACCESS_RESULT_OK);
+                return generateResult(null, ACCESS_RESULT_OK);
             }
         };
-        ITaskDelegate<UserRecoverableAuthIOException> taskDelegate = new ITaskDelegate<UserRecoverableAuthIOException>() {
-            @Override
-            public void onTaskToBeExecuted() {
-                //Do nothing
-            }
-
+        ITaskDelegate<UserRecoverableAuthIOException> taskDelegate = new AbstractTaskResultListener<UserRecoverableAuthIOException>() {
             @Override
             public void onTaskExecuted(Result<UserRecoverableAuthIOException> taskResult) {
                 if(taskResult.getResultCode() == ACCESS_RESULT_NOT_AUTHORIZED) {
@@ -280,11 +290,6 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
                 else {
                    onRESTServiceClientConnected();
                 }
-            }
-
-            @Override
-            public void onTaskCancelled() {
-                //Do nothing
             }
         };
 
@@ -311,7 +316,7 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
         final int CREATE_SPREADSHEET_RESULT_OK = 0;
         final int CREATE_SPREADSHEET_RESULT_FAILED = 1;
 
-        long taskId = SimplestValetApp.getTaskIdPool().getAvailableTaskId();
+        final long taskId = SimplestValetApp.getTaskIdPool().getAvailableTaskId();
         ITask<String> folderCreateTask = new AbstractTask<String>(taskId) {
             @Override
             public Result<String> doExecute() {
@@ -336,44 +341,35 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
 
                     File createdFile = files.insert(newSpreadSheet).execute();
 
-                    return new Result<>(createdFile.getId(), getId(), CREATE_SPREADSHEET_RESULT_OK);
+                    return generateResult(createdFile.getId(), CREATE_SPREADSHEET_RESULT_OK);
 
                 } catch (IOException iae) {
-                    return new Result<>("", getId(), CREATE_SPREADSHEET_RESULT_FAILED);
+                    return generateResult("", CREATE_SPREADSHEET_RESULT_FAILED);
                 }
             }
         };
 
-        ITaskDelegate<String> spreadSheetCreateTaskDelegate = new ITaskDelegate<String>() {
-            @Override
-            public void onTaskToBeExecuted() {
-                //Do nothing
-            }
+        ITaskDelegate<String> spreadSheetCreateTaskDelegate = new AbstractTaskResultListener<String>() {
             @Override
             public void onTaskExecuted(Result<String> taskResult) {
                 if(taskResult.getResultCode() == CREATE_SPREADSHEET_RESULT_OK) {
-                    onSpreadSheetConnected(taskResult.getElement());
-                    showSpreadSheetCreatedDialog();
+                    showSpreadSheetCreatedDialog(taskResult.getElement());
                 }
                 else {
-                    finish();
+                    returnError();
                 }
-            }
-            @Override
-            public void onTaskCancelled() {
-                //Do nothing
             }
         };
 
         mTaskExecutor.executeTask(folderCreateTask, spreadSheetCreateTaskDelegate);
     }
 
-    private void showSpreadSheetCreatedDialog() {
+    private void showSpreadSheetCreatedDialog(final String spreadSheetId) {
         DialogInterface.OnClickListener onClickListener = new  DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                finish();
+                onSpreadSheetConnected(spreadSheetId);
             }
         };
 

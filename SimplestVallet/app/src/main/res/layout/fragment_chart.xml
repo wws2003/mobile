@@ -13,7 +13,7 @@
     <TextView android:id="@+id/tv_spent_amount_lb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tv_spent_amount"
+        android:text="@string/tv_spent_amount_so_far"
         android:layout_below="@id/tv_chart_title"
         android:layout_marginTop="12dp"/>
 
@@ -23,6 +23,21 @@
         android:text="0"
         android:layout_alignBaseline="@id/tv_spent_amount_lb"
         android:layout_toRightOf="@id/tv_spent_amount_lb"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView android:id="@+id/tv_spent_amount_this_month_lb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_spent_amount_this_month"
+        android:layout_below="@id/tv_spent_amount_lb"
+        android:layout_marginTop="12dp"/>
+
+    <TextView android:id="@+id/tv_spent_amount_this_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_alignBaseline="@id/tv_spent_amount_this_month_lb"
+        android:layout_toRightOf="@id/tv_spent_amount_this_month_lb"
         android:layout_marginLeft="10dp"/>
 
 </RelativeLayout>

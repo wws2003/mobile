@@ -29,9 +29,9 @@ public class DateUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         try {
             return dateFormat.parse(date);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new Date(0);
         }
     }
 

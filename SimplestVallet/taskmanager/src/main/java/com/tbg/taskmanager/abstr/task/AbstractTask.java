@@ -45,5 +45,9 @@ public abstract class AbstractTask<T> implements ITask<T> {
         return result;
     }
 
+    public Result<T> generateResult(T element, int resultCode) {
+        return new Result<>(element, getId(), resultCode);
+    }
+
     public abstract Result<T> doExecute();
 }
