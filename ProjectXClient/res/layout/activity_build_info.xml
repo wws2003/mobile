@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="12dp" >
+
+    <TextView
+        android:id="@+id/tvBuildIdTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/build_info_build_id_title" />
+
+    <TextView
+        android:id="@+id/tvBuildIdValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tvBuildIdTitle"
+        android:layout_alignBaseline="@+id/tvBuildIdTitle" />
+
+    <TextView
+        android:id="@+id/tvBuildStatusTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvBuildIdTitle"
+        android:text="@string/build_info_build_status_title" />
+
+    <TextView
+        android:id="@+id/tvBuildStatusValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvBuildStatusTitle"
+        android:layout_toRightOf="@+id/tvBuildStatusTitle" />
+    
+    <TextView
+        android:id="@+id/tvBuildStartTimeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvBuildStatusTitle"
+        android:text="@string/build_info_build_start_time_title" />
+
+    <TextView
+        android:id="@+id/tvBuildStartTimeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvBuildStartTimeTitle"
+        android:layout_toRightOf="@+id/tvBuildStartTimeTitle" />
+
+    <TextView
+        android:id="@+id/tvBuildEndTimeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvBuildStartTimeTitle"
+        android:text="@string/build_info_build_end_time_title" />
+
+    <TextView
+        android:id="@+id/tvBuildEndTimeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvBuildEndTimeTitle"
+        android:layout_toRightOf="@+id/tvBuildEndTimeTitle" />
+
+    <TextView
+        android:id="@+id/tvBuildLogUrlTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvBuildEndTimeTitle"
+        android:text="@string/build_info_build_log_url_title" />
+
+    <TextView
+        android:id="@+id/tvBuildLogUrlValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvBuildLogUrlTitle"
+        android:layout_toRightOf="@+id/tvBuildLogUrlTitle" />
+</RelativeLayout>
