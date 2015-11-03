@@ -176,6 +176,7 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
 
     //Call back when spreadsheet specified and connected
     private void onSpreadSheetConnected(String spreadSheetId) {
+        Log.d("onSpreadSheetConnected", "Connected to spreadsheet " + spreadSheetId);
         Intent resultIntent = generateResultIntent(spreadSheetId);
         setResult(RESULT_OK, resultIntent);
     }
