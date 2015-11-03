@@ -19,9 +19,19 @@
         android:inputType="date"
         android:ems="10"
         android:id="@+id/et_date"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_input_title" />
+
+    <AutoCompleteTextView
+        android:id="@+id/et_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="@string/et_hint_type"
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/et_date" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -31,7 +41,7 @@
         android:ems="10"
         android:layout_centerHorizontal="true"
         android:id="@+id/et_amount"
-        android:layout_below="@id/et_date"/>
+        android:layout_below="@id/et_type"/>
 
     <EditText
         android:layout_width="wrap_content"

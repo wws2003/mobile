@@ -24,6 +24,7 @@
 
     <string name="tv_load_saved_entry">Or load from saved entries</string>
 
+    <string name="et_hint_type">Type</string>
     <string name="et_hint_amount">Amount</string>
     <string name="et_hint_note">Note</string>
 

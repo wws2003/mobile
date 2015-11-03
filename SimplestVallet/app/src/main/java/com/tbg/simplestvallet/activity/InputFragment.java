@@ -8,6 +8,8 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -33,6 +35,7 @@ import java.util.Calendar;
 public class InputFragment extends Fragment implements View.OnClickListener {
 
     private EditText mEtDate = null;
+    private AutoCompleteTextView mEtType = null;
     private EditText mEtAmount = null;
     private EditText mEtNote = null;
     private Button mBtnAddEntry = null;
@@ -47,6 +50,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Just to test service-based task executor
         mTaskExecutor = new ServiceBasedTaskExecutor(getActivity().getApplicationContext(),
                 SimplestValetApp.getLocatorContainer().getTaskLocator(),
                 SimplestValetApp.getLocatorContainer().getTaskResultLocator(),
@@ -80,16 +84,19 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     private void setupView() {
         mEtDate = (EditText)getActivity().findViewById(R.id.et_date);
         mEtAmount = (EditText)getActivity().findViewById(R.id.et_amount);
+        mEtType = (AutoCompleteTextView)getActivity().findViewById(R.id.et_type);
         mEtNote = (EditText)getActivity().findViewById(R.id.et_note);
         mBtnAddEntry = (Button)getActivity().findViewById(R.id.btn_add_entry);
 
-        mViewWrapper.setup(mEtDate, mEtAmount, mEtNote, mBtnAddEntry);
+        mViewWrapper.setup(mEtDate, mEtAmount, mEtType, mBtnAddEntry);
 
         mBtnAddEntry.setOnClickListener(this);
     }
 
     private void renderView() {
-        mViewWrapper.render();
+        //TODO Retrieve theses values from somewhere rather than hardcoded
+        String[] types = {"Coop Card","Softbank","Other"};
+        mViewWrapper.render(types);
     }
 
     //Button click handler
@@ -112,7 +119,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
         MoneyQuantity quantity = new MoneyQuantity(Double.valueOf(mEtAmount.getText().toString()));
         return new Entry(Calendar.getInstance().getTime(),
                 quantity,
-                "Misc",
+                mEtType.getText().toString(),
                 mEtNote.getText().toString());
     }
 
@@ -147,24 +154,44 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     private static class ViewWrapper {
         private EditText mEtDate = null;
         private EditText mEtAmount = null;
-        private EditText mEtNote = null;
+        private AutoCompleteTextView mEtType = null;
         private Button mBtnAddEntry = null;
         private ProgressDialog mProgressDialog = null;
         private Context mContext;
 
-        public void setup(EditText etDate, EditText etAmount, EditText etNote, Button btnAddEntry) {
+        public void setup(EditText etDate, EditText etAmount, AutoCompleteTextView etType, Button btnAddEntry) {
             mEtDate = etDate;
             mEtAmount = etAmount;
-            mEtNote = etNote;
+            mEtType = etType;
             mBtnAddEntry = btnAddEntry;
             mContext = mBtnAddEntry.getContext();
             initProgressDialog();
         }
 
-        public void render() {
+        public void render(String[] types) {
+            //Set date
             Calendar rightNow = Calendar.getInstance();
             CharSequence dateSq = DateFormat.format("yyyy/MM/dd", rightNow);
             mEtDate.setText(dateSq);
+
+            //Set autocomplete
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,
+                    android.R.layout.simple_dropdown_item_1line,
+                    types);
+            mEtType.setAdapter(adapter);
+            mEtType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        mEtType.showDropDown();
+                    }
+                    else {
+                        mEtType.dismissDropDown();
+                    }
+                }
+            });
+
+            //Focus on amount field
             mEtAmount.requestFocus();
         }
 
