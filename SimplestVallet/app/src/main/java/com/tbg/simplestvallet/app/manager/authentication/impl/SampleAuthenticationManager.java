@@ -4,6 +4,9 @@ import com.tbg.simplestvallet.app.manager.authentication.Credential;
 import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
 import com.tbg.simplestvallet.app.preference.abstr.IPreferenceOperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by wws2003 on 10/2/15.
  */

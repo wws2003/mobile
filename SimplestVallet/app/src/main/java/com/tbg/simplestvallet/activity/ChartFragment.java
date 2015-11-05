@@ -1,5 +1,7 @@
 package com.tbg.simplestvallet.activity;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -70,9 +72,20 @@ public class ChartFragment extends Fragment {
                 return generateResult(amounts, LOAD_AMOUNT_OK);
             }
         };
-        ITaskDelegate<List<MoneyQuantity>> dataTaskDelegate = new AbstractTaskResultListener<List<MoneyQuantity>>() {
+        ITaskDelegate<List<MoneyQuantity>> dataTaskDelegate = new ITaskDelegate<List<MoneyQuantity>>() {
+            @Override
+            public void onTaskToBeExecuted() {
+                mViewWrapper.freeze();
+            }
+
+            @Override
+            public void onTaskCancelled() {
+                //Do nothing
+            }
+
             @Override
             public void onTaskExecuted(Result<List<MoneyQuantity>> taskResult) {
+                mViewWrapper.unFreezing();
                 if(taskResult.getResultCode() == LOAD_AMOUNT_OK) {
                     MoneyQuantity sumAmount = taskResult.getElement().get(0);
                     MoneyQuantity amountThisMonth = taskResult.getElement().get(1);
@@ -90,10 +103,14 @@ public class ChartFragment extends Fragment {
     private class ViewWrapper {
         private TextView mTvSpentAmount;
         private TextView mTvSpentAmountThisMonth;
+        private ProgressDialog mProgressDialog = null;
+        private Context mContext = null;
 
         public void setup(TextView tvSpentAmount, TextView tvSpentAmountThisMonth) {
-            this.mTvSpentAmountThisMonth = tvSpentAmount;
-            this.mTvSpentAmount = tvSpentAmountThisMonth;
+            this.mTvSpentAmount = tvSpentAmount;
+            this.mTvSpentAmountThisMonth = tvSpentAmountThisMonth;
+            this.mContext = tvSpentAmount.getContext();
+            initProgressDialog();
         }
 
         public void render(MoneyQuantity spentAmount, MoneyQuantity spentAmountThisMonth) {
@@ -103,6 +120,23 @@ public class ChartFragment extends Fragment {
 
         public void renderError() {
             //TODO Implement
+        }
+
+        public void freeze() {
+            //Show progress bar
+            mProgressDialog.show();
+        }
+
+        public void unFreezing() {
+            //Hide progress bar
+            mProgressDialog.dismiss();
+        }
+
+        private void initProgressDialog() {
+            mProgressDialog = new ProgressDialog(mContext);
+            mProgressDialog.setMessage(mContext.getString(R.string.dlg_load_amount_message));
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setIndeterminate(true);
         }
     }
 }

@@ -75,7 +75,9 @@ public class GoogleSpreadSheetBasedSheet implements IEntrySheet {
         //TODO Implement more efficiently
         GoogleSpreadSheetRowMoneyQuantityAdapter moneyQuantityAdapter = new GoogleSpreadSheetRowMoneyQuantityAdapter();
         try {
-            mGoogleSpreadSheet.getAllDerivedItems(new ArrayList<MoneyQuantity>(), moneyQuantityAdapter, null);
+            mGoogleSpreadSheet.getAllDerivedItems(new ArrayList<MoneyQuantity>(),
+                    moneyQuantityAdapter,
+                    null);
             //This return statement is just a trick to take advantage of side-effect. Officially required to iterate the list retrieved to collect results
             return moneyQuantityAdapter.getMoneyQuantity();
         } catch (IOException e) {
@@ -96,10 +98,13 @@ public class GoogleSpreadSheetBasedSheet implements IEntrySheet {
         GoogleSpreadSheetRowMoneyQuantityAdapter moneyQuantityAdapter = new GoogleSpreadSheetRowMoneyQuantityAdapter();
         IGoogleSpreadSheetRowFilter<Entry> googleSpreadSheetRowMonthAdapter = new GoogleSpreadSheetRowFilterByMonth(thisYear, thisMonth);
         try {
-            mGoogleSpreadSheet.getAllDerivedItems(new ArrayList<MoneyQuantity>(), moneyQuantityAdapter, googleSpreadSheetRowMonthAdapter);
+            mGoogleSpreadSheet.getAllDerivedItems(new ArrayList<MoneyQuantity>(),
+                    moneyQuantityAdapter,
+                    googleSpreadSheetRowMonthAdapter);
             //This return statement is just a trick to take advantage of side-effect. Officially required to iterate the list retrieved to collect results
             return moneyQuantityAdapter.getMoneyQuantity();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -139,11 +144,16 @@ public class GoogleSpreadSheetBasedSheet implements IEntrySheet {
     private class GoogleSpreadSheetRowMoneyQuantityAdapter implements IGoogleSpreadSheetRowAdapter<MoneyQuantity> {
 
         private GoogleSpreadSheetRowEntryAdapter mEntryAdapter = new GoogleSpreadSheetRowEntryAdapter();
-        private MoneyQuantity mQuantity = new MoneyQuantity(0, null);
+        private MoneyQuantity mQuantity = null;
 
         @Override
         public MoneyQuantity getItemFromRow(ListEntry row) {
-            mQuantity = mQuantity.add(mEntryAdapter.getItemFromRow(row).getMoneyQuantity());
+            if(mQuantity == null) {
+                mQuantity = mEntryAdapter.getItemFromRow(row).getMoneyQuantity();
+            }
+            else {
+                mQuantity = mQuantity.add(mEntryAdapter.getItemFromRow(row).getMoneyQuantity());
+            }
             return mQuantity;
         }
 
@@ -158,7 +168,7 @@ public class GoogleSpreadSheetBasedSheet implements IEntrySheet {
         }
 
         public MoneyQuantity getMoneyQuantity() {
-            return mQuantity;
+            return (mQuantity != null) ? mQuantity : new MoneyQuantity(0);
         }
     }
 

@@ -72,9 +72,11 @@ public class StartingActivity extends AppCompatActivity {
             loadSheet(credential);
         }
         catch (IAuthenticationManager.SVAccountNotFoundException e) {
+            e.printStackTrace();
             toLoginScreen();
         }
         catch (IAuthenticationManager.SVCredentialNotFoundException e) {
+            e.printStackTrace();
            toLoginScreen();
         }
     }

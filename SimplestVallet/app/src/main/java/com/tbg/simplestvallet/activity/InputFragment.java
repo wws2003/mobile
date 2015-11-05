@@ -1,7 +1,9 @@
 package com.tbg.simplestvallet.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -127,7 +129,6 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     }
 
     private class AddEntryTaskDelegate implements ITaskDelegate<Entry> {
-
         @Override
         public void onTaskToBeExecuted() {
            mViewWrapper.freeze();
@@ -138,7 +139,10 @@ public class InputFragment extends Fragment implements View.OnClickListener {
             mViewWrapper.unFreezing();
             switch (taskResult.getResultCode()) {
                 case EntryActionResult.ADD_RESULT_OK:
-                    ((MainActivity)getActivity()).switchToChartTab();
+                    //((MainActivity)getActivity()).switchToChartTab();
+                    new AlertDialog.Builder(getContext()).setMessage("New entry has been added")
+                            .setTitle("Simplest Valet says")
+                            .show();
                     break;
                 case EntryActionResult.ADD_RESULT_PENDED:
                     ((MainActivity)getActivity()).switchToPendingTab();
@@ -147,7 +151,6 @@ public class InputFragment extends Fragment implements View.OnClickListener {
                     break;
             }
         }
-
         @Override
         public void onTaskCancelled() {
             //TODO Implement

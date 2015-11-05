@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light"
+    android:background="@color/clr_input_fragment"
     tools:context="com.tbg.simplestvallet.activity.InputFragment">
 
     <TextView android:id="@+id/tv_input_title"
@@ -11,6 +11,8 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:textSize="20dp"
+        android:layout_marginTop="12dp"
+        android:textColor="@android:color/holo_red_light"
         android:text="@string/fragment_input_title" />
 
     <EditText
@@ -79,6 +81,7 @@
         android:layout_below="@+id/et_saved_entry_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         />
 
 </RelativeLayout>

@@ -3,6 +3,8 @@ package com.tbg.simplestvallet.app;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
@@ -24,7 +26,7 @@ import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 /**
  * Created by wws2003 on 10/24/15.
  */
-public class SimplestValetApp extends Application {
+public class SimplestValetApp extends MultiDexApplication {
 
     private static Context mContext;
 
@@ -48,6 +50,12 @@ public class SimplestValetApp extends Application {
 
     public static Context getContext() {
         return mContext;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public static AuthenticationManagerContainer getAuthenticationManagerContainer() {

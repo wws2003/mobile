@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Simplest Valet</string>
 
-    <string name="hello_world">Hello</string>
+    <string name="tv_login_welcome_h1">Welcome to SV</string>
+    <string name="tv_login_welcome_h2">Choose an account to continue</string>
+
+    <string name="hello_world">Login</string>
 
     <string name="tv_start_loading">Loading...</string>
 
@@ -35,9 +38,9 @@
     <string name="et_hint_amount">Amount</string>
     <string name="et_hint_note">Note</string>
 
-    <string name="btn_add_entry">Add entry</string>
+    <string name="btn_add_entry">Done</string>
     <string name="dlg_add_entry_message">Adding entry</string>
-
+    <string name="dlg_load_amount_message">Loading amounts</string>
 
     <string name="tv_spent_amount_so_far">Spent amount so far</string>
     <string name="tv_spent_amount_this_month">Spent amount this month</string>
