@@ -2,18 +2,19 @@ package com.tbg.simplestvallet.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.tbg.simplestvallet.app.authen.Credential;
-import com.tbg.simplestvallet.app.authen.impl.SampleAuthenticationManager;
+import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
+import com.tbg.simplestvallet.app.manager.authentication.impl.SampleAuthenticationManager;
 import com.tbg.simplestvallet.app.container.AuthenticationManagerContainer;
 import com.tbg.simplestvallet.app.container.EntryCollectionContainer;
 import com.tbg.simplestvallet.app.container.LocatorContainer;
 import com.tbg.simplestvallet.app.container.TaskExecutorContainer;
 import com.tbg.simplestvallet.app.container.TaskIdPool;
+import com.tbg.simplestvallet.app.preference.abstr.IPreferenceOperator;
+import com.tbg.simplestvallet.app.preference.impl.SamplePreferenceOperator;
 import com.tbg.simplestvallet.ioc.taskmanager.locator.MapBasedLocator;
-import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
-import com.tbg.simplestvallet.model.active.impl.GoogleSpreadSheetBasedSheet;
 import com.tbg.simplestvallet.model.active.impl.SamplePendingEntryStore;
 import com.tbg.simplestvallet.model.active.impl.SampleSheet;
 import com.tbg.taskmanager.abstr.task.ITask;
@@ -27,11 +28,15 @@ public class SimplestValetApp extends Application {
 
     private static Context mContext;
 
+    private static IPreferenceOperator gPreferenceOperator;
     private static AuthenticationManagerContainer gAuthenticationManagerContainer;
     private static TaskExecutorContainer gTaskExecutorContainer;
     private static EntryCollectionContainer gEntryCollectionContainer;
     private static LocatorContainer gLocatorContainer;
     private static TaskIdPool gTaskIdPool;
+    private static SheetServiceManagerContainer gSheetServiceManagerContainer;
+
+    private static final String SHARED_PREFERENCES_NAME = "simplest_valet_sharePreference";
 
     @Override
     public void onCreate() {
@@ -57,12 +62,6 @@ public class SimplestValetApp extends Application {
         return gEntryCollectionContainer;
     }
 
-    public static void reloadEntrySheetForCredential(Credential credential, String spreadSheetId) {
-        String accessToken = credential.getServiceAccessToken(Credential.SERVICE_NAME_GOOGLE_DRIVE);
-        IEntrySheet entrySheet = new GoogleSpreadSheetBasedSheet(spreadSheetId, accessToken);
-        gEntryCollectionContainer.setEntrySheet(entrySheet);
-    }
-
     public static LocatorContainer getLocatorContainer() {
         return gLocatorContainer;
     }
@@ -71,17 +70,27 @@ public class SimplestValetApp extends Application {
         return gTaskIdPool;
     }
 
+    public static SheetServiceManagerContainer getSheetServiceManagerContainer() {
+        return gSheetServiceManagerContainer;
+    }
+
     private void initContainers() {
+        initPreferenceOperator();
         initAuthenticationManagerContainer();
         initTaskExecutorContainer();
         initEntrySheetContainer();
         initLocatorContainer();
         initTaskPool();
+        initSheetServiceManagerContainer();
+    }
+
+    private void initPreferenceOperator() {
+        gPreferenceOperator = new SamplePreferenceOperator(getSharedPreference());
     }
 
     private void initAuthenticationManagerContainer() {
         gAuthenticationManagerContainer = new AuthenticationManagerContainer();
-        gAuthenticationManagerContainer.setAuthenticationManager(SampleAuthenticationManager.newAuthenticationManager());
+        gAuthenticationManagerContainer.setAuthenticationManager(new SampleAuthenticationManager(gPreferenceOperator));
     }
 
     private void initTaskExecutorContainer() {
@@ -103,5 +112,13 @@ public class SimplestValetApp extends Application {
 
     private void initTaskPool() {
         gTaskIdPool = TaskIdPool.getInstance();
+    }
+
+    private void initSheetServiceManagerContainer() {
+        gSheetServiceManagerContainer = new SheetServiceManagerContainer(gPreferenceOperator);
+    }
+
+    private static SharedPreferences getSharedPreference(){
+        return getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 }

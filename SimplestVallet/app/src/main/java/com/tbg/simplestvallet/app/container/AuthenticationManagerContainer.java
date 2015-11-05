@@ -1,6 +1,6 @@
 package com.tbg.simplestvallet.app.container;
 
-import com.tbg.simplestvallet.app.authen.abstr.IAuthenticationManager;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
 
 /**
  * Created by wws2003 on 11/3/15.

@@ -1,10 +1,11 @@
-package com.tbg.simplestvallet.app.authen;
+package com.tbg.simplestvallet.app.manager.authentication;
 
 /**
  * Created by wws2003 on 10/2/15.
  */
 public class Credential {
     public static final String SERVICE_NAME_GOOGLE_DRIVE = "google_drive";
+    public static final String SERVICE_NAME_LOCAL = "local";
 
     private String mSelectedAccountName;
     private String mAuthToken;
@@ -31,11 +32,6 @@ public class Credential {
         return null;
     }
 
-    public void reset() {
-        mAuthToken = null;
-        mSelectedAccountName = null;
-    }
-
     public static class Builder {
         private Credential mCredential = new Credential();
 
@@ -58,7 +54,7 @@ public class Credential {
         }
 
         public Builder setServiceAccessToken(String serviceName, String token) {
-            if (serviceName.equals(Credential.SERVICE_NAME_GOOGLE_DRIVE)) {
+            if (Credential.SERVICE_NAME_GOOGLE_DRIVE.equals(serviceName)) {
                 mCredential.mGoogleDriveAcessToken = token;
                 return new Builder(mCredential);
             }

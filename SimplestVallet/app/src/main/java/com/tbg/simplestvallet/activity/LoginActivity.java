@@ -16,8 +16,17 @@ import android.widget.TextView;
 import com.google.android.gms.common.AccountPicker;
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.app.authen.Credential;
-import com.tbg.simplestvallet.app.authen.abstr.IAuthenticationManager;
+import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
+import com.tbg.simplestvallet.app.manager.authentication.Credential;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
+import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISheetServiceManager;
+import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
+import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
+import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
+import com.tbg.taskmanager.abstr.task.AbstractTask;
+import com.tbg.taskmanager.abstr.task.ITask;
+import com.tbg.taskmanager.common.Result;
+import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_INIT_GOOGLE_SHEET = 3;
 
     private IAuthenticationManager mAuthenticationManager = null;
+    private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
+    private ITaskExecutor mTaskExecutor = null;
 
     private Button mDoneButton;
 
@@ -36,13 +47,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         initViews();
         mAuthenticationManager = SimplestValetApp.getAuthenticationManagerContainer().getAuthenticationManager();
+        mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
+        mSheetServiceManagerContainer = SimplestValetApp.getSheetServiceManagerContainer();
         confirmGetAccountsPermission();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_input, menu);
         return true;
     }
 
@@ -126,30 +139,40 @@ public class LoginActivity extends AppCompatActivity {
         mAuthenticationManager.loginByAccountName(selectedAccountName);
     }
 
-    private void onSpreadSheetInitializedForAccount(String spreadSheetId, String googleDriveAccessToken) {
+    private void onSpreadSheetInitializedForAccount(final String spreadSheetId, final String googleDriveAccessToken) {
         mAuthenticationManager.setServiceAccessToken(Credential.SERVICE_NAME_GOOGLE_DRIVE, googleDriveAccessToken);
-        Credential credential = mAuthenticationManager.getCredential();
-        SimplestValetApp.reloadEntrySheetForCredential(credential, spreadSheetId);
-        toMainScreen();
+
+        //Try to persist session before go to main screen
+        ITask<Integer> persistSessionTask = new AbstractTask<Integer>() {
+            @Override
+            public Result<Integer> doExecute() {
+                ISheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(Credential.SERVICE_NAME_GOOGLE_DRIVE);
+                String accountName = mAuthenticationManager.getCredential().getSelectedAccountName();
+
+                try {
+                    sheetServiceManager.accessSheet(spreadSheetId, accountName, googleDriveAccessToken);
+                } catch (ISheetServiceManager.SVSheetServiceNotAvailableException e) {
+                    e.printStackTrace();
+                } catch (ISheetServiceManager.SVSheetServiceUnAuthorizedException e) {
+                    e.printStackTrace();
+                }
+
+                sheetServiceManager.storeSheetId(spreadSheetId, accountName, googleDriveAccessToken);
+                mAuthenticationManager.persistSession();
+                return generateResult(0, 0);
+            }
+        };
+        ITaskDelegate<Integer> persistSessionTaskDelegate = new AbstractTaskResultListener<Integer>() {
+            @Override
+            public void onTaskExecuted(Result<Integer> taskResult) {
+                toMainScreen();
+            }
+        };
+        mTaskExecutor.executeTask(persistSessionTask, persistSessionTaskDelegate);
     }
 
-    /*private void tryToLogin() {
-        String authToken = mAuthenticationManager.getCredential().getAuthToken();
-        int resultCode = mAuthenticationManager.loginByToken(authToken);
-        if(resultCode == IAuthenticationManager.LOGIN_RESULT_OK) {
-            onLoggedIn();
-        }
-    }*/
-
     private void onLoggedIn() {
-        boolean hasInitialSettingDone = false; //TODO Evaluate this value
-
-        if(hasInitialSettingDone) {
-            toMainScreen();
-        }
-        else {
-            toInitialSettingScreen();
-        }
+        toInitialSettingScreen();
     }
 
     private void toInitialSettingScreen() {

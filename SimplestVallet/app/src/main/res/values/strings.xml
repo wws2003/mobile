@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">Simplest Valet</string>
 
-    <string name="hello_world">Login</string>
+    <string name="hello_world">Hello</string>
+
+    <string name="tv_start_loading">Loading...</string>
+
     <string name="action_settings">Settings</string>
+
+    <string name="main_action_settings">Settings</string>
+    <string name="main_action_logout">Logout</string>
+
     <string name="choose_account">Choose Google Account</string>
     <string name="done">Done</string>
     <string name="selected_email">Selected email</string>
@@ -44,5 +51,6 @@
     <string name="btn_choose_sheet">Choose Google Sheet</string>
 
     <string name="btn_create_sheet">Create Google Sheet</string>
+    <string name="title_activity_starting">Starting</string>
 
 </resources>

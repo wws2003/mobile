@@ -268,6 +268,7 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
                     com.google.api.services.drive.Drive.Files.List files = mDriveClient.files().list();
                     files.execute();
                 } catch (IOException iae) {
+                    iae.printStackTrace();
                     if (iae.getClass() == UserRecoverableAuthIOException.class) {
                         UserRecoverableAuthIOException urae = (UserRecoverableAuthIOException) iae;
                         return generateResult(urae, ACCESS_RESULT_NOT_AUTHORIZED);
@@ -284,8 +285,13 @@ public class InitialSettingActivity extends AppCompatActivity implements GoogleA
             public void onTaskExecuted(Result<UserRecoverableAuthIOException> taskResult) {
                 if(taskResult.getResultCode() == ACCESS_RESULT_NOT_AUTHORIZED) {
                     UserRecoverableAuthIOException exception = taskResult.getElement();
-                    Intent authorizeIntent = exception.getIntent();
-                    startActivityForResult(authorizeIntent, REQUEST_CODE_REST_CLIENT_CONNECT);
+                    if(exception != null)  {
+                        Intent authorizeIntent = exception.getIntent();
+                        startActivityForResult(authorizeIntent, REQUEST_CODE_REST_CLIENT_CONNECT);
+                    }
+                    else {
+                        Log.d("tryToAccessRESTService", "Some thing strange happened");
+                    }
                 }
                 else {
                    onRESTServiceClientConnected();

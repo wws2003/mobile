@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
+import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
 import com.tbg.simplestvallet.ioc.taskmanager.service.TaskService;
 import com.tbg.simplestvallet.model.active.EntryActionResult;
 import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
@@ -42,6 +43,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
 
     private ViewWrapper mViewWrapper = new ViewWrapper();
     private ITaskExecutor mTaskExecutor = null;
+    private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
 
     public InputFragment() {
         //mTaskExecutor = SimplestValetApp.getTaskExecutorContainer().getTaskExecutor();
@@ -55,6 +57,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
                 SimplestValetApp.getLocatorContainer().getTaskLocator(),
                 SimplestValetApp.getLocatorContainer().getTaskResultLocator(),
                 TaskService.class);
+        mSheetServiceManagerContainer = SimplestValetApp.getSheetServiceManagerContainer();
     }
 
     @Override
@@ -103,7 +106,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     private void onBtnAddEntryClicked() {
         Entry inputEntry = getInputEntry();
 
-        IEntrySheet sheet = SimplestValetApp.getEntryCollectionContainer().getEntrySheet();
+        IEntrySheet sheet = mSheetServiceManagerContainer.getCachedSheetServiceManager().getSVEntrySheet();
         IPendingEntryStore pendingEntryStore = SimplestValetApp.getEntryCollectionContainer().getPendingEntryStore();
         AddEntryTask addEntryTask = new AddEntryTask(sheet, inputEntry);
         ITaskResultProcessor<Entry> addEntryTaskResultProcessor = new AddEntryTaskResultProcessor(pendingEntryStore);

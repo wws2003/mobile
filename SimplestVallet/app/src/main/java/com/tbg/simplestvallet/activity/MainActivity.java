@@ -8,14 +8,24 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 
 import com.tbg.simplestvallet.R;
+import com.tbg.simplestvallet.app.SimplestValetApp;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
 
 public class MainActivity extends AppCompatActivity {
+
+    private IAuthenticationManager mAuthenticationManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuthenticationManager = SimplestValetApp.getAuthenticationManagerContainer().getAuthenticationManager();
         initTabs();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -32,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_logout:
+                return onActionLogoutClicked();
+            case R.id.action_settings:
+                return onActionSettingClicked();
         }
 
         return super.onOptionsItemSelected(item);
@@ -66,5 +78,16 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(tabSpec1, InputFragment.class, null);
         tabHost.addTab(tabSpec2, ChartFragment.class, null);
         tabHost.addTab(tabSpec3, PendingListFragment.class, null);
+    }
+
+    private boolean onActionSettingClicked() {
+        //TODO Implement
+        return false;
+    }
+
+    private boolean onActionLogoutClicked() {
+        mAuthenticationManager.destroySession();
+        finish();
+        return true;
     }
 }

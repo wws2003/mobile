@@ -56,7 +56,7 @@ public class ChartFragment extends Fragment {
     }
 
     private void loadData() {
-        final IEntrySheet entrySheet = SimplestValetApp.getEntryCollectionContainer().getEntrySheet();
+        final IEntrySheet entrySheet = SimplestValetApp.getSheetServiceManagerContainer().getCachedSheetServiceManager().getSVEntrySheet();
         final int LOAD_AMOUNT_OK = 0;
         //final int LOAD_AMOUNT_FAILED = 1;
 
