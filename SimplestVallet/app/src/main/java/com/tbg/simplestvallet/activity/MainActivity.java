@@ -9,11 +9,11 @@ import android.widget.TabHost;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVAuthenticationManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private IAuthenticationManager mAuthenticationManager = null;
+    private ISVAuthenticationManager mAuthenticationManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -35,4 +35,9 @@ public class DateUtil {
         }
     }
 
+    public static long getCurrentTime() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getTimeInMillis();
+    }
+
 }

@@ -1,34 +1,34 @@
 package com.tbg.simplestvallet.app.container;
 
-import com.tbg.simplestvallet.app.manager.authentication.Credential;
-import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISheetServiceManager;
-import com.tbg.simplestvallet.app.manager.sheetservice.impl.GoogleSheetServiceManager;
-import com.tbg.simplestvallet.app.preference.abstr.IPreferenceOperator;
+import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
+import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
+import com.tbg.simplestvallet.app.manager.sheetservice.impl.SVGoogleSheetServiceManagerImpl;
+import com.tbg.simplestvallet.persist.abstr.ISVPersistor;
 
 /**
  * Created by wws2003 on 11/5/15.
  */
 public class SheetServiceManagerContainer {
 
-    private ISheetServiceManager mCachedServiceManager = null;
+    private ISVSheetServiceManager mCachedServiceManager = null;
 
-    private ISheetServiceManager mGoogleSheetServiceManager = null;
+    private ISVSheetServiceManager mGoogleSheetServiceManager = null;
 
-    private IPreferenceOperator mPreferenceOperator;
+    private ISVPersistor mPersistor;
 
-    public SheetServiceManagerContainer(IPreferenceOperator preferenceOperator) {
-        this.mPreferenceOperator = preferenceOperator;
-        mGoogleSheetServiceManager = new GoogleSheetServiceManager(mPreferenceOperator);
+    public SheetServiceManagerContainer(ISVPersistor persistor) {
+        this.mPersistor = persistor;
+        mGoogleSheetServiceManager = new SVGoogleSheetServiceManagerImpl(mPersistor);
     }
 
-    public ISheetServiceManager reloadSheetForService(String serviceName) {
-        if(serviceName.equals(Credential.SERVICE_NAME_GOOGLE_DRIVE)) {
+    public ISVSheetServiceManager reloadSheetForService(String serviceName) {
+        if(serviceName.equals(SVCredential.SERVICE_NAME_GOOGLE_DRIVE)) {
             mCachedServiceManager = mGoogleSheetServiceManager;
         }
         return mCachedServiceManager;
     }
 
-    public ISheetServiceManager getCachedSheetServiceManager() {
+    public ISVSheetServiceManager getCachedSheetServiceManager() {
         return mCachedServiceManager;
     }
 }

@@ -1,17 +1,18 @@
 package com.tbg.simplestvallet.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
-import com.tbg.simplestvallet.app.manager.authentication.Credential;
-import com.tbg.simplestvallet.app.manager.authentication.abstr.IAuthenticationManager;
-import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISheetServiceManager;
+import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVAuthenticationManager;
+import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVSession;
+import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
 import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
@@ -22,7 +23,7 @@ import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
 public class StartingActivity extends AppCompatActivity {
 
-    private IAuthenticationManager mAuthenticationManager = null;
+    private ISVAuthenticationManager mAuthenticationManager = null;
     private ITaskExecutor mTaskExecutor = null;
     private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
 
@@ -66,18 +67,18 @@ public class StartingActivity extends AppCompatActivity {
     private void initialRoute() {
         try {
             //Try to login to saved account session
-            mAuthenticationManager.loginToOldSession();
-            Credential credential = mAuthenticationManager.getCredential();
-
-            loadSheet(credential);
+            ISVSession oldSession = mAuthenticationManager.getOldSession();
+            SVCredential credential = oldSession.getCredential();
+            String sheetServiceName = oldSession.getAttributeValue(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME);
+            continueOldSession(oldSession, credential, sheetServiceName);
         }
-        catch (IAuthenticationManager.SVAccountNotFoundException e) {
+        catch (ISVSession.SVSessionNotFound e) {
             e.printStackTrace();
             toLoginScreen();
         }
-        catch (IAuthenticationManager.SVCredentialNotFoundException e) {
+        catch (ISVSession.SVInvalidatedSessionException e) {
             e.printStackTrace();
-           toLoginScreen();
+            toLoginScreen();
         }
     }
 
@@ -86,19 +87,19 @@ public class StartingActivity extends AppCompatActivity {
         startActivity(loginIntent);
     }
 
-    private void loadSheet(final Credential credential) {
+    private void continueOldSession(final ISVSession oldSession,
+                                    final SVCredential credential,
+                                    final String sheetServiceName) {
         ITask<Exception> loadSheetTask = new AbstractTask<Exception>() {
             @Override
             public Result<Exception> doExecute() {
                 try {
-                    //TODO sheetServiceName from may be authentication manager ?
-                    String sheetServiceName = Credential.SERVICE_NAME_GOOGLE_DRIVE;
-                    String accountName = credential.getSelectedAccountName();
+                    String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
                     String sheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
 
-                    ISheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
-                    String sheetId = sheetServiceManager.getSheetId(accountName, sheetServiceAccessToken);
-                    sheetServiceManager.accessSheet(sheetId, accountName, sheetServiceAccessToken);
+                    ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
+                    String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, sheetServiceAccessToken);
+                    sheetServiceManager.accessSheet(sheetId, sheetServiceAccessAccountName, sheetServiceAccessToken);
 
                     return generateResult(null, 0);
                 } catch (Exception e) {
@@ -113,6 +114,11 @@ public class StartingActivity extends AppCompatActivity {
                 Exception exception = taskResult.getElement();
                 if(exception != null) {
                     exception.printStackTrace();
+
+                    //Also invalidate loaded session
+                    oldSession.invalidate();
+                    mAuthenticationManager.destroySession();
+
                     toLoginScreen();
                 }
                 else {

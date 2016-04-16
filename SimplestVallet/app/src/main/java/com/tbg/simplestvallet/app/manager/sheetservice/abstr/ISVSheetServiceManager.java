@@ -5,13 +5,15 @@ import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
 /**
  * Created by wws2003 on 11/5/15.
  */
-public interface ISheetServiceManager {
-    String getSheetId(String accountName, String serviceToken) throws SVSheetNotFoundException;
+public interface ISVSheetServiceManager {
+    String loadSheetId(String accountName, String serviceToken) throws SVSheetNotFoundException;
 
     void storeSheetId(String sheetId, String accountName, String serviceToken);
 
+    //FIXME: This looks like to violate Single Responsibility Principle. Subject to move to other class
     void accessSheet(String sheetId, String accountName, String serviceToken) throws SVSheetServiceNotAvailableException, SVSheetServiceUnAuthorizedException;
 
+    //FIXME: This looks like to violate Single Responsibility Principle. Subject to move to other class
     IEntrySheet getSVEntrySheet();
 
     class SVSheetNotFoundException extends Exception {
@@ -19,10 +21,6 @@ public interface ISheetServiceManager {
 
         public SVSheetNotFoundException() {
             super(MESSAGE);
-        }
-
-        public SVSheetNotFoundException(Throwable throwable) {
-            super(MESSAGE, throwable);
         }
     }
 
@@ -32,10 +30,6 @@ public interface ISheetServiceManager {
         public SVSheetServiceNotAvailableException() {
             super(MESSAGE);
         }
-
-        public SVSheetServiceNotAvailableException(Throwable throwable) {
-            super(MESSAGE, throwable);
-        }
     }
 
     class SVSheetServiceUnAuthorizedException extends Exception {
@@ -43,10 +37,6 @@ public interface ISheetServiceManager {
 
         public SVSheetServiceUnAuthorizedException() {
             super(MESSAGE);
-        }
-
-        public SVSheetServiceUnAuthorizedException(Throwable throwable) {
-            super(MESSAGE, throwable);
         }
     }
 }

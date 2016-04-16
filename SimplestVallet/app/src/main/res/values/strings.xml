@@ -56,4 +56,6 @@
     <string name="btn_create_sheet">Create Google Sheet</string>
     <string name="title_activity_starting">Starting</string>
 
+    <string name="msg_login_error">Sorry, some thing went wrong when login by google account</string>
+
 </resources>
