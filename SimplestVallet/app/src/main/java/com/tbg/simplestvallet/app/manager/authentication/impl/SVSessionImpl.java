@@ -204,7 +204,7 @@ public class SVSessionImpl implements ISVSession {
             Iterator<PersistPacket> iterator = iterable.iterator();
             while (iterator.hasNext()) {
 
-                PersistPacket packet = iterable.iterator().next();
+                PersistPacket packet = iterator.next();
 
                 String identifier = packet.getIdentifier();
                 String[] payload = packet.getPayload();

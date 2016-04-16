@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        mDoneButton = (Button)findViewById(R.id.btn_done);
+        mDoneButton = (Button) findViewById(R.id.btn_done);
         mDoneButton.setEnabled(false);
     }
 
@@ -87,19 +87,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_CHOOSE_GOOGLE_ACCOUNT:
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     String selectedAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     onAccountNameSelected(selectedAccountName);
                 }
                 break;
             case REQUEST_CODE_INIT_GOOGLE_SHEET:
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     String spreadSheetId = data.getStringExtra(InitialSettingActivity.RESULT_KEY_SPREAD_SHEET_ID);
                     String googleDriveAccessToken = data.getStringExtra(InitialSettingActivity.RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN);
                     onSpreadSheetInitializedForAccount(spreadSheetId, googleDriveAccessToken);
-                }
-                else {
-                    Log.d("Login.onActivityResult","Can't retrieve spreadsheet");
+                } else {
+                    Log.d("Login.onActivityResult", "Can't retrieve spreadsheet");
                 }
                 break;
             default:
@@ -128,14 +127,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void confirmGetAccountsPermission() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(checkCallingOrSelfPermission("android.permission.GET_ACCOUNTS") != PackageManager.PERMISSION_GRANTED) {
+            if (checkCallingOrSelfPermission("android.permission.GET_ACCOUNTS") != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{"android.permission.GET_ACCOUNTS"}, REQUEST_CODE_CONFIRM_PERMISSION_GET_ACCOUNTS);
             }
         }
     }
 
     private void onAccountNameSelected(String selectedAccountName) {
-        TextView tvSelectedAccountName = (TextView)findViewById(R.id.tv_selected_email);
+        TextView tvSelectedAccountName = (TextView) findViewById(R.id.tv_selected_email);
         tvSelectedAccountName.setText(selectedAccountName);
         mDoneButton.setEnabled(true);
 
@@ -154,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
         final ISVSession currentSession = mAuthenticationManager.getCurrentSession();
         try {
             //This login action effectively use the google account for both this app authentication and sheet authentication
-            String googleAccountName = currentSession.getLoggedInAccountName();
+            String googleAccountName =  currentSession.getLoggedInAccountName();
 
             currentSession.putAttribute(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME,
                     SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
@@ -179,14 +178,11 @@ public class LoginActivity extends AppCompatActivity {
                     sheetServiceManager.accessSheet(spreadSheetId, accountName, googleDriveAccessToken);
                     sheetServiceManager.storeSheetId(spreadSheetId, accountName, googleDriveAccessToken);
                     return generateResult(0, 0);
-                }
-                catch (ISVSession.SVInvalidatedSessionException e) {
+                } catch (ISVSession.SVInvalidatedSessionException e) {
                     e.printStackTrace();
-                }
-                catch (ISVSheetServiceManager.SVSheetServiceNotAvailableException e) {
+                } catch (ISVSheetServiceManager.SVSheetServiceNotAvailableException e) {
                     e.printStackTrace();
-                }
-                catch (ISVSheetServiceManager.SVSheetServiceUnAuthorizedException e) {
+                } catch (ISVSheetServiceManager.SVSheetServiceUnAuthorizedException e) {
                     e.printStackTrace();
                 }
                 return generateResult(0, -1);
@@ -195,10 +191,9 @@ public class LoginActivity extends AppCompatActivity {
         ITaskDelegate<Integer> persistSessionTaskDelegate = new AbstractTaskResultListener<Integer>() {
             @Override
             public void onTaskExecuted(Result<Integer> taskResult) {
-                if(taskResult.getResultCode() != 0) {
+                if (taskResult.getResultCode() != 0) {
                     showError(getApplicationContext().getString(R.string.msg_login_error));
-                }
-                else {
+                } else {
                     toMainScreen();
                 }
             }
