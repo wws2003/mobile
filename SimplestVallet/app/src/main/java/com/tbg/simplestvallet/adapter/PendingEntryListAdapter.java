@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
-import com.tbg.simplestvallet.model.dto.LocalEntry;
+import com.tbg.simplestvallet.model.dto.SVLocalEntry;
 import com.tbg.simplestvallet.util.DateUtil;
 
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by wws2003 on 10/29/15.
  */
-public class PendingEntryListAdapter extends ArrayAdapter<LocalEntry> {
+public class PendingEntryListAdapter extends ArrayAdapter<SVLocalEntry> {
 
     private LayoutInflater mLayoutInflater;
 
-    public PendingEntryListAdapter(Context context, List<LocalEntry> objects) {
+    public PendingEntryListAdapter(Context context, List<SVLocalEntry> objects) {
         super(context, 0, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -31,12 +31,12 @@ public class PendingEntryListAdapter extends ArrayAdapter<LocalEntry> {
         if(itemView == null) {
             itemView = mLayoutInflater.inflate(R.layout.pending_entry, null);
         }
-        LocalEntry localEntry = getItem(position);
+        SVLocalEntry localEntry = getItem(position);
         renderLocalEntry(localEntry, itemView);
         return itemView;
     }
 
-    private void renderLocalEntry(LocalEntry entry, View itemView) {
+    private void renderLocalEntry(SVLocalEntry entry, View itemView) {
         TextView tvEntryType = (TextView)itemView.findViewById(R.id.tv_item_pending_entry_type);
         tvEntryType.setText(entry.getType().toString());
         TextView tvEntryDate = (TextView)itemView.findViewById(R.id.tv_item_pending_entry_date);

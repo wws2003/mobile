@@ -169,30 +169,32 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         //Try to access sheet before go to main screen
-        ITask<Integer> persistSessionTask = new AbstractTask<Integer>() {
+        ITask<Exception> persistSessionTask = new AbstractTask<Exception>() {
             @Override
-            public Result<Integer> doExecute() {
+            public Result<Exception> doExecute() {
                 ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
                 try {
                     String accountName = currentSession.getCredential().getServiceAccountName(SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
                     sheetServiceManager.accessSheet(spreadSheetId, accountName, googleDriveAccessToken);
                     sheetServiceManager.storeSheetId(spreadSheetId, accountName, googleDriveAccessToken);
-                    return generateResult(0, 0);
+                    return generateResult(null, 0);
                 } catch (ISVSession.SVInvalidatedSessionException e) {
                     e.printStackTrace();
+                    return generateResult(e, -1);
                 } catch (ISVSheetServiceManager.SVSheetServiceNotAvailableException e) {
                     e.printStackTrace();
+                    return generateResult(e, -1);
                 } catch (ISVSheetServiceManager.SVSheetServiceUnAuthorizedException e) {
                     e.printStackTrace();
+                    return generateResult(e, -1);
                 }
-                return generateResult(0, -1);
             }
         };
-        ITaskDelegate<Integer> persistSessionTaskDelegate = new AbstractTaskResultListener<Integer>() {
+        ITaskDelegate<Exception> persistSessionTaskDelegate = new AbstractTaskResultListener<Exception>() {
             @Override
-            public void onTaskExecuted(Result<Integer> taskResult) {
+            public void onTaskExecuted(Result<Exception> taskResult) {
                 if (taskResult.getResultCode() != 0) {
-                    showError(getApplicationContext().getString(R.string.msg_login_error));
+                    showError(getString(R.string.msg_login_error), taskResult.getElement().getLocalizedMessage());
                 } else {
                     toMainScreen();
                 }
@@ -214,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivityForResult(initialSettingIntent, REQUEST_CODE_INIT_GOOGLE_SHEET);
         } catch (ISVSession.SVInvalidatedSessionException e) {
             e.printStackTrace();
-            showError(getApplicationContext().getString(R.string.msg_login_error));
+            showError(getString(R.string.msg_login_error), e.getLocalizedMessage());
         }
     }
 
@@ -224,9 +226,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(mainIntent);
     }
 
-    private void showError(String errorMessage) {
+    private void showError(String title, String errorMessage) {
         AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-        alertDialog.setTitle("Alert");
+        alertDialog.setTitle(title);
         alertDialog.setMessage(errorMessage);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {

@@ -11,9 +11,10 @@ import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
-import com.tbg.simplestvallet.model.dto.MoneyQuantity;
-import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntryWrapperBuilder;
+import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
 import com.tbg.taskmanager.abstr.task.AbstractTask;
@@ -21,14 +22,17 @@ import com.tbg.taskmanager.abstr.task.ITask;
 import com.tbg.taskmanager.common.Result;
 import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class ChartFragment extends Fragment {
 
     private ViewWrapper mViewWrapper = new ViewWrapper();
     private ITaskExecutor mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
+
+    private static final int LOAD_AMOUNT_OK = 0;
+    private static final int LOAD_AMOUNT_FAILED = 1;
 
     public ChartFragment() {
 
@@ -58,21 +62,45 @@ public class ChartFragment extends Fragment {
     }
 
     private void loadData() {
-        final IEntrySheet entrySheet = SimplestValetApp.getSheetServiceManagerContainer().getCachedSheetServiceManager().getSVEntrySheet();
-        final int LOAD_AMOUNT_OK = 0;
-        //final int LOAD_AMOUNT_FAILED = 1;
+        final ISVEntrySheet entrySheet = SimplestValetApp.getSheetServiceManagerContainer().getCachedSheetServiceManager().getSVEntrySheet();
 
-        ITask<List<MoneyQuantity>> dataTask = new AbstractTask<List<MoneyQuantity>>() {
+        //Currently just testing with load all amount of this month
+        final ISVEntryQueryWrapper queryWrapper = getEntryQueryWrapper();
+
+        ITask<SVMoneyQuantity> dataTask = getDataLoadTask(entrySheet, queryWrapper);
+
+        ITaskDelegate<SVMoneyQuantity> dataTaskDelegate = getDataLoadTaskDelegate();
+
+        mTaskExecutor.executeTask(dataTask, dataTaskDelegate);
+    }
+
+    private ISVEntryQueryWrapper getEntryQueryWrapper() {
+        ISVEntryWrapperBuilder queryWrapperBuilder = SimplestValetApp.getEntryQueryWrapperBuilderContainer().getEntryWrapperBuilder();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDateOfMonth = calendar.getTime();
+        queryWrapperBuilder.setDateRanges(firstDateOfMonth, null);
+
+        return queryWrapperBuilder.build();
+    }
+
+    private ITask<SVMoneyQuantity> getDataLoadTask(final ISVEntrySheet entrySheet, final ISVEntryQueryWrapper queryWrapper) {
+
+        ITask<SVMoneyQuantity> dataTask = new AbstractTask<SVMoneyQuantity>() {
             @Override
-            public Result<List<MoneyQuantity>> doExecute() {
-                List<MoneyQuantity> amounts = new ArrayList<>();
-                //TODO Change implementation logic to handle error
-                amounts.add(entrySheet.getAllEntriesAmount());
-                amounts.add(entrySheet.getCachedAllEntriesAmount());
-                return generateResult(amounts, LOAD_AMOUNT_OK);
+            public Result<SVMoneyQuantity> doExecute() {
+                SVMoneyQuantity amount = entrySheet.queryEntriesAmount(queryWrapper);
+                return generateResult(amount, LOAD_AMOUNT_OK);
             }
         };
-        ITaskDelegate<List<MoneyQuantity>> dataTaskDelegate = new ITaskDelegate<List<MoneyQuantity>>() {
+
+        return dataTask;
+    }
+
+    private ITaskDelegate<SVMoneyQuantity> getDataLoadTaskDelegate() {
+        ITaskDelegate<SVMoneyQuantity> dataTaskDelegate = new ITaskDelegate<SVMoneyQuantity>() {
+
             @Override
             public void onTaskToBeExecuted() {
                 mViewWrapper.freeze();
@@ -84,20 +112,20 @@ public class ChartFragment extends Fragment {
             }
 
             @Override
-            public void onTaskExecuted(Result<List<MoneyQuantity>> taskResult) {
+            public void onTaskExecuted(Result<SVMoneyQuantity> taskResult) {
                 mViewWrapper.unFreezing();
                 if(taskResult.getResultCode() == LOAD_AMOUNT_OK) {
-                    MoneyQuantity sumAmount = taskResult.getElement().get(0);
-                    MoneyQuantity amountThisMonth = taskResult.getElement().get(1);
-                    mViewWrapper.render(sumAmount, amountThisMonth);
+                    SVMoneyQuantity amountThisMonth = taskResult.getElement();
+                    if(amountThisMonth != null) {
+                        //Just to test
+                        mViewWrapper.render(amountThisMonth, amountThisMonth);
+                        return;
+                    }
                 }
-                else {
-                    mViewWrapper.renderError();
-                }
+                mViewWrapper.renderError();
             }
         };
-
-        mTaskExecutor.executeTask(dataTask, dataTaskDelegate);
+        return dataTaskDelegate;
     }
 
     private class ViewWrapper {
@@ -113,7 +141,7 @@ public class ChartFragment extends Fragment {
             initProgressDialog();
         }
 
-        public void render(MoneyQuantity spentAmount, MoneyQuantity spentAmountThisMonth) {
+        public void render(SVMoneyQuantity spentAmount, SVMoneyQuantity spentAmountThisMonth) {
             mTvSpentAmount.setText(spentAmount.toString());
             mTvSpentAmountThisMonth.setText(spentAmountThisMonth.toString());
         }

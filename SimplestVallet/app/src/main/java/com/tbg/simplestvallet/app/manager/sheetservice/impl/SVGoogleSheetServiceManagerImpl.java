@@ -2,8 +2,8 @@ package com.tbg.simplestvallet.app.manager.sheetservice.impl;
 
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
 import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
-import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
-import com.tbg.simplestvallet.model.active.impl.GoogleSpreadSheetBasedSheet;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.impl.google.SVGoogleSpreadSheetBasedSheet;
 import com.tbg.simplestvallet.persist.abstr.ISVPersistable;
 import com.tbg.simplestvallet.persist.abstr.ISVPersistor;
 
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class SVGoogleSheetServiceManagerImpl implements ISVSheetServiceManager {
 
-    private IEntrySheet mCachedSheet = null;
+    private ISVEntrySheet mCachedSheet = null;
     private ISVPersistor mPersistor;
 
     public SVGoogleSheetServiceManagerImpl(ISVPersistor persistor) {
@@ -49,12 +49,17 @@ public class SVGoogleSheetServiceManagerImpl implements ISVSheetServiceManager {
 
     @Override
     public void accessSheet(String sheetId, String accountName, String serviceToken) throws SVSheetServiceNotAvailableException, SVSheetServiceUnAuthorizedException {
-        //TODO Inspect more
-        mCachedSheet = new GoogleSpreadSheetBasedSheet(sheetId, serviceToken);
+        mCachedSheet = new SVGoogleSpreadSheetBasedSheet(sheetId, serviceToken);
+        try {
+            mCachedSheet.open();
+        }
+        catch (ISVEntrySheet.SVEntryOpenSheetException ose) {
+            throw new SVSheetServiceNotAvailableException(ose);
+        }
     }
 
     @Override
-    public IEntrySheet getSVEntrySheet() {
+    public ISVEntrySheet getSVEntrySheet() {
         return mCachedSheet;
     }
 

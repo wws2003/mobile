@@ -12,8 +12,8 @@ import android.widget.ListView;
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.adapter.PendingEntryListAdapter;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.model.active.abstr.IPendingEntryStore;
-import com.tbg.simplestvallet.model.dto.LocalEntry;
+import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.dto.SVLocalEntry;
 import com.tbg.simplestvallet.ioc.taskmanager.task.RetrievePendingEntriesTask;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
@@ -53,9 +53,9 @@ public class PendingListFragment extends Fragment {
     }
 
     private void loadPendingEntryList() {
-        IPendingEntryStore pendingEntryStore = SimplestValetApp.getEntryCollectionContainer().getPendingEntryStore();
-        ITask<List<LocalEntry>> retrievePendingEntriesTask = new RetrievePendingEntriesTask(pendingEntryStore);
-        ITaskDelegate<List<LocalEntry>> taskDelegate = new RetrievePendingEntryListTaskDelegate(mViewWrapper);
+        ISVPendingEntryStore pendingEntryStore = SimplestValetApp.getEntryCollectionContainer().getPendingEntryStore();
+        ITask<List<SVLocalEntry>> retrievePendingEntriesTask = new RetrievePendingEntriesTask(pendingEntryStore);
+        ITaskDelegate<List<SVLocalEntry>> taskDelegate = new RetrievePendingEntryListTaskDelegate(mViewWrapper);
         mTaskExecutor.executeTask(retrievePendingEntriesTask, taskDelegate);
     }
 
@@ -66,7 +66,7 @@ public class PendingListFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_pendinglist, container, false);
     }
 
-    private class RetrievePendingEntryListTaskDelegate implements ITaskDelegate<List<LocalEntry> >{
+    private class RetrievePendingEntryListTaskDelegate implements ITaskDelegate<List<SVLocalEntry> >{
         private ViewWrapper mViewWrapper;
 
         public RetrievePendingEntryListTaskDelegate(ViewWrapper viewWrapper) {
@@ -79,7 +79,7 @@ public class PendingListFragment extends Fragment {
         }
 
         @Override
-        public void onTaskExecuted(Result<List<LocalEntry>> taskResult) {
+        public void onTaskExecuted(Result<List<SVLocalEntry>> taskResult) {
             mViewWrapper.renderPendingEntryList(taskResult.getElement());
         }
 
@@ -91,8 +91,8 @@ public class PendingListFragment extends Fragment {
 
     private class ViewWrapper {
         private ListView mLvPendingEntries;
-        private List<LocalEntry> mPendingEntries = new ArrayList<>();
-        private ArrayAdapter<LocalEntry> mPendingEntriesAdapter;
+        private List<SVLocalEntry> mPendingEntries = new ArrayList<>();
+        private ArrayAdapter<SVLocalEntry> mPendingEntriesAdapter;
 
         public void setup(ListView lvPendingEntries) {
             mLvPendingEntries = lvPendingEntries;
@@ -100,7 +100,7 @@ public class PendingListFragment extends Fragment {
             mLvPendingEntries.setAdapter(mPendingEntriesAdapter);
         }
 
-        public void renderPendingEntryList(List<LocalEntry> pendingEntries) {
+        public void renderPendingEntryList(List<SVLocalEntry> pendingEntries) {
             mPendingEntries.clear();
             mPendingEntries.addAll(pendingEntries);
             mPendingEntriesAdapter.notifyDataSetChanged();

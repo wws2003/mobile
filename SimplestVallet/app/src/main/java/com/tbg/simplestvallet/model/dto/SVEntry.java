@@ -5,14 +5,14 @@ import java.util.Date;
 /**
  * Created by wws2003 on 10/12/15.
  */
-public class Entry {
+public class SVEntry {
 
     private Date mCreatedAt;
-    private MoneyQuantity mMoneyQuantity;
+    private SVMoneyQuantity mMoneyQuantity;
     private String mType;
     private String mNote;
 
-    public Entry(Date createdAt, MoneyQuantity amount, String type, String note) {
+    public SVEntry(Date createdAt, SVMoneyQuantity amount, String type, String note) {
         this.mCreatedAt = createdAt;
         this.mMoneyQuantity = amount;
         this.mType = type;
@@ -31,7 +31,7 @@ public class Entry {
         return mNote;
     }
 
-    public MoneyQuantity getMoneyQuantity() {
+    public SVMoneyQuantity getMoneyQuantity() {
         return mMoneyQuantity;
     }
 }

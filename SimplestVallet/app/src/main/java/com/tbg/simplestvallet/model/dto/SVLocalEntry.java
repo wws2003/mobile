@@ -5,16 +5,16 @@ import java.util.Date;
 /**
  * Created by wws2003 on 10/29/15.
  */
-public class LocalEntry extends Entry {
+public class SVLocalEntry extends SVEntry {
 
     private int mId;
 
-    public LocalEntry(int id, Date createdAt, MoneyQuantity amount, String type, String note) {
+    public SVLocalEntry(int id, Date createdAt, SVMoneyQuantity amount, String type, String note) {
         super(createdAt, amount, type, note);
         mId = id;
     }
 
-    public LocalEntry(int id, Entry entry) {
+    public SVLocalEntry(int id, SVEntry entry) {
         super(entry.getCreatedAt(), entry.getMoneyQuantity(), entry.getType(), entry.getNote());
         mId = id;
     }

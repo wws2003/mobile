@@ -116,7 +116,6 @@ public class StartingActivity extends AppCompatActivity {
                     exception.printStackTrace();
 
                     //Also invalidate loaded session
-                    oldSession.invalidate();
                     mAuthenticationManager.destroySession();
 
                     toLoginScreen();

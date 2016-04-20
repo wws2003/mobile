@@ -1,43 +1,42 @@
 package com.tbg.simplestvallet.model.active.impl;
 
 import android.util.SparseArray;
-import android.util.SparseLongArray;
 
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.IPendingEntryStore;
-import com.tbg.simplestvallet.model.dto.Entry;
-import com.tbg.simplestvallet.model.dto.LocalEntry;
+import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.dto.SVEntry;
+import com.tbg.simplestvallet.model.dto.SVLocalEntry;
 
 import java.util.List;
 
 /**
  * Created by wws2003 on 10/29/15.
  */
-public class SamplePendingEntryStore implements IPendingEntryStore {
+public class SVSamplePendingEntryStore implements ISVPendingEntryStore {
 
-    private SparseArray<LocalEntry> mLocalEntriesMap = new SparseArray<LocalEntry>();
+    private SparseArray<SVLocalEntry> mLocalEntriesMap = new SparseArray<SVLocalEntry>();
 
     @Override
-    public int addPendingEntry(Entry entry) {
+    public int addPendingEntry(SVEntry entry) {
         int newEntryId = getAvailableLocalEntryId();
-        LocalEntry localEntry = new LocalEntry(newEntryId, entry);
+        SVLocalEntry localEntry = new SVLocalEntry(newEntryId, entry);
         mLocalEntriesMap.append(newEntryId, localEntry);
         return EntryActionResult.ADD_RESULT_OK;
     }
 
     @Override
-    public int getAllPendingEntries(List<LocalEntry> localEntries) {
+    public int getAllPendingEntries(List<SVLocalEntry> localEntries) {
         int nbEntries = mLocalEntriesMap.size();
         for(int i = 0; i < nbEntries; i++) {
-            LocalEntry entry = mLocalEntriesMap.valueAt(i);
+            SVLocalEntry entry = mLocalEntriesMap.valueAt(i);
             localEntries.add(entry);
         }
         return EntryActionResult.RETRIEVE_RESULT_OK;
     }
 
     @Override
-    public int deletePendingEntry(LocalEntry pendingEntry) {
-        LocalEntry localEntry = mLocalEntriesMap.get(pendingEntry.getId());
+    public int deletePendingEntry(SVLocalEntry pendingEntry) {
+        SVLocalEntry localEntry = mLocalEntriesMap.get(pendingEntry.getId());
         if(localEntry != null) {
             mLocalEntriesMap.remove(localEntry.getId());
             return EntryActionResult.DELETE_RESULT_OK;

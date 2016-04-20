@@ -1,6 +1,9 @@
-package com.tbg.simplestvallet.model.active.impl;
+package com.tbg.simplestvallet.model.active.impl.google;
+
+import android.util.Log;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
@@ -12,32 +15,46 @@ import com.google.gdata.util.InvalidEntryException;
 import com.google.gdata.util.ServiceException;
 import com.tbg.simplestvallet.model.active.abstr.IGoogleSpreadSheetRowAdapter;
 import com.tbg.simplestvallet.model.active.abstr.IGoogleSpreadSheetRowFilter;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
+import com.tbg.simplestvallet.util.DateUtil;
+
+import org.mortbay.util.IO;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by wws2003 on 11/3/15.
  */
-public class MyGoogleSpreadSheet<T> {
+public class SVGoogleSpreadSheet<T> {
     private String mSpreadSheetURL;
     private SpreadsheetService mService = new SpreadsheetService("MySpreadsheetIntegration-v1");;
     private IGoogleSpreadSheetRowAdapter<T> mAdapter;
 
-    public MyGoogleSpreadSheet(String spreadSheetId, String accessToken, IGoogleSpreadSheetRowAdapter<T> adapter) {
+    public SVGoogleSpreadSheet(String spreadSheetId, String accessToken, IGoogleSpreadSheetRowAdapter<T> adapter) {
         this.mSpreadSheetURL = getFeedURLForSpreadSheet(spreadSheetId);
         this.mAdapter = adapter;
 
-        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+        //Set expiration for one week
+        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken).setExpiresInSeconds((long)(60 * 60 * 24 * 7));
+
         mService.setOAuth2Credentials(credential);
     }
 
-    public void insertItem(T item) throws MalformedURLException, ServiceException, IOException {
-        SpreadsheetEntry spreadsheetEntry = null;
-        List<WorksheetEntry> worksheets = null;
+    public void open() throws IOException, ServiceException {
+        //Test access to the sheet. Probably use the retrieved result for future purpose
+        mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
+    }
+
+    public void insertItem(T item) throws ServiceException, IOException {
+        SpreadsheetEntry spreadsheetEntry;
+        List<WorksheetEntry> worksheets;
 
         //Get spreadsheet and its worksheets
         spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
@@ -62,7 +79,7 @@ public class MyGoogleSpreadSheet<T> {
         }
     }
 
-    public void getAllItems(List<T> items, IGoogleSpreadSheetRowFilter<T> filter) throws MalformedURLException, ServiceException, IOException {
+    public void getAllItems(IGoogleSpreadSheetRowFilter<T> filter, List<T> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
         List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
@@ -80,15 +97,16 @@ public class MyGoogleSpreadSheet<T> {
         }
     }
 
-    public <T2> void getAllDerivedItems(List<T2> items,
-                                       IGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
-                                       IGoogleSpreadSheetRowFilter<T> filter) throws MalformedURLException, ServiceException, IOException {
+    public <T2> void getAllDerivedItems(IGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
+                                        IGoogleSpreadSheetRowFilter<T> filter,
+                                        List<T2> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
         List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
 
         for(WorksheetEntry worksheet : worksheets) {
             URL worksheetListFeedURL = worksheet.getListFeedUrl();
+
             ListFeed listFeed = mService.getFeed(worksheetListFeedURL, ListFeed.class);
 
             for (ListEntry row : listFeed.getEntries()) {
@@ -101,7 +119,55 @@ public class MyGoogleSpreadSheet<T> {
         }
     }
 
-    //TODO Add more methods
+    public <T2> void queryDerivedItems(String structuredQuery,
+                                       IGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
+                                       IGoogleSpreadSheetRowFilter<T> filter,
+                                       List<T2> items) throws ServiceException, IOException {
+        items.clear();
+        SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
+        List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
+
+        for(WorksheetEntry worksheet : worksheets) {
+            URL worksheetListFeedURL = worksheet.getListFeedUrl();
+
+            ListQuery query = new ListQuery(worksheetListFeedURL);
+            query.setSpreadsheetQuery(structuredQuery);
+
+            ListFeed listFeed = mService.query(query, ListFeed.class);
+
+            for (ListEntry row : listFeed.getEntries()) {
+                T item = mAdapter.getItemFromRow(row);
+                if(filter == null || filter.filterRowItem(item)) {
+                    T2 derivedItem = derivedAdapter.getItemFromRow(row);
+                    items.add(derivedItem);
+                }
+            }
+        }
+    }
+
+    public void queryItems(String structuredQuery,
+                           IGoogleSpreadSheetRowFilter<T> filter,
+                           List<T> items) throws ServiceException, IOException {
+        items.clear();
+        SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
+        List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
+
+        for(WorksheetEntry worksheet : worksheets) {
+            URL worksheetListFeedURL = worksheet.getListFeedUrl();
+
+            ListQuery query = new ListQuery(worksheetListFeedURL);
+            query.setSpreadsheetQuery(structuredQuery);
+
+            ListFeed listFeed = mService.query(query, ListFeed.class);
+
+            for (ListEntry row : listFeed.getEntries()) {
+                T item = mAdapter.getItemFromRow(row);
+                if(filter == null || filter.filterRowItem(item)) {
+                    items.add(item);
+                }
+            }
+        }
+    }
 
     private String getFeedURLForSpreadSheet(String spreadSheetId) {
         return "https://spreadsheets.google.com/feeds/spreadsheets/" + spreadSheetId;

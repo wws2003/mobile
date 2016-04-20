@@ -14,7 +14,6 @@ public interface ITask<T> {
     }
     Result<T> execute();
 
-    int getStatus();
     void setStatus(int status);
 
     long getId();

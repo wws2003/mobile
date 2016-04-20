@@ -1,7 +1,6 @@
 package com.tbg.simplestvallet.app;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
@@ -9,14 +8,15 @@ import android.util.Log;
 import com.tbg.simplestvallet.app.container.AuthenticationManagerContainer;
 import com.tbg.simplestvallet.app.container.EntryCollectionContainer;
 import com.tbg.simplestvallet.app.container.LocatorContainer;
+import com.tbg.simplestvallet.app.container.SVEntryQueryBuilderContainer;
 import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
 import com.tbg.simplestvallet.app.container.TaskExecutorContainer;
 import com.tbg.simplestvallet.app.container.TaskIdPool;
 import com.tbg.simplestvallet.app.manager.authentication.impl.SVAuthenticationManagerImpl;
 import com.tbg.simplestvallet.ioc.taskmanager.locator.MapBasedLocator;
-import com.tbg.simplestvallet.model.active.impl.SamplePendingEntryStore;
-import com.tbg.simplestvallet.model.active.impl.SampleSheet;
-import com.tbg.simplestvallet.persist.abstr.ISVPersistor;
+import com.tbg.simplestvallet.model.active.impl.SVEntryWrapperBuilderImpl;
+import com.tbg.simplestvallet.model.active.impl.SVSamplePendingEntryStore;
+import com.tbg.simplestvallet.model.active.impl.SVSampleSheet;
 import com.tbg.simplestvallet.persist.impl.SVJSONBasedPersistorImpl;
 import com.tbg.taskmanager.abstr.task.ITask;
 import com.tbg.taskmanager.common.Result;
@@ -29,17 +29,15 @@ public class SimplestValetApp extends MultiDexApplication {
 
     private static Context mContext;
 
-    private static ISVPersistor gSessionPersistor;
-    private static ISVPersistor gAccountPersistor;
-
     private static AuthenticationManagerContainer gAuthenticationManagerContainer;
-    private static TaskExecutorContainer gTaskExecutorContainer;
-    private static EntryCollectionContainer gEntryCollectionContainer;
-    private static LocatorContainer gLocatorContainer;
-    private static TaskIdPool gTaskIdPool;
     private static SheetServiceManagerContainer gSheetServiceManagerContainer;
 
-    private static final String SHARED_PREFERENCES_NAME = "simplest_valet_sharePreference";
+    private static TaskExecutorContainer gTaskExecutorContainer;
+    private static TaskIdPool gTaskIdPool;
+    private static LocatorContainer gLocatorContainer;
+
+    private static EntryCollectionContainer gEntryCollectionContainer;
+    private static SVEntryQueryBuilderContainer gEntryQueryBuilderContainer;
 
     @Override
     public void onCreate() {
@@ -71,6 +69,10 @@ public class SimplestValetApp extends MultiDexApplication {
         return gEntryCollectionContainer;
     }
 
+    public static SVEntryQueryBuilderContainer getEntryQueryWrapperBuilderContainer() {
+        return gEntryQueryBuilderContainer;
+    }
+
     public static LocatorContainer getLocatorContainer() {
         return gLocatorContainer;
     }
@@ -84,38 +86,39 @@ public class SimplestValetApp extends MultiDexApplication {
     }
 
     private void initContainers() {
-        initPreferenceOperator();
-        initSessionPersistor();
         initAuthenticationManagerContainer();
-        initTaskExecutorContainer();
+        initSheetServiceManagerContainer();
+
         initEntrySheetContainer();
+        initEntryQueryWrapperBuilderContainer();
+
+        initTaskExecutorContainer();
         initLocatorContainer();
         initTaskPool();
-        initSheetServiceManagerContainer();
-    }
-
-    private void initSessionPersistor() {
-        gSessionPersistor = new SVJSONBasedPersistorImpl();
-    }
-
-    private void initPreferenceOperator() {
-       gAccountPersistor = new SVJSONBasedPersistorImpl();
     }
 
     private void initAuthenticationManagerContainer() {
         gAuthenticationManagerContainer = new AuthenticationManagerContainer();
-        gAuthenticationManagerContainer.setAuthenticationManager(new SVAuthenticationManagerImpl(gSessionPersistor));
+        gAuthenticationManagerContainer.setAuthenticationManager(new SVAuthenticationManagerImpl(new SVJSONBasedPersistorImpl()));
+    }
+
+    private void initSheetServiceManagerContainer() {
+        gSheetServiceManagerContainer = new SheetServiceManagerContainer(new SVJSONBasedPersistorImpl());
+    }
+
+    private void initEntrySheetContainer() {
+        gEntryCollectionContainer = new EntryCollectionContainer();
+        gEntryCollectionContainer.setEntrySheet(new SVSampleSheet());
+        gEntryCollectionContainer.setPendingEntryStore(new SVSamplePendingEntryStore());
+    }
+
+    private void initEntryQueryWrapperBuilderContainer() {
+        gEntryQueryBuilderContainer = new SVEntryQueryBuilderContainer(new SVEntryWrapperBuilderImpl());
     }
 
     private void initTaskExecutorContainer() {
         gTaskExecutorContainer = new TaskExecutorContainer();
         gTaskExecutorContainer.setTaskExecutor(new AsyncTaskBasedTaskExecutorImpl());
-    }
-
-    private void initEntrySheetContainer() {
-        gEntryCollectionContainer = new EntryCollectionContainer();
-        gEntryCollectionContainer.setEntrySheet(new SampleSheet());
-        gEntryCollectionContainer.setPendingEntryStore(new SamplePendingEntryStore());
     }
 
     private void initLocatorContainer() {
@@ -126,13 +129,5 @@ public class SimplestValetApp extends MultiDexApplication {
 
     private void initTaskPool() {
         gTaskIdPool = TaskIdPool.getInstance();
-    }
-
-    private void initSheetServiceManagerContainer() {
-        gSheetServiceManagerContainer = new SheetServiceManagerContainer(gAccountPersistor);
-    }
-
-    private static SharedPreferences getSharedPreference(){
-        return getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 }

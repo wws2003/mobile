@@ -3,7 +3,6 @@ package com.tbg.simplestvallet.activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -20,10 +19,10 @@ import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
 import com.tbg.simplestvallet.ioc.taskmanager.service.TaskService;
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.IEntrySheet;
-import com.tbg.simplestvallet.model.active.abstr.IPendingEntryStore;
-import com.tbg.simplestvallet.model.dto.Entry;
-import com.tbg.simplestvallet.model.dto.MoneyQuantity;
+import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.dto.SVEntry;
+import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 import com.tbg.simplestvallet.ioc.taskmanager.task.AddEntryTask;
 import com.tbg.simplestvallet.ioc.taskmanager.task.AddEntryTaskResultProcessor;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
@@ -106,13 +105,13 @@ public class InputFragment extends Fragment implements View.OnClickListener {
 
     //Button click handler
     private void onBtnAddEntryClicked() {
-        Entry inputEntry = getInputEntry();
+        SVEntry inputEntry = getInputEntry();
 
-        IEntrySheet sheet = mSheetServiceManagerContainer.getCachedSheetServiceManager().getSVEntrySheet();
-        IPendingEntryStore pendingEntryStore = SimplestValetApp.getEntryCollectionContainer().getPendingEntryStore();
+        ISVEntrySheet sheet = mSheetServiceManagerContainer.getCachedSheetServiceManager().getSVEntrySheet();
+        ISVPendingEntryStore pendingEntryStore = SimplestValetApp.getEntryCollectionContainer().getPendingEntryStore();
         AddEntryTask addEntryTask = new AddEntryTask(sheet, inputEntry);
-        ITaskResultProcessor<Entry> addEntryTaskResultProcessor = new AddEntryTaskResultProcessor(pendingEntryStore);
-        ChainedTask<Entry> addEntryChainedTask = new ChainedTask<>(addEntryTask, addEntryTaskResultProcessor, false);
+        ITaskResultProcessor<SVEntry> addEntryTaskResultProcessor = new AddEntryTaskResultProcessor(pendingEntryStore);
+        ChainedTask<SVEntry> addEntryChainedTask = new ChainedTask<>(addEntryTask, addEntryTaskResultProcessor, false);
         addEntryChainedTask.setId(SimplestValetApp.getTaskIdPool().getAvailableTaskId());
 
         AddEntryTaskDelegate taskDelegate = new AddEntryTaskDelegate();
@@ -120,22 +119,22 @@ public class InputFragment extends Fragment implements View.OnClickListener {
         mTaskExecutor.executeTask(addEntryChainedTask, taskDelegate);
     }
 
-    private Entry getInputEntry() {
-        MoneyQuantity quantity = new MoneyQuantity(Double.valueOf(mEtAmount.getText().toString()));
-        return new Entry(Calendar.getInstance().getTime(),
+    private SVEntry getInputEntry() {
+        SVMoneyQuantity quantity = new SVMoneyQuantity(Double.valueOf(mEtAmount.getText().toString()));
+        return new SVEntry(Calendar.getInstance().getTime(),
                 quantity,
                 mEtType.getText().toString(),
                 mEtNote.getText().toString());
     }
 
-    private class AddEntryTaskDelegate implements ITaskDelegate<Entry> {
+    private class AddEntryTaskDelegate implements ITaskDelegate<SVEntry> {
         @Override
         public void onTaskToBeExecuted() {
            mViewWrapper.freeze();
         }
 
         @Override
-        public void onTaskExecuted(Result<Entry> taskResult) {
+        public void onTaskExecuted(Result<SVEntry> taskResult) {
             mViewWrapper.unFreezing();
             switch (taskResult.getResultCode()) {
                 case EntryActionResult.ADD_RESULT_OK:

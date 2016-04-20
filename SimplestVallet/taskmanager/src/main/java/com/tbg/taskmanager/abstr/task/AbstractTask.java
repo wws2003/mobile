@@ -17,7 +17,7 @@ public abstract class AbstractTask<T> implements ITask<T> {
         mId = id;
     }
 
-    @Override
+    //@Override
     public synchronized int getStatus() {
         return mStatus;
     }

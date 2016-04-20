@@ -26,6 +26,9 @@ public class DateUtil {
     }
 
     public static Date getDateFromString(String date, String format) {
+        if (date == null) {
+            return new Date(0);
+        }
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         try {
             return dateFormat.parse(date);
@@ -40,4 +43,16 @@ public class DateUtil {
         return calendar.getTimeInMillis();
     }
 
+    //Reference: http://vbzinas.blogspot.jp/2010/06/java-setspreadsheetquery-by-date.html
+    public static int getDateNumericValueForGoogleSpreadSheet(Date date) {
+        long zeroTime = 0;
+        try {
+            zeroTime = new SimpleDateFormat("yyyy-MM-dd").parse("1899-12-30").getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long time = date.getTime();
+        double numberOfDays = (double)(time - zeroTime ) / (double)(24 * 60 * 60 * 1000);
+        return (int)numberOfDays;
+    }
 }

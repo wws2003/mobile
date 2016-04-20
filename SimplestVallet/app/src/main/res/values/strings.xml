@@ -4,7 +4,7 @@
     <string name="tv_login_welcome_h1">Welcome to SV</string>
     <string name="tv_login_welcome_h2">Choose an account to continue</string>
 
-    <string name="hello_world">Login</string>
+    <string name="hello_world">Login by</string>
 
     <string name="tv_start_loading">Loading...</string>
 

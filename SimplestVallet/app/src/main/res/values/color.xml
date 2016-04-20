@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="clr_login_screen" type="color">#CEF6F5</item>
+    <item name="clr_login_screen" type="color">#F0F8FF</item>
     <item name="clr_initial_setting_screen" type="color">#CEF6F5</item>
     <item name="clr_input_fragment" type="color">#CEE3F6</item>
     <item name="clr_chart_fragment" type="color">#CEE3F6</item>
     <item name="clr_pending_fragment" type="color">#CEE3F6</item>
+    <item name="clr_fragment_bar" type="color">#CEF6CE</item>
 </resources>

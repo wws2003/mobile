@@ -106,7 +106,6 @@ public class SVJSONBasedPersistorImpl implements ISVPersistor {
             readPersistedPackets(reader, packets);
         }
         catch (IOException e) {
-            e.printStackTrace();
             throw new SVLoadException(e);
         }
         finally {

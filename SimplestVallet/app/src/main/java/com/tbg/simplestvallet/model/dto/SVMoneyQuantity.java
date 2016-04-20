@@ -6,35 +6,35 @@ import java.util.Locale;
 /**
  * Created by wws2003 on 10/24/15.
  */
-public class MoneyQuantity {
+public class SVMoneyQuantity {
     private double mAmount;
     private Currency mCurrency = Currency.getInstance(Locale.getDefault());
 
-    public MoneyQuantity(double amount) {
+    public SVMoneyQuantity(double amount) {
         mAmount = amount;
     }
 
-    public MoneyQuantity(double amount, Currency currency) {
+    public SVMoneyQuantity(double amount, Currency currency) {
         mAmount = amount;
         mCurrency = currency;
     }
 
-    public MoneyQuantity add(MoneyQuantity quantity) {
+    public SVMoneyQuantity add(SVMoneyQuantity quantity) {
         if(mCurrency == null) {
             mCurrency = quantity.mCurrency;
         }
         else {
             checkCurrency(quantity);
         }
-        return new MoneyQuantity(mAmount + quantity.mAmount, mCurrency);
+        return new SVMoneyQuantity(mAmount + quantity.mAmount, mCurrency);
     }
 
-    public MoneyQuantity add(double amount) {
-        return new MoneyQuantity(mAmount + amount, mCurrency);
+    public SVMoneyQuantity add(double amount) {
+        return new SVMoneyQuantity(mAmount + amount, mCurrency);
     }
 
-    public MoneyQuantity multiply(double times) {
-        return new MoneyQuantity(mAmount * times, mCurrency);
+    public SVMoneyQuantity multiply(double times) {
+        return new SVMoneyQuantity(mAmount * times, mCurrency);
     }
 
     public Currency getCurrency() {
@@ -49,7 +49,7 @@ public class MoneyQuantity {
         return mAmount + mCurrency.toString();
     }
 
-    private void checkCurrency(MoneyQuantity quantity) {
+    private void checkCurrency(SVMoneyQuantity quantity) {
         if(quantity.mCurrency != mCurrency) {
             throw new RuntimeException("Sorry, currency conversion hasn't been supported yet");
         }
