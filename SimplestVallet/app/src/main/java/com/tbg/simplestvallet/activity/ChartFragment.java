@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryWrapperBuilder;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVEntryQueryStructureBuilder;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVQueryStructure;
 import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
@@ -65,32 +65,33 @@ public class ChartFragment extends Fragment {
         final ISVEntrySheet entrySheet = SimplestValetApp.getSheetServiceManagerContainer().getCachedSheetServiceManager().getSVEntrySheet();
 
         //Currently just testing with load all amount of this month
-        final ISVEntryQueryWrapper queryWrapper = getEntryQueryWrapper();
+        final ISVQueryStructure queryStructure = getEntryQueryWrapper();
 
-        ITask<SVMoneyQuantity> dataTask = getDataLoadTask(entrySheet, queryWrapper);
+        ITask<SVMoneyQuantity> dataTask = getDataLoadTask(entrySheet, queryStructure);
 
         ITaskDelegate<SVMoneyQuantity> dataTaskDelegate = getDataLoadTaskDelegate();
 
         mTaskExecutor.executeTask(dataTask, dataTaskDelegate);
     }
 
-    private ISVEntryQueryWrapper getEntryQueryWrapper() {
-        ISVEntryWrapperBuilder queryWrapperBuilder = SimplestValetApp.getEntryQueryWrapperBuilderContainer().getEntryWrapperBuilder();
+    private ISVQueryStructure getEntryQueryWrapper() {
+        ISVEntryQueryStructureBuilder queryStructureBuilder = SimplestValetApp.getEntryQueryStructureBuilderContainer().getEntryQueryStructureBuilder();
+        queryStructureBuilder = queryStructureBuilder.newInstance();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         Date firstDateOfMonth = calendar.getTime();
-        queryWrapperBuilder.setDateRanges(firstDateOfMonth, null);
+        queryStructureBuilder.setDateRanges(firstDateOfMonth, null);
 
-        return queryWrapperBuilder.build();
+        return queryStructureBuilder.build();
     }
 
-    private ITask<SVMoneyQuantity> getDataLoadTask(final ISVEntrySheet entrySheet, final ISVEntryQueryWrapper queryWrapper) {
+    private ITask<SVMoneyQuantity> getDataLoadTask(final ISVEntrySheet entrySheet, final ISVQueryStructure queryStructure) {
 
         ITask<SVMoneyQuantity> dataTask = new AbstractTask<SVMoneyQuantity>() {
             @Override
             public Result<SVMoneyQuantity> doExecute() {
-                SVMoneyQuantity amount = entrySheet.queryEntriesAmount(queryWrapper);
+                SVMoneyQuantity amount = entrySheet.queryEntriesAmount(queryStructure);
                 return generateResult(amount, LOAD_AMOUNT_OK);
             }
         };

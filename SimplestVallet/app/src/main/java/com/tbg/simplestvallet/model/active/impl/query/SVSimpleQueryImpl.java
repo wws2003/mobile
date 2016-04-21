@@ -1,8 +1,8 @@
-package com.tbg.simplestvallet.model.active.impl;
+package com.tbg.simplestvallet.model.active.impl.query;
 
 import android.util.SparseArray;
 
-import com.tbg.simplestvallet.model.active.abstr.ISVQuery;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVQuery;
 
 import java.util.LinkedList;
 import java.util.List;

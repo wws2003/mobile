@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.adapter.PendingEntryListAdapter;
 import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVPendingEntryStore;
 import com.tbg.simplestvallet.model.dto.SVLocalEntry;
 import com.tbg.simplestvallet.ioc.taskmanager.task.RetrievePendingEntriesTask;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;

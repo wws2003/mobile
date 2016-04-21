@@ -7,6 +7,11 @@ import java.util.Date;
  */
 public class SVEntry {
 
+    public static final int FIELD_INDEX_CREATED_DATE = 0;
+    public static final int FIELD_INDEX_TYPE = 1;
+    public static final int FIELD_INDEX_NOTE = 2;
+    public static final int FIELD_INDEX_AMOUNT = 3;
+
     private Date mCreatedAt;
     private SVMoneyQuantity mMoneyQuantity;
     private String mType;

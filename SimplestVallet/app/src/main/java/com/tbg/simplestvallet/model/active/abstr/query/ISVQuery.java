@@ -1,4 +1,4 @@
-package com.tbg.simplestvallet.model.active.abstr;
+package com.tbg.simplestvallet.model.active.abstr.query;
 
 import android.util.SparseArray;
 

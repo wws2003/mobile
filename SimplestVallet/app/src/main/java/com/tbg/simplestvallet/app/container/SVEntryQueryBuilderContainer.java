@@ -1,18 +1,18 @@
 package com.tbg.simplestvallet.app.container;
 
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryWrapperBuilder;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVEntryQueryStructureBuilder;
 
 /**
  * Created by wws2003 on 4/20/16.
  */
 public class SVEntryQueryBuilderContainer {
-    private ISVEntryWrapperBuilder mEntryWrapperBuilder;
+    private ISVEntryQueryStructureBuilder mEntryStructureBuilder;
 
-    public SVEntryQueryBuilderContainer(ISVEntryWrapperBuilder entryWrapperBuilder) {
-        this.mEntryWrapperBuilder = entryWrapperBuilder;
+    public SVEntryQueryBuilderContainer(ISVEntryQueryStructureBuilder entryStructureBuilder) {
+        this.mEntryStructureBuilder = entryStructureBuilder;
     }
 
-    public ISVEntryWrapperBuilder getEntryWrapperBuilder() {
-        return mEntryWrapperBuilder;
+    public ISVEntryQueryStructureBuilder getEntryQueryStructureBuilder() {
+        return mEntryStructureBuilder;
     }
 }

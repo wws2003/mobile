@@ -1,6 +1,6 @@
 package com.tbg.simplestvallet.app.manager.sheetservice.abstr;
 
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
 
 /**
  * Created by wws2003 on 11/5/15.

@@ -2,7 +2,7 @@ package com.tbg.simplestvallet.ioc.taskmanager.task;
 
 import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.taskmanager.abstr.task.AbstractTask;
 import com.tbg.taskmanager.common.Result;

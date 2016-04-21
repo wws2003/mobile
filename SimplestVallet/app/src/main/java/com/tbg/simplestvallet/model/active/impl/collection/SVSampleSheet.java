@@ -1,8 +1,8 @@
-package com.tbg.simplestvallet.model.active.impl;
+package com.tbg.simplestvallet.model.active.impl.collection;
 
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVQueryStructure;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 
@@ -39,12 +39,12 @@ public class SVSampleSheet implements ISVEntrySheet {
     }
 
     @Override
-    public void queryEntries(ISVEntryQueryWrapper entryQueryWrapper, List<SVEntry> entries) {
+    public void queryEntries(ISVQueryStructure queryStructure, List<SVEntry> entries) {
         //TODO Implement
     }
 
     @Override
-    public SVMoneyQuantity queryEntriesAmount(ISVEntryQueryWrapper entryQueryWrapper) {
+    public SVMoneyQuantity queryEntriesAmount(ISVQueryStructure queryStructure) {
         //TODO Implement
         return new SVMoneyQuantity(0);
     }

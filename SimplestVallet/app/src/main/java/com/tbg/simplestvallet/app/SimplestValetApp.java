@@ -14,9 +14,9 @@ import com.tbg.simplestvallet.app.container.TaskExecutorContainer;
 import com.tbg.simplestvallet.app.container.TaskIdPool;
 import com.tbg.simplestvallet.app.manager.authentication.impl.SVAuthenticationManagerImpl;
 import com.tbg.simplestvallet.ioc.taskmanager.locator.MapBasedLocator;
-import com.tbg.simplestvallet.model.active.impl.SVEntryWrapperBuilderImpl;
-import com.tbg.simplestvallet.model.active.impl.SVSamplePendingEntryStore;
-import com.tbg.simplestvallet.model.active.impl.SVSampleSheet;
+import com.tbg.simplestvallet.model.active.impl.collection.SVSamplePendingEntryStore;
+import com.tbg.simplestvallet.model.active.impl.collection.SVSampleSheet;
+import com.tbg.simplestvallet.model.active.impl.query.SVEntryQueryStructureBuilderImpl;
 import com.tbg.simplestvallet.persist.impl.SVJSONBasedPersistorImpl;
 import com.tbg.taskmanager.abstr.task.ITask;
 import com.tbg.taskmanager.common.Result;
@@ -37,7 +37,7 @@ public class SimplestValetApp extends MultiDexApplication {
     private static LocatorContainer gLocatorContainer;
 
     private static EntryCollectionContainer gEntryCollectionContainer;
-    private static SVEntryQueryBuilderContainer gEntryQueryBuilderContainer;
+    private static SVEntryQueryBuilderContainer gEntryQueryStructureBuilderContainer;
 
     @Override
     public void onCreate() {
@@ -69,8 +69,8 @@ public class SimplestValetApp extends MultiDexApplication {
         return gEntryCollectionContainer;
     }
 
-    public static SVEntryQueryBuilderContainer getEntryQueryWrapperBuilderContainer() {
-        return gEntryQueryBuilderContainer;
+    public static SVEntryQueryBuilderContainer getEntryQueryStructureBuilderContainer() {
+        return gEntryQueryStructureBuilderContainer;
     }
 
     public static LocatorContainer getLocatorContainer() {
@@ -113,7 +113,7 @@ public class SimplestValetApp extends MultiDexApplication {
     }
 
     private void initEntryQueryWrapperBuilderContainer() {
-        gEntryQueryBuilderContainer = new SVEntryQueryBuilderContainer(new SVEntryWrapperBuilderImpl());
+        gEntryQueryStructureBuilderContainer = new SVEntryQueryBuilderContainer(new SVEntryQueryStructureBuilderImpl());
     }
 
     private void initTaskExecutorContainer() {

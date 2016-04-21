@@ -2,8 +2,8 @@ package com.tbg.simplestvallet.app.manager.sheetservice.impl;
 
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
 import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
-import com.tbg.simplestvallet.model.active.impl.google.SVGoogleSpreadSheetBasedSheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.impl.collection.google.SVGoogleSpreadSheetBasedSheet;
 import com.tbg.simplestvallet.persist.abstr.ISVPersistable;
 import com.tbg.simplestvallet.persist.abstr.ISVPersistor;
 

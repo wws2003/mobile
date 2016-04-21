@@ -1,7 +1,7 @@
 package com.tbg.simplestvallet.app.container;
 
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
-import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVPendingEntryStore;
 
 /**
  * Created by wws2003 on 10/24/15.

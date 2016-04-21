@@ -1,9 +1,11 @@
-package com.tbg.simplestvallet.model.active.impl.google;
+package com.tbg.simplestvallet.model.active.impl.collection.google;
 
 import com.google.gdata.util.ServiceException;
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVEntryQueryStringBuilder;
+import com.tbg.simplestvallet.model.active.abstr.query.ISVQueryStructure;
+import com.tbg.simplestvallet.model.active.impl.query.google.SVGoogleEntryStringQueryBuilderImpl;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 
@@ -23,9 +25,12 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
     private SVGoogleSpreadSheet<SVEntry> mGoogleSpreadSheet;
     private SVGoogleSpreadSheetMapping mGoogleSpreadSheetQueryCreator;
 
+    private ISVEntryQueryStringBuilder mEntryQueryStringBuilder;
+
     public SVGoogleSpreadSheetBasedSheet(String spreadSheetId, String accessToken) {
         mGoogleSpreadSheet = new SVGoogleSpreadSheet<>(spreadSheetId, accessToken, new SVGoogleSpreadSheetMapping.GoogleSpreadSheetRowEntryAdapter());
         mGoogleSpreadSheetQueryCreator = new SVGoogleSpreadSheetMapping();
+        mEntryQueryStringBuilder = new SVGoogleEntryStringQueryBuilderImpl();
     }
 
     @Override
@@ -89,8 +94,11 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
     }
 
     @Override
-    public void queryEntries(ISVEntryQueryWrapper entryQueryWrapper, List<SVEntry> entries) {
-        String structuredQuery = mGoogleSpreadSheetQueryCreator.createEntryQuery(entryQueryWrapper);
+    public void queryEntries(ISVQueryStructure queryStructure, List<SVEntry> entries) {
+        mEntryQueryStringBuilder.reset();
+        queryStructure.accept(mEntryQueryStringBuilder);
+
+        String structuredQuery = mEntryQueryStringBuilder.build();
         try {
             mGoogleSpreadSheet.queryItems(structuredQuery, null, entries);
         } catch (ServiceException e) {
@@ -101,8 +109,11 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
     }
 
     @Override
-    public SVMoneyQuantity queryEntriesAmount(ISVEntryQueryWrapper entryQueryWrapper) {
-        String structuredQuery = mGoogleSpreadSheetQueryCreator.createEntryQuery(entryQueryWrapper);
+    public SVMoneyQuantity queryEntriesAmount(ISVQueryStructure queryStructure) {
+        mEntryQueryStringBuilder.reset();
+        queryStructure.accept(mEntryQueryStringBuilder);
+        String structuredQuery = mEntryQueryStringBuilder.build();
+
         SVGoogleSpreadSheetMapping.GoogleSpreadSheetRowMoneyQuantityAdapter moneyQuantityAdapter = new SVGoogleSpreadSheetMapping.GoogleSpreadSheetRowMoneyQuantityAdapter();
         try {
             mGoogleSpreadSheet.queryDerivedItems(structuredQuery,

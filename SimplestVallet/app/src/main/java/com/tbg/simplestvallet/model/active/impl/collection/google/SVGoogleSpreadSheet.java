@@ -1,4 +1,4 @@
-package com.tbg.simplestvallet.model.active.impl.google;
+package com.tbg.simplestvallet.model.active.impl.collection.google;
 
 import android.util.Log;
 
@@ -13,20 +13,12 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.InvalidEntryException;
 import com.google.gdata.util.ServiceException;
-import com.tbg.simplestvallet.model.active.abstr.IGoogleSpreadSheetRowAdapter;
-import com.tbg.simplestvallet.model.active.abstr.IGoogleSpreadSheetRowFilter;
-import com.tbg.simplestvallet.model.active.abstr.ISVEntryQueryWrapper;
-import com.tbg.simplestvallet.util.DateUtil;
-
-import org.mortbay.util.IO;
+import com.tbg.simplestvallet.model.active.abstr.collection.google.ISVGoogleSpreadSheetRowAdapter;
+import com.tbg.simplestvallet.model.active.abstr.collection.google.ISVGoogleSpreadSheetRowFilter;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,9 +27,9 @@ import java.util.List;
 public class SVGoogleSpreadSheet<T> {
     private String mSpreadSheetURL;
     private SpreadsheetService mService = new SpreadsheetService("MySpreadsheetIntegration-v1");;
-    private IGoogleSpreadSheetRowAdapter<T> mAdapter;
+    private ISVGoogleSpreadSheetRowAdapter<T> mAdapter;
 
-    public SVGoogleSpreadSheet(String spreadSheetId, String accessToken, IGoogleSpreadSheetRowAdapter<T> adapter) {
+    public SVGoogleSpreadSheet(String spreadSheetId, String accessToken, ISVGoogleSpreadSheetRowAdapter<T> adapter) {
         this.mSpreadSheetURL = getFeedURLForSpreadSheet(spreadSheetId);
         this.mAdapter = adapter;
 
@@ -79,7 +71,7 @@ public class SVGoogleSpreadSheet<T> {
         }
     }
 
-    public void getAllItems(IGoogleSpreadSheetRowFilter<T> filter, List<T> items) throws ServiceException, IOException {
+    public void getAllItems(ISVGoogleSpreadSheetRowFilter<T> filter, List<T> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
         List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
@@ -97,8 +89,8 @@ public class SVGoogleSpreadSheet<T> {
         }
     }
 
-    public <T2> void getAllDerivedItems(IGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
-                                        IGoogleSpreadSheetRowFilter<T> filter,
+    public <T2> void getAllDerivedItems(ISVGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
+                                        ISVGoogleSpreadSheetRowFilter<T> filter,
                                         List<T2> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
@@ -120,8 +112,8 @@ public class SVGoogleSpreadSheet<T> {
     }
 
     public <T2> void queryDerivedItems(String structuredQuery,
-                                       IGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
-                                       IGoogleSpreadSheetRowFilter<T> filter,
+                                       ISVGoogleSpreadSheetRowAdapter<T2> derivedAdapter,
+                                       ISVGoogleSpreadSheetRowFilter<T> filter,
                                        List<T2> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
@@ -132,6 +124,9 @@ public class SVGoogleSpreadSheet<T> {
 
             ListQuery query = new ListQuery(worksheetListFeedURL);
             query.setSpreadsheetQuery(structuredQuery);
+
+            Log.d("---Query feed url", query.getFeedUrl().toString());
+            Log.d("---------Query sq", query.getSpreadsheetQuery().toString());
 
             ListFeed listFeed = mService.query(query, ListFeed.class);
 
@@ -146,7 +141,7 @@ public class SVGoogleSpreadSheet<T> {
     }
 
     public void queryItems(String structuredQuery,
-                           IGoogleSpreadSheetRowFilter<T> filter,
+                           ISVGoogleSpreadSheetRowFilter<T> filter,
                            List<T> items) throws ServiceException, IOException {
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);

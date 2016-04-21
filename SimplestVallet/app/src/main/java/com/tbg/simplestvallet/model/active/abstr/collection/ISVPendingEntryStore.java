@@ -1,4 +1,4 @@
-package com.tbg.simplestvallet.model.active.abstr;
+package com.tbg.simplestvallet.model.active.abstr.collection;
 
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVLocalEntry;

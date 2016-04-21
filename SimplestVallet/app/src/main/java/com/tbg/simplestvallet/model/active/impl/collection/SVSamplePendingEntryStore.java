@@ -1,9 +1,9 @@
-package com.tbg.simplestvallet.model.active.impl;
+package com.tbg.simplestvallet.model.active.impl.collection;
 
 import android.util.SparseArray;
 
 import com.tbg.simplestvallet.model.active.EntryActionResult;
-import com.tbg.simplestvallet.model.active.abstr.ISVPendingEntryStore;
+import com.tbg.simplestvallet.model.active.abstr.collection.ISVPendingEntryStore;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVLocalEntry;
 

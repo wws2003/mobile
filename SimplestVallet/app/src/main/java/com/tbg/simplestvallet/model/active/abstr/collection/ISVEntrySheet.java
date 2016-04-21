@@ -1,5 +1,6 @@
-package com.tbg.simplestvallet.model.active.abstr;
+package com.tbg.simplestvallet.model.active.abstr.collection;
 
+import com.tbg.simplestvallet.model.active.abstr.query.ISVQueryStructure;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 
@@ -19,8 +20,8 @@ public interface ISVEntrySheet {
     int getAllEntries(List<SVEntry> entries);
     SVMoneyQuantity getAllEntriesAmount();
 
-    void queryEntries(ISVEntryQueryWrapper entryQueryWrapper, List<SVEntry> entries);
-    SVMoneyQuantity queryEntriesAmount(ISVEntryQueryWrapper entryQueryWrapper);
+    void queryEntries(ISVQueryStructure queryStructure, List<SVEntry> entries);
+    SVMoneyQuantity queryEntriesAmount(ISVQueryStructure queryStructure);
 
     //MARK: For some exceptions
     class SVEntryOpenSheetException extends Exception {
