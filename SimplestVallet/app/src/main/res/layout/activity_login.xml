@@ -35,11 +35,13 @@
         android:layout_marginTop="45dp"
         android:layout_below="@id/tv_login_message"
         android:textSize="8pt"
+        android:textColor="@android:color/primary_text_light"
         android:text="@string/hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Button
+        android:id="@+id/button_choose_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/choose_account"
@@ -56,6 +58,7 @@
         android:textSize="8pt"
         android:text="@string/selected_email"
         android:layout_below="@id/tv_login"
+        android:textColor="@android:color/primary_text_light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -63,6 +66,7 @@
         android:id="@+id/tv_selected_email"
         android:layout_marginTop="40dp"
         android:textSize="8pt"
+        android:textColor="@android:color/primary_text_light"
         android:layout_toRightOf="@id/tv_lb_selected_email"
         android:layout_marginLeft="10dp"
         android:layout_below="@id/tv_login"
@@ -81,5 +85,15 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         >
     </Button>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/primary_text_light"
+        android:text="@string/cbx_keep_login"
+        android:id="@+id/cbx_keep_login"
+        android:layout_below="@+id/tv_selected_email"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

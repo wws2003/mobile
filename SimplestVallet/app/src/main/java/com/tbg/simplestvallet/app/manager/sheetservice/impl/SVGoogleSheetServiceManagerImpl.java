@@ -56,6 +56,9 @@ public class SVGoogleSheetServiceManagerImpl implements ISVSheetServiceManager {
         catch (ISVEntrySheet.SVEntryOpenSheetException ose) {
             throw new SVSheetServiceNotAvailableException(ose);
         }
+        catch (ISVEntrySheet.SVEntrySheetUnAuthorizedException uae) {
+            throw new SVSheetServiceUnAuthorizedException(uae);
+        }
     }
 
     @Override

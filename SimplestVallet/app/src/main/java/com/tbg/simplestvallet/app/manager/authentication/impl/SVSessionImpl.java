@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class SVSessionImpl implements ISVSession {
 
-    private static final String SV_SESSION_PERSITABLE_IDENTIFIER = "0_sv_session_id";
+    private static final String SV_SESSION_PERSISTABLE_IDENTIFIER = "0_sv_session_id";
 
     private long mCreatedTime;
     private long mLastAccessedTime;
@@ -45,17 +45,6 @@ public class SVSessionImpl implements ISVSession {
     }
 
     @Override
-    public void getAllAttributePairs(List<String> keys, List<String> values) throws SVInvalidatedSessionException {
-        tryToAccess();
-        keys.clear();
-        values.clear();
-        for (String key : mAttributesMap.keySet()) {
-            keys.add(key);
-            values.add(mAttributesMap.get(key));
-        }
-    }
-
-    @Override
     public long getCreatedTime() {
         return mCreatedTime;
     }
@@ -78,6 +67,17 @@ public class SVSessionImpl implements ISVSession {
     }
 
     @Override
+    public boolean isAutoReLoginPermitted() throws SVInvalidatedSessionException {
+        tryToAccess();
+        return "TRUE".equals(mAttributesMap.get(ATTRIBUTE_KEY_AUTO_RE_LOGIN));
+    }
+
+    @Override
+    public void permitAutoReLogin() throws SVInvalidatedSessionException {
+        putAttribute(ATTRIBUTE_KEY_AUTO_RE_LOGIN, "TRUE");
+    }
+
+    @Override
     public void putCredentialServiceAccessToken(String serviceName, String accountName, String serviceAccessToken) throws SVInvalidatedSessionException {
         tryToAccess();
         mCredentialBuilder.configureService(serviceName, accountName, serviceAccessToken);
@@ -95,7 +95,7 @@ public class SVSessionImpl implements ISVSession {
      */
     @Override
     public String getIdentifier() {
-        return SV_SESSION_PERSITABLE_IDENTIFIER;
+        return SV_SESSION_PERSISTABLE_IDENTIFIER;
     }
 
     @Override

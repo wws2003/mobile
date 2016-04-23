@@ -16,6 +16,7 @@
     <string name="choose_account">Choose Google Account</string>
     <string name="done">Done</string>
     <string name="selected_email">Selected email</string>
+    <string name="cbx_keep_login">Keep me signed in</string>
     <string name="title_activity_main">Simplest Valet</string>
 
     <string name="title_activity_input">InputActivity</string>

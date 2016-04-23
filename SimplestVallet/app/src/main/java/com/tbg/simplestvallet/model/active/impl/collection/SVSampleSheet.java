@@ -18,7 +18,7 @@ public class SVSampleSheet implements ISVEntrySheet {
     private SVMoneyQuantity mCachedQuantity = new SVMoneyQuantity(0);
 
     @Override
-    public void open() throws SVEntryOpenSheetException {
+    public void open() throws SVEntryOpenSheetException, SVEntrySheetUnAuthorizedException {
         //Do nothing
     }
 

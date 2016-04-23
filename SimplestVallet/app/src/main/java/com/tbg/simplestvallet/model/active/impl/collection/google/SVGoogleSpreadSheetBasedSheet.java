@@ -34,7 +34,7 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
     }
 
     @Override
-    public void open() throws SVEntryOpenSheetException {
+    public void open() throws SVEntryOpenSheetException, SVEntrySheetUnAuthorizedException {
         try {
             mGoogleSpreadSheet.open();
         } catch (Exception e) {

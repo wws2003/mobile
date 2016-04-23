@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface ISVEntrySheet {
     //Try to open the sheet
-    void open() throws SVEntryOpenSheetException;
+    void open() throws SVEntryOpenSheetException, SVEntrySheetUnAuthorizedException;
 
     //MARK: For edit
     int addEntry(SVEntry entry);
@@ -28,6 +28,14 @@ public interface ISVEntrySheet {
         private static final String MESSAGE = "Couldn't open sheet";
 
         public SVEntryOpenSheetException(Throwable throwable) {
+            super(MESSAGE, throwable);
+        }
+    }
+
+    class SVEntrySheetUnAuthorizedException extends Exception {
+        private static final String MESSAGE = "Couldn't get authorization to access sheet";
+
+        public SVEntrySheetUnAuthorizedException(Throwable throwable) {
             super(MESSAGE, throwable);
         }
     }

@@ -1,12 +1,16 @@
 package com.tbg.simplestvallet.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tbg.simplestvallet.R;
+import com.tbg.simplestvallet.activity.delegate.ISVGoogleSpreadSheetAccessCallback;
+import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveAccessDelegate;
 import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
@@ -23,9 +27,12 @@ import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
 public class StartingActivity extends AppCompatActivity {
 
+    private final static int REQUEST_CODE_REST_CLIENT_CONNECT = 3;
+
     private ISVAuthenticationManager mAuthenticationManager = null;
     private ITaskExecutor mTaskExecutor = null;
     private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
+    private SVGoogleDriveAccessDelegate mDriveAccessDelegate = new SVGoogleDriveAccessDelegate();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +79,7 @@ public class StartingActivity extends AppCompatActivity {
             String sheetServiceName = oldSession.getAttributeValue(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME);
             continueOldSession(oldSession, credential, sheetServiceName);
         }
-        catch (ISVSession.SVSessionNotFound e) {
-            e.printStackTrace();
-            toLoginScreen();
-        }
-        catch (ISVSession.SVInvalidatedSessionException e) {
+        catch (Exception e) {
             e.printStackTrace();
             toLoginScreen();
         }
@@ -89,20 +92,21 @@ public class StartingActivity extends AppCompatActivity {
 
     private void continueOldSession(final ISVSession oldSession,
                                     final SVCredential credential,
-                                    final String sheetServiceName) {
+                                    final String sheetServiceName) throws ISVSession.SVInvalidatedSessionException, ISVSheetServiceManager.SVSheetNotFoundException {
+
+        final String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
+        final String sheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
+        final ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
+        final String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, sheetServiceAccessToken);
+
         ITask<Exception> loadSheetTask = new AbstractTask<Exception>() {
             @Override
             public Result<Exception> doExecute() {
                 try {
-                    String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
-                    String sheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
-
-                    ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
-                    String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, sheetServiceAccessToken);
                     sheetServiceManager.accessSheet(sheetId, sheetServiceAccessAccountName, sheetServiceAccessToken);
-
                     return generateResult(null, 0);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     return generateResult(e, 0);
                 }
             }
@@ -114,11 +118,21 @@ public class StartingActivity extends AppCompatActivity {
                 Exception exception = taskResult.getElement();
                 if(exception != null) {
                     exception.printStackTrace();
-
-                    //Also invalidate loaded session
-                    mAuthenticationManager.destroySession();
-
-                    toLoginScreen();
+                    //Try to re login if possible
+                    try {
+                        if (oldSession.isAutoReLoginPermitted()) {
+                            tryToReLogin(oldSession, sheetServiceAccessAccountName, sheetId);
+                        }
+                        else {
+                            //Also invalidate loaded session
+                            mAuthenticationManager.destroySession();
+                            toLoginScreen();
+                        }
+                    }
+                    catch (ISVSession.SVInvalidatedSessionException ise) {
+                        ise.printStackTrace();
+                        toLoginScreen();
+                    }
                 }
                 else {
                     toMainScreen();
@@ -133,4 +147,59 @@ public class StartingActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(this, MainActivity.class);
         startActivity(mainIntent);
     }
+
+    //FIXME: This brings the dependency to Google Drive here, not good for portability...
+    private void tryToReLogin(final ISVSession oldSession, final String sheetServiceAccessAccountName, String sheetId) {
+
+        ISVGoogleSpreadSheetAccessCallback callback = new ISVGoogleSpreadSheetAccessCallback() {
+            @Override
+            public void onNewSheetCreated(String sheetId) {
+                //Do nothing now
+            }
+
+            @Override
+            public void onNewSheetCreationFailed() {
+                //Do nothing now
+            }
+
+            @Override
+            public void onAccessTokenRetrieved(String accessToken, String sheetId) {
+                try {
+                    //Reset access token for session
+                    oldSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE, sheetServiceAccessAccountName, accessToken);
+
+                    //Re try to go to main screen
+                   initialRoute();
+                }
+                catch (ISVSession.SVInvalidatedSessionException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onAccessTokenRetrieveFailed() {
+                showError("Authentication error", "Can not re-login");
+            }
+        };
+
+        mDriveAccessDelegate.accessSpreadSheet(sheetServiceAccessAccountName,
+                sheetId,
+                this,
+                REQUEST_CODE_REST_CLIENT_CONNECT,
+                callback);
+    }
+
+    private void showError(String title, String errorMessage) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(errorMessage);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
 }

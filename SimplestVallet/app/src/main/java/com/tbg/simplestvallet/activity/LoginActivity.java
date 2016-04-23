@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.common.AccountPicker;
@@ -210,11 +211,16 @@ public class LoginActivity extends AppCompatActivity {
     private void toInitialSettingScreen() {
         ISVSession currentSession = mAuthenticationManager.getCurrentSession();
         try {
+            boolean keepLogin = ((CheckBox)findViewById(R.id.cbx_keep_login)).isChecked();
+            if (keepLogin) {
+                currentSession.permitAutoReLogin();
+            }
             String selectedAccountName = currentSession.getLoggedInAccountName();
             Intent initialSettingIntent = new Intent(this, InitialSettingActivity.class);
             initialSettingIntent.putExtra(InitialSettingActivity.KEY_GOOGLE_ACCOUNT_NAME, selectedAccountName);
             startActivityForResult(initialSettingIntent, REQUEST_CODE_INIT_GOOGLE_SHEET);
-        } catch (ISVSession.SVInvalidatedSessionException e) {
+        }
+        catch (ISVSession.SVInvalidatedSessionException e) {
             e.printStackTrace();
             showError(getString(R.string.msg_login_error), e.getLocalizedMessage());
         }

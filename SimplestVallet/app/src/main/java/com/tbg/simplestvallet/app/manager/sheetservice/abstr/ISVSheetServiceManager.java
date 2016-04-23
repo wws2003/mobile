@@ -35,8 +35,8 @@ public interface ISVSheetServiceManager {
     class SVSheetServiceUnAuthorizedException extends Exception {
         private static final String MESSAGE = "You are not authorized to use the service";
 
-        public SVSheetServiceUnAuthorizedException() {
-            super(MESSAGE);
+        public SVSheetServiceUnAuthorizedException(Throwable throwable) {
+            super(MESSAGE, throwable);
         }
     }
 }
