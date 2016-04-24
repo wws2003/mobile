@@ -6,7 +6,7 @@
 
     <string name="hello_world">Login by</string>
 
-    <string name="tv_start_loading">Loading...</string>
+    <string name="tv_start_loading">Trying to login</string>
 
     <string name="action_settings">Settings</string>
 

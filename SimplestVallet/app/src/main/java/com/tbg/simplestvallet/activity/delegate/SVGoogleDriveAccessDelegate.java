@@ -50,7 +50,6 @@ public class SVGoogleDriveAccessDelegate {
     public void accessSpreadSheet(final String googleAccountName,
                                   final String sheetId,
                                   final Activity activity,
-                                  final int requestCode,
                                   final ISVGoogleSpreadSheetAccessCallback callback) {
 
         final ISVGoogleDriveRESTServiceCallback restServiceCallback = new ISVGoogleDriveRESTServiceCallback() {
@@ -61,12 +60,14 @@ public class SVGoogleDriveAccessDelegate {
 
             @Override
             public void onRESTServiceClientConnectingFailed(Intent authorizeIntent) {
-                activity.startActivityForResult(authorizeIntent, requestCode);
+                activity.startActivityForResult(authorizeIntent,
+                        SVGoogleDriveConstants.REQUEST_CODE_DRIVE_API_CLIENT_CONNECT);
             }
         };
         accessDriveRESTService(googleAccountName, activity, restServiceCallback);
     }
 
+    //Access sheet when Google Drive REST service connected
     public void accessSpreadSheet(final String sheetId,
                                   final ISVGoogleSpreadSheetAccessCallback callback) {
         tryToAccessSheet(sheetId, callback);
@@ -74,23 +75,28 @@ public class SVGoogleDriveAccessDelegate {
 
     //Access Google Drive REST service from scratch
     public void accessDriveRESTService(final String googleAccountName,
-                                       final Context context,
+                                       final Activity activity,
                                        final ISVGoogleDriveRESTServiceCallback callback) {
 
         ISVGoogleDriveAccessCallback driveAccessCallback = new ISVGoogleDriveAccessCallback() {
             @Override
             public void onDriveAPIClientConnected() {
                 //Try to access REST service
-                setupGoogleAccountCredential(googleAccountName, context);
+                setupGoogleAccountCredential(googleAccountName, activity);
                 tryToAccessRESTService(callback);
             }
 
             @Override
             public void onDriveAPIConnectingFailed(ConnectionResult connectionResult) {
-                onDriveAPIConnectingFailed(connectionResult);
+                try {
+                    connectionResult.startResolutionForResult(activity,
+                            SVGoogleDriveConstants.REQUEST_CODE_REST_CLIENT_CONNECT);
+                } catch (IntentSender.SendIntentException e) {
+                    e.printStackTrace();
+                }
             }
         };
-        accessDriveAPI(googleAccountName, context, driveAccessCallback);
+        accessDriveAPI(googleAccountName, activity, driveAccessCallback);
     }
 
     //Access Google Drive API service from scratch
@@ -183,12 +189,12 @@ public class SVGoogleDriveAccessDelegate {
         mTaskExecutor.executeTask(folderCreateTask, spreadSheetCreateTaskDelegate);
     }
 
-    public void tryToOpenSpreadSheet(Activity activity, int requestCode) {
+    public void tryToOpenSpreadSheet(Activity activity) {
         IntentSender intentSender = Drive.DriveApi.newOpenFileActivityBuilder()
                 .setMimeType(new String[]{"application/vnd.google-apps.spreadsheet"})
                 .build(mGoogleApiClient);
         try {
-            activity.startIntentSenderForResult(intentSender, requestCode,
+            activity.startIntentSenderForResult(intentSender, SVGoogleDriveConstants.REQUEST_CODE_OPEN_FILE,
                     null,
                     0,
                     0,
@@ -266,6 +272,7 @@ public class SVGoogleDriveAccessDelegate {
             public Result<String> doExecute() {
                 try {
                     String googleToken = mGoogleCredential.getToken();
+                    Log.d("Google access token", googleToken);
                     return generateResult(googleToken, 0);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -98,6 +98,8 @@ public class SVGoogleSheetServiceManagerImpl implements ISVSheetServiceManager {
                 String packetIdentifier = persistPacket.getIdentifier();
                 if(packetIdentifier != null && packetIdentifier.equals(accountName)) {
                     String[] payload = persistPacket.getPayload();
+                    //Payload[0]: Access token
+                    //Payload[1]: Sheet id
                     if(payload != null && payload.length == 2) {
                         if (payload[0].equals(accessToken)) {
                             return payload[1];
@@ -112,6 +114,8 @@ public class SVGoogleSheetServiceManagerImpl implements ISVSheetServiceManager {
             String packetIdentifier = accountName;
 
             //Packet payload = [access token, sheet id]
+            //Payload[0]: Access token
+            //Payload[1]: Sheet id
             String[] payload = new String[2];
             payload[0] = accessToken;
             payload[1] = sheetId;

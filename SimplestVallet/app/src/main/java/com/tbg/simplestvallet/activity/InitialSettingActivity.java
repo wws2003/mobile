@@ -17,6 +17,7 @@ import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.activity.delegate.ISVGoogleDriveRESTServiceCallback;
 import com.tbg.simplestvallet.activity.delegate.ISVGoogleSpreadSheetAccessCallback;
 import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveAccessDelegate;
+import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveConstants;
 
 public class InitialSettingActivity extends AppCompatActivity implements ISVGoogleDriveRESTServiceCallback,
         ISVGoogleSpreadSheetAccessCallback {
@@ -26,10 +27,6 @@ public class InitialSettingActivity extends AppCompatActivity implements ISVGoog
     public final static String RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN = "RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN";
 
     private SVGoogleDriveAccessDelegate mGoogleDriveAccessDelegate = new SVGoogleDriveAccessDelegate();
-
-    private final static int REQUEST_CODE_DRIVE_API_CLIENT_CONNECT = 1;
-    private final static int REQUEST_CODE_REST_CLIENT_CONNECT = 3;
-    private final static int REQUEST_CODE_OPEN_FILE = 4;
 
     private final static String CREATED_DRIVE_FOLDER_NAME = "SimplestValet";
     private final static String CREATED_DRIVE_SPREADSHEET_NAME = "Log";
@@ -68,8 +65,14 @@ public class InitialSettingActivity extends AppCompatActivity implements ISVGoog
     }
 
     @Override
+    public void onRESTServiceClientConnected() {
+        enableBtnOpenSheet();
+        enableBtnCreateSheet();
+    }
+
+    @Override
     public void onRESTServiceClientConnectingFailed(Intent authorizeIntent) {
-        startActivityForResult(authorizeIntent, REQUEST_CODE_REST_CLIENT_CONNECT);
+        startActivityForResult(authorizeIntent, SVGoogleDriveConstants.REQUEST_CODE_REST_CLIENT_CONNECT);
     }
 
     @Override
@@ -97,27 +100,21 @@ public class InitialSettingActivity extends AppCompatActivity implements ISVGoog
     }
 
     @Override
-    public void onRESTServiceClientConnected() {
-        enableBtnOpenSheet();
-        enableBtnCreateSheet();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_DRIVE_API_CLIENT_CONNECT:
+            case SVGoogleDriveConstants.REQUEST_CODE_DRIVE_API_CLIENT_CONNECT:
                 if(resultCode == RESULT_OK) {
                     //Re-connecting is required
                     mGoogleDriveAccessDelegate.reconnect();
                 }
                 break;
-            case REQUEST_CODE_REST_CLIENT_CONNECT:
+            case SVGoogleDriveConstants.REQUEST_CODE_REST_CLIENT_CONNECT:
                 if (resultCode == RESULT_OK) {
                     onRESTServiceClientConnected();
                 }
                 break;
-            case REQUEST_CODE_OPEN_FILE:
+            case SVGoogleDriveConstants.REQUEST_CODE_OPEN_FILE:
                 if(resultCode == RESULT_OK) {
                     DriveId fileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                     onSpreadSheetConnected(fileDriveId.getResourceId());
@@ -133,7 +130,7 @@ public class InitialSettingActivity extends AppCompatActivity implements ISVGoog
 
     //Button "Open Sheet" onClick handler
     public void onBtnChooseSheetClicked(View view) {
-        mGoogleDriveAccessDelegate.tryToOpenSpreadSheet(this, REQUEST_CODE_OPEN_FILE);
+        mGoogleDriveAccessDelegate.tryToOpenSpreadSheet(this);
     }
 
     //Button "Create Sheet" onClick handler

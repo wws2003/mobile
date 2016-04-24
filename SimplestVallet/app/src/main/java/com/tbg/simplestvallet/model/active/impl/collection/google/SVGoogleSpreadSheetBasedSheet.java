@@ -1,5 +1,7 @@
 package com.tbg.simplestvallet.model.active.impl.collection.google;
 
+import android.util.Log;
+
 import com.google.gdata.util.ServiceException;
 import com.tbg.simplestvallet.model.active.EntryActionResult;
 import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
@@ -37,7 +39,13 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
     public void open() throws SVEntryOpenSheetException, SVEntrySheetUnAuthorizedException {
         try {
             mGoogleSpreadSheet.open();
-        } catch (Exception e) {
+        }
+        catch (ServiceException se) {
+            se.printStackTrace();
+            Log.d("Open spreadsheet error", se.getDebugInfo() + " " + se.getInternalReason());
+            throw new SVEntryOpenSheetException(se);
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new SVEntryOpenSheetException(e);
         }

@@ -1,46 +1,32 @@
 package com.tbg.simplestvallet.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.activity.delegate.ISVGoogleSpreadSheetAccessCallback;
 import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveAccessDelegate;
-import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
+import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveConstants;
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
-import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVAuthenticationManager;
 import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVSession;
 import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
 import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
-import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
 import com.tbg.taskmanager.abstr.task.AbstractTask;
 import com.tbg.taskmanager.abstr.task.ITask;
 import com.tbg.taskmanager.common.Result;
-import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
-public class StartingActivity extends AppCompatActivity {
+public class StartingActivity extends SVAbstractPreMainActivity {
 
-    private final static int REQUEST_CODE_REST_CLIENT_CONNECT = 3;
-
-    private ISVAuthenticationManager mAuthenticationManager = null;
-    private ITaskExecutor mTaskExecutor = null;
-    private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
     private SVGoogleDriveAccessDelegate mDriveAccessDelegate = new SVGoogleDriveAccessDelegate();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting);
-        mAuthenticationManager = SimplestValetApp.getAuthenticationManagerContainer().getAuthenticationManager();
-        mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
-        mSheetServiceManagerContainer = SimplestValetApp.getSheetServiceManagerContainer();
     }
 
     @Override
@@ -71,6 +57,34 @@ public class StartingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case SVGoogleDriveConstants.REQUEST_CODE_DRIVE_API_CLIENT_CONNECT:
+                //Do nothing for now
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void toLoginScreen() {
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        startActivity(loginIntent);
+    }
+
+    @Override
+    protected void fillSession(ISVSession oldSession, String googleDriveAccessToken) throws ISVSession.SVInvalidatedSessionException {
+        //In this screen, session if ready is loaded from storage. Therefore only reset token is required
+        SVCredential credential = oldSession.getCredential();
+        String sheetServiceName = oldSession.getAttributeValue(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME);
+        final String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
+
+        oldSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE, sheetServiceAccessAccountName, googleDriveAccessToken);
+    }
+
     private void initialRoute() {
         try {
             //Try to login to saved account session
@@ -85,25 +99,25 @@ public class StartingActivity extends AppCompatActivity {
         }
     }
 
-    private void toLoginScreen() {
-        Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity(loginIntent);
-    }
-
     private void continueOldSession(final ISVSession oldSession,
                                     final SVCredential credential,
                                     final String sheetServiceName) throws ISVSession.SVInvalidatedSessionException, ISVSheetServiceManager.SVSheetNotFoundException {
 
         final String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
-        final String sheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
+        final String oldSheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
         final ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
-        final String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, sheetServiceAccessToken);
+
+        //Note: oldSheetServiceAccessToken is still the old one !
+        final String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, oldSheetServiceAccessToken);
+
+        //Just a test
+        //tryToReLogin(oldSession, sheetServiceAccessAccountName, sheetId);
 
         ITask<Exception> loadSheetTask = new AbstractTask<Exception>() {
             @Override
             public Result<Exception> doExecute() {
                 try {
-                    sheetServiceManager.accessSheet(sheetId, sheetServiceAccessAccountName, sheetServiceAccessToken);
+                    sheetServiceManager.accessSheet(sheetId, sheetServiceAccessAccountName, oldSheetServiceAccessToken);
                     return generateResult(null, 0);
                 }
                 catch (Exception e) {
@@ -143,11 +157,6 @@ public class StartingActivity extends AppCompatActivity {
         mTaskExecutor.executeTask(loadSheetTask, loadSheetTaskDelegate);
     }
 
-    private void toMainScreen() {
-        Intent mainIntent = new Intent(this, MainActivity.class);
-        startActivity(mainIntent);
-    }
-
     //FIXME: This brings the dependency to Google Drive here, not good for portability...
     private void tryToReLogin(final ISVSession oldSession, final String sheetServiceAccessAccountName, String sheetId) {
 
@@ -165,41 +174,27 @@ public class StartingActivity extends AppCompatActivity {
             @Override
             public void onAccessTokenRetrieved(String accessToken, String sheetId) {
                 try {
-                    //Reset access token for session
-                    oldSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE, sheetServiceAccessAccountName, accessToken);
-
-                    //Re try to go to main screen
-                   initialRoute();
+                    Log.d("Newly retrieved token", accessToken);
+                    onSpreadSheetInitializedForAccount(oldSession, sheetId, accessToken);
                 }
-                catch (ISVSession.SVInvalidatedSessionException e) {
+                catch (Exception e) {
                     e.printStackTrace();
+                    toLoginScreen();
                 }
             }
 
             @Override
             public void onAccessTokenRetrieveFailed() {
                 showError("Authentication error", "Can not re-login");
+                mAuthenticationManager.destroySession();
+                toLoginScreen();
             }
         };
 
         mDriveAccessDelegate.accessSpreadSheet(sheetServiceAccessAccountName,
                 sheetId,
                 this,
-                REQUEST_CODE_REST_CLIENT_CONNECT,
                 callback);
-    }
-
-    private void showError(String title, String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
     }
 
 }

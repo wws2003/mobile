@@ -33,8 +33,9 @@ public class SVGoogleSpreadSheet<T> {
         this.mSpreadSheetURL = getFeedURLForSpreadSheet(spreadSheetId);
         this.mAdapter = adapter;
 
-        //Set expiration for one week
-        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken).setExpiresInSeconds((long)(60 * 60 * 24 * 7));
+        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+
+        Log.d("Open sheet token", accessToken);
 
         mService.setOAuth2Credentials(credential);
     }

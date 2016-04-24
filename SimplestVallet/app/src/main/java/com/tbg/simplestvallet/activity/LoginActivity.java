@@ -1,13 +1,10 @@
 package com.tbg.simplestvallet.activity;
 
 import android.accounts.AccountManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,30 +15,16 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.AccountPicker;
 import com.tbg.simplestvallet.R;
-import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.app.container.SheetServiceManagerContainer;
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
 import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVAuthenticationManager;
 import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVSession;
-import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
-import com.tbg.taskmanager.abstr.delegate.AbstractTaskResultListener;
-import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
-import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
-import com.tbg.taskmanager.abstr.task.AbstractTask;
-import com.tbg.taskmanager.abstr.task.ITask;
-import com.tbg.taskmanager.common.Result;
-import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends SVAbstractPreMainActivity {
 
     private static final int REQUEST_CODE_CONFIRM_PERMISSION_GET_ACCOUNTS = 1;
     private static final int REQUEST_CODE_CHOOSE_GOOGLE_ACCOUNT = 2;
 
     private static final int REQUEST_CODE_INIT_GOOGLE_SHEET = 3;
-
-    private ISVAuthenticationManager mAuthenticationManager = null;
-    private SheetServiceManagerContainer mSheetServiceManagerContainer = null;
-    private ITaskExecutor mTaskExecutor = null;
 
     private Button mDoneButton;
 
@@ -50,9 +33,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initViews();
-        mAuthenticationManager = SimplestValetApp.getAuthenticationManagerContainer().getAuthenticationManager();
-        mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
-        mSheetServiceManagerContainer = SimplestValetApp.getSheetServiceManagerContainer();
         confirmGetAccountsPermission();
     }
 
@@ -97,7 +77,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     String spreadSheetId = data.getStringExtra(InitialSettingActivity.RESULT_KEY_SPREAD_SHEET_ID);
                     String googleDriveAccessToken = data.getStringExtra(InitialSettingActivity.RESULT_KEY_GOOGLE_DRIVE_ACCESS_TOKEN);
-                    onSpreadSheetInitializedForAccount(spreadSheetId, googleDriveAccessToken);
+                    ISVSession currentSession = mAuthenticationManager.getCurrentSession();
+                    onSpreadSheetInitializedForAccount(currentSession, spreadSheetId, googleDriveAccessToken);
                 } else {
                     Log.d("Login.onActivityResult", "Can't retrieve spreadsheet");
                 }
@@ -105,6 +86,24 @@ public class LoginActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void fillSession(ISVSession currentSession, String googleDriveAccessToken) throws ISVSession.SVInvalidatedSessionException {
+        //This login action effectively use the google account for both this app authentication and sheet authentication
+        String googleAccountName = currentSession.getLoggedInAccountName();
+
+        currentSession.putAttribute(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME,
+                SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
+
+        currentSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE,
+                googleAccountName,
+                googleDriveAccessToken);
+    }
+
+    @Override
+    protected void toLoginScreen() {
+        //Do nothing as this is login screen
     }
 
     //Callback method
@@ -123,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Callback method
     public void onBtnDoneClicked(View view) {
-        onLoggedIn();
+        toInitialSettingScreen();
     }
 
     private void confirmGetAccountsPermission() {
@@ -147,67 +146,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void onSpreadSheetInitializedForAccount(final String spreadSheetId,
-                                                    final String googleDriveAccessToken) {
-
-        //Try to persist session before go to main screen
-        final ISVSession currentSession = mAuthenticationManager.getCurrentSession();
-        try {
-            //This login action effectively use the google account for both this app authentication and sheet authentication
-            String googleAccountName =  currentSession.getLoggedInAccountName();
-
-            currentSession.putAttribute(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME,
-                    SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
-
-            currentSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE,
-                    googleAccountName,
-                    googleDriveAccessToken);
-
-            mAuthenticationManager.persistSession();
-        } catch (ISVSession.SVInvalidatedSessionException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        //Try to access sheet before go to main screen
-        ITask<Exception> persistSessionTask = new AbstractTask<Exception>() {
-            @Override
-            public Result<Exception> doExecute() {
-                ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
-                try {
-                    String accountName = currentSession.getCredential().getServiceAccountName(SVCredential.SERVICE_NAME_GOOGLE_DRIVE);
-                    sheetServiceManager.accessSheet(spreadSheetId, accountName, googleDriveAccessToken);
-                    sheetServiceManager.storeSheetId(spreadSheetId, accountName, googleDriveAccessToken);
-                    return generateResult(null, 0);
-                } catch (ISVSession.SVInvalidatedSessionException e) {
-                    e.printStackTrace();
-                    return generateResult(e, -1);
-                } catch (ISVSheetServiceManager.SVSheetServiceNotAvailableException e) {
-                    e.printStackTrace();
-                    return generateResult(e, -1);
-                } catch (ISVSheetServiceManager.SVSheetServiceUnAuthorizedException e) {
-                    e.printStackTrace();
-                    return generateResult(e, -1);
-                }
-            }
-        };
-        ITaskDelegate<Exception> persistSessionTaskDelegate = new AbstractTaskResultListener<Exception>() {
-            @Override
-            public void onTaskExecuted(Result<Exception> taskResult) {
-                if (taskResult.getResultCode() != 0) {
-                    showError(getString(R.string.msg_login_error), taskResult.getElement().getLocalizedMessage());
-                } else {
-                    toMainScreen();
-                }
-            }
-        };
-        mTaskExecutor.executeTask(persistSessionTask, persistSessionTaskDelegate);
-    }
-
-    private void onLoggedIn() {
-        toInitialSettingScreen();
-    }
-
     private void toInitialSettingScreen() {
         ISVSession currentSession = mAuthenticationManager.getCurrentSession();
         try {
@@ -224,24 +162,5 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             showError(getString(R.string.msg_login_error), e.getLocalizedMessage());
         }
-    }
-
-    private void toMainScreen() {
-        Intent mainIntent = new Intent();
-        mainIntent.setClass(getApplicationContext(), MainActivity.class);
-        startActivity(mainIntent);
-    }
-
-    private void showError(String title, String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
     }
 }
