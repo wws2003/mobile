@@ -1,6 +1,7 @@
 package com.tbg.simplestvallet.activity;
 
 import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -104,6 +105,15 @@ public class LoginActivity extends SVAbstractPreMainActivity {
     @Override
     protected void toLoginScreen() {
         //Do nothing as this is login screen
+    }
+
+    @Override
+    protected void toMainScreen() {
+        //Should be StartingActivity
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        finish();
+        startActivity(mainIntent);
     }
 
     //Callback method

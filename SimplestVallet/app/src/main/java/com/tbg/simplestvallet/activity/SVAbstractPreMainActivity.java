@@ -119,6 +119,7 @@ public abstract class SVAbstractPreMainActivity extends AppCompatActivity {
 
     protected void toMainScreen() {
         Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(mainIntent);
     }
 
