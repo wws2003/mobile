@@ -1,15 +1,23 @@
 package com.tbg.simplestvallet.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.activity.delegate.ISVGoogleSpreadSheetAccessCallback;
 import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveAccessDelegate;
 import com.tbg.simplestvallet.activity.delegate.SVGoogleDriveConstants;
+import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
 import com.tbg.simplestvallet.app.manager.authentication.abstr.ISVSession;
 import com.tbg.simplestvallet.app.manager.sheetservice.abstr.ISVSheetServiceManager;
@@ -21,18 +29,21 @@ import com.tbg.taskmanager.common.Result;
 
 public class StartingActivity extends SVAbstractPreMainActivity {
 
+    private ViewWrapper mViewWrapper;
     private SVGoogleDriveAccessDelegate mDriveAccessDelegate = new SVGoogleDriveAccessDelegate();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting);
+        initViews();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        initialRoute();
+
+        checkInternetConnection();
     }
 
     @Override
@@ -83,6 +94,36 @@ public class StartingActivity extends SVAbstractPreMainActivity {
         final String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
 
         oldSession.putCredentialServiceAccessToken(SVCredential.SERVICE_NAME_GOOGLE_DRIVE, sheetServiceAccessAccountName, googleDriveAccessToken);
+    }
+
+    private void initViews() {
+        mViewWrapper = new ViewWrapper((TextView) findViewById(R.id.tv_connectivity_status),
+                (TextView) findViewById(R.id.tv_login_message));
+    }
+
+    private void checkInternetConnection() {
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork != null) {
+            onInternetConnected(activeNetwork);
+        }
+        else {
+            onInternetConnectingFailed();
+        }
+    }
+
+    private void onInternetConnected(NetworkInfo activeNetwork) {
+        //Show network info
+        mViewWrapper.showOK(activeNetwork);
+
+        //Continue to log in
+        initialRoute();
+    }
+
+    private void onInternetConnectingFailed() {
+        //Show error message
+        mViewWrapper.showError();
     }
 
     private void initialRoute() {
@@ -195,6 +236,29 @@ public class StartingActivity extends SVAbstractPreMainActivity {
                 sheetId,
                 this,
                 callback);
+    }
+
+    private static class ViewWrapper {
+        private TextView mTvNetworkInfo;
+        private TextView mTvLoginActionInfo;
+
+        public ViewWrapper(TextView tvNetworkInfo, TextView tvLoginActionInfo) {
+            mTvNetworkInfo = tvNetworkInfo;
+            mTvLoginActionInfo = tvLoginActionInfo;
+        }
+
+        void showError() {
+            mTvNetworkInfo.setText(SimplestValetApp.getContext().getString(R.string.tv_network_error));
+            mTvNetworkInfo.setTextColor(Color.RED);
+            mTvLoginActionInfo.setVisibility(View.GONE);
+        }
+
+        void showOK(NetworkInfo networkInfo) {
+            mTvNetworkInfo.setTextColor(Color.GREEN);
+            Resources resources = SimplestValetApp.getContext().getResources();
+            String networkInfoMessage = String.format(resources.getString(R.string.tv_connected_info), networkInfo.getTypeName());
+            mTvNetworkInfo.setText(networkInfoMessage);
+        }
     }
 
 }

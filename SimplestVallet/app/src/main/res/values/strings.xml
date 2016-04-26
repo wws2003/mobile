@@ -6,7 +6,10 @@
 
     <string name="hello_world">Login by</string>
 
+    <string name="tv_connectivity_status">Checking internet...</string>
+    <string name="tv_connected_info">Connected to the internet via %1$s</string>
     <string name="tv_start_loading">Trying to login</string>
+    <string name="tv_network_error">Sorry, offline mode is not available yet</string>
 
     <string name="action_settings">Settings</string>
 
