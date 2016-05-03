@@ -5,40 +5,50 @@
     android:background="@color/clr_chart_fragment"
     tools:context="com.tbg.simplestvallet.activity.ChartFragment">
 
-    <TextView
-        android:id="@+id/tv_chart_title"
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/rdg_charts"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/fragment_chart_title" />
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        >
 
-    <TextView android:id="@+id/tv_spent_amount_lb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tv_spent_amount_so_far"
-        android:layout_below="@id/tv_chart_title"
-        android:layout_marginTop="12dp"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Line Chart"
+            android:checked="true"
+            android:id="@+id/rdb_linechart"
+            android:layout_alignParentStart="true" />
 
-    <TextView android:id="@+id/tv_spent_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:layout_alignBaseline="@id/tv_spent_amount_lb"
-        android:layout_toRightOf="@id/tv_spent_amount_lb"
-        android:layout_marginLeft="10dp"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pie Chart"
+            android:id="@+id/rdb_piechart"
+            android:layout_alignBaseline="@id/rdb_linechart" />
+    </RadioGroup>
 
-    <TextView android:id="@+id/tv_spent_amount_this_month_lb"
+    <TextView android:id="@+id/tv_spent_amount_last_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tv_spent_amount_this_month"
-        android:layout_below="@id/tv_spent_amount_lb"
+        android:text="@string/tv_month_amount_preload"
+        android:layout_below="@id/rdg_charts"
         android:layout_marginTop="12dp"/>
 
     <TextView android:id="@+id/tv_spent_amount_this_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:layout_alignBaseline="@id/tv_spent_amount_this_month_lb"
-        android:layout_toRightOf="@id/tv_spent_amount_this_month_lb"
-        android:layout_marginLeft="10dp"/>
+        android:text="@string/tv_month_amount_preload"
+        android:layout_below="@id/tv_spent_amount_last_month"
+        android:layout_marginTop="12dp"/>
+
+    <ViewSwitcher
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/vsw_charts"
+        android:layout_below="@id/tv_spent_amount_this_month"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

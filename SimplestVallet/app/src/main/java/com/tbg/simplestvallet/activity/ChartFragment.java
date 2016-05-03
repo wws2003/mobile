@@ -1,38 +1,26 @@
 package com.tbg.simplestvallet.activity;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.tbg.simplestvallet.R;
-import com.tbg.simplestvallet.app.SimplestValetApp;
-import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
-import com.tbg.simplestvallet.model.active.abstr.query.ISVEntryQueryStructureBuilder;
-import com.tbg.simplestvallet.model.active.abstr.query.ISVQueryStructure;
-import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
-import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
-import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
-import com.tbg.taskmanager.abstr.task.AbstractTask;
-import com.tbg.taskmanager.abstr.task.ITask;
-import com.tbg.taskmanager.common.Result;
-import com.tbg.taskmanager.impl.executor.AsyncTaskBasedTaskExecutorImpl;
-
-import java.util.Calendar;
-import java.util.Date;
+import com.tbg.simplestvallet.activity.delegate.SVEntryDataSetFlipDelegate;
 
 
-public class ChartFragment extends Fragment {
+public class ChartFragment extends Fragment implements View.OnTouchListener, RadioGroup.OnCheckedChangeListener {
 
-    private ViewWrapper mViewWrapper = new ViewWrapper();
-    private ITaskExecutor mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
+    private SVEntryDataSetFlipDelegate mChartDelegate = null;
+    private RadioGroup mRdgCharts;
 
-    private static final int LOAD_AMOUNT_OK = 0;
-    private static final int LOAD_AMOUNT_FAILED = 1;
+    private float mLastTouchedX;
+    private static final float FLOAT_DELTA_X_THRESHOLD = 160;
 
     public ChartFragment() {
 
@@ -52,120 +40,67 @@ public class ChartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                mLastTouchedX = motionEvent.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                float currentX = motionEvent.getX();
+
+                // Handling left to right screen swap.
+                float deltaX = currentX - mLastTouchedX;
+                if (deltaX > FLOAT_DELTA_X_THRESHOLD) {
+                    mChartDelegate.flipLeftToRight();
+                }
+
+                // Handling right to left screen swap.
+                if (deltaX < -FLOAT_DELTA_X_THRESHOLD) {
+                    mChartDelegate.flipRightToLeft();
+                }
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.rdb_linechart:
+                mChartDelegate.showLineChart();
+                break;
+            case R.id.rdb_piechart:
+                mChartDelegate.showPieChart();
+                break;
+            default:
+                break;
+        }
     }
 
     private void setupView() {
-        TextView tvSpentAmount = (TextView)getActivity().findViewById(R.id.tv_spent_amount);
+        mRdgCharts = (RadioGroup)getActivity().findViewById(R.id.rdg_charts);
+        mRdgCharts.setOnCheckedChangeListener(this);
+
+        TextView tvSpentAmountPrevMonth = (TextView)getActivity().findViewById(R.id.tv_spent_amount_last_month);
         TextView tvSpentAmountThisMonth = (TextView)getActivity().findViewById(R.id.tv_spent_amount_this_month);
-        mViewWrapper.setup(tvSpentAmount, tvSpentAmountThisMonth);
-    }
+        ViewSwitcher viewSwitcher = (ViewSwitcher)getActivity().findViewById(R.id.vsw_charts);
+        String lineChartDescription = getContext().getResources().getString(R.string.tv_line_chart_description);
+        String pieChartLabel = getContext().getResources().getString(R.string.tv_pie_chart_label);
+        String pieChartDescription = getContext().getResources().getString(R.string.tv_pie_chart_description);
 
-    private void loadData() {
-        final ISVEntrySheet entrySheet = SimplestValetApp.getSheetServiceManagerContainer().getCachedSheetServiceManager().getSVEntrySheet();
+        mChartDelegate = new SVEntryDataSetFlipDelegate(lineChartDescription,
+                pieChartLabel,
+                pieChartDescription,
+                getContext(),
+                tvSpentAmountThisMonth,
+                tvSpentAmountPrevMonth,
+                viewSwitcher,
+                this);
 
-        //Currently just testing with load all amount of this month
-        final ISVQueryStructure queryStructure = getEntryQueryWrapper();
-
-        ITask<SVMoneyQuantity> dataTask = getDataLoadTask(entrySheet, queryStructure);
-
-        ITaskDelegate<SVMoneyQuantity> dataTaskDelegate = getDataLoadTaskDelegate();
-
-        mTaskExecutor.executeTask(dataTask, dataTaskDelegate);
-    }
-
-    private ISVQueryStructure getEntryQueryWrapper() {
-        ISVEntryQueryStructureBuilder queryStructureBuilder = SimplestValetApp.getEntryQueryStructureBuilderContainer().getEntryQueryStructureBuilder();
-        queryStructureBuilder = queryStructureBuilder.newInstance();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstDateOfMonth = calendar.getTime();
-        queryStructureBuilder.setDateRanges(firstDateOfMonth, null);
-
-        return queryStructureBuilder.build();
-    }
-
-    private ITask<SVMoneyQuantity> getDataLoadTask(final ISVEntrySheet entrySheet, final ISVQueryStructure queryStructure) {
-
-        ITask<SVMoneyQuantity> dataTask = new AbstractTask<SVMoneyQuantity>() {
-            @Override
-            public Result<SVMoneyQuantity> doExecute() {
-                SVMoneyQuantity amount = entrySheet.queryEntriesAmount(queryStructure);
-                return generateResult(amount, LOAD_AMOUNT_OK);
-            }
-        };
-
-        return dataTask;
-    }
-
-    private ITaskDelegate<SVMoneyQuantity> getDataLoadTaskDelegate() {
-        ITaskDelegate<SVMoneyQuantity> dataTaskDelegate = new ITaskDelegate<SVMoneyQuantity>() {
-
-            @Override
-            public void onTaskToBeExecuted() {
-                mViewWrapper.freeze();
-            }
-
-            @Override
-            public void onTaskCancelled() {
-                //Do nothing
-            }
-
-            @Override
-            public void onTaskExecuted(Result<SVMoneyQuantity> taskResult) {
-                mViewWrapper.unFreezing();
-                if(taskResult.getResultCode() == LOAD_AMOUNT_OK) {
-                    SVMoneyQuantity amountThisMonth = taskResult.getElement();
-                    if(amountThisMonth != null) {
-                        //Just to test
-                        mViewWrapper.render(amountThisMonth, amountThisMonth);
-                        return;
-                    }
-                }
-                mViewWrapper.renderError();
-            }
-        };
-        return dataTaskDelegate;
-    }
-
-    private class ViewWrapper {
-        private TextView mTvSpentAmount;
-        private TextView mTvSpentAmountThisMonth;
-        private ProgressDialog mProgressDialog = null;
-        private Context mContext = null;
-
-        public void setup(TextView tvSpentAmount, TextView tvSpentAmountThisMonth) {
-            this.mTvSpentAmount = tvSpentAmount;
-            this.mTvSpentAmountThisMonth = tvSpentAmountThisMonth;
-            this.mContext = tvSpentAmount.getContext();
-            initProgressDialog();
-        }
-
-        public void render(SVMoneyQuantity spentAmount, SVMoneyQuantity spentAmountThisMonth) {
-            mTvSpentAmount.setText(spentAmount.toString());
-            mTvSpentAmountThisMonth.setText(spentAmountThisMonth.toString());
-        }
-
-        public void renderError() {
-            //TODO Implement
-        }
-
-        public void freeze() {
-            //Show progress bar
-            mProgressDialog.show();
-        }
-
-        public void unFreezing() {
-            //Hide progress bar
-            mProgressDialog.dismiss();
-        }
-
-        private void initProgressDialog() {
-            mProgressDialog = new ProgressDialog(mContext);
-            mProgressDialog.setMessage(mContext.getString(R.string.dlg_load_amount_message));
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setIndeterminate(true);
-        }
+        mChartDelegate.firstLoad();
     }
 }

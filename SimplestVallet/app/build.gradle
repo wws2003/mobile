@@ -39,4 +39,5 @@ dependencies {
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
     compile project(':task')
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }

@@ -144,6 +144,7 @@ public class SVGoogleSpreadSheet<T> {
     public void queryItems(String structuredQuery,
                            ISVGoogleSpreadSheetRowFilter<T> filter,
                            List<T> items) throws ServiceException, IOException {
+
         items.clear();
         SpreadsheetEntry spreadsheetEntry = mService.getEntry(new URL(mSpreadSheetURL), SpreadsheetEntry.class);
         List<WorksheetEntry> worksheets = spreadsheetEntry.getWorksheets();
@@ -154,6 +155,9 @@ public class SVGoogleSpreadSheet<T> {
             ListQuery query = new ListQuery(worksheetListFeedURL);
             query.setSpreadsheetQuery(structuredQuery);
 
+            Log.d("---Query feed url", query.getFeedUrl().toString());
+            Log.d("---------Query sq", query.getSpreadsheetQuery().toString());
+
             ListFeed listFeed = mService.query(query, ListFeed.class);
 
             for (ListEntry row : listFeed.getEntries()) {
@@ -162,6 +166,8 @@ public class SVGoogleSpreadSheet<T> {
                     items.add(item);
                 }
             }
+
+            Log.d("----Results number", String.valueOf(items.size()));
         }
     }
 

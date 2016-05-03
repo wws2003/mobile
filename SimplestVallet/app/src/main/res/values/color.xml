@@ -2,8 +2,18 @@
 <resources>
     <item name="clr_login_screen" type="color">#F0F8FF</item>
     <item name="clr_initial_setting_screen" type="color">#CEF6F5</item>
-    <item name="clr_input_fragment" type="color">#CEE3F6</item>
-    <item name="clr_chart_fragment" type="color">#CEE3F6</item>
-    <item name="clr_pending_fragment" type="color">#CEE3F6</item>
+    <item name="clr_input_fragment" type="color">#77CEE3F6</item>
+    <item name="clr_chart_fragment" type="color">#77CEE3F6</item>
+    <item name="clr_pending_fragment" type="color">#77CEE3F6</item>
     <item name="clr_fragment_bar" type="color">#CEF6CE</item>
+
+    <color name="clr_primary">#3F51B5</color>
+    <color name="clr_primary_dark">#303F9F</color>
+    <color name="clr_accent">#FF4081</color>
+
+    <color name="clr_pie1">#AA40FF</color>
+    <color name="clr_pie2">#00F081</color>
+    <color name="clr_pie3">#FF10E1</color>
+    <color name="clr_pie4">#303F9F</color>
+    <color name="clr_pie5">#CEF6F5</color>
 </resources>

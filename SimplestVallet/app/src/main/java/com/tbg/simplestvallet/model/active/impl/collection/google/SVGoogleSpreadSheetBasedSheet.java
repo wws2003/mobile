@@ -25,13 +25,11 @@ import java.util.List;
 public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
 
     private SVGoogleSpreadSheet<SVEntry> mGoogleSpreadSheet;
-    private SVGoogleSpreadSheetMapping mGoogleSpreadSheetQueryCreator;
 
     private ISVEntryQueryStringBuilder mEntryQueryStringBuilder;
 
     public SVGoogleSpreadSheetBasedSheet(String spreadSheetId, String accessToken) {
         mGoogleSpreadSheet = new SVGoogleSpreadSheet<>(spreadSheetId, accessToken, new SVGoogleSpreadSheetMapping.GoogleSpreadSheetRowEntryAdapter());
-        mGoogleSpreadSheetQueryCreator = new SVGoogleSpreadSheetMapping();
         mEntryQueryStringBuilder = new SVGoogleEntryStringQueryBuilderImpl();
     }
 

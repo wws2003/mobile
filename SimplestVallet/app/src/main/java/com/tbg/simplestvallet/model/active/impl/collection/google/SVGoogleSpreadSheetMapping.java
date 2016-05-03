@@ -20,10 +20,19 @@ public class SVGoogleSpreadSheetMapping {
 
     //MARK: Inner classes
     public static class GoogleSpreadSheetRowEntryAdapter implements ISVGoogleSpreadSheetRowAdapter<SVEntry> {
+
         @Override
         public SVEntry getItemFromRow(ListEntry row) {
+            float amount = 0.0f;
+            try {
+                amount = Float.valueOf(row.getCustomElements().getValue(AMOUNT_HEADER));
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
+
             return new SVEntry(DateUtil.getDateFromString(row.getCustomElements().getValue(DATE_HEADER), "dd/MM/yyyy"),
-                    new SVMoneyQuantity(Double.valueOf(row.getCustomElements().getValue(AMOUNT_HEADER))),
+                    new SVMoneyQuantity(amount),
                     row.getCustomElements().getValue(TYPE_HEADER),
                     row.getCustomElements().getValue(NOTE_HEADER));
         }

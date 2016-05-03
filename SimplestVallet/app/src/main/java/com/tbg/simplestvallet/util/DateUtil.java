@@ -10,6 +10,7 @@ import java.util.Locale;
  * Created by wws2003 on 10/29/15.
  */
 public class DateUtil {
+
     public static String getYMDString(Date date) {
         if(date == null) {
             return "N/I";
@@ -23,6 +24,16 @@ public class DateUtil {
                 .append("/")
                 .append(String.format(Locale.US, "%02d", calendar.get(Calendar.DATE)));
         return ymdStringBuilder.toString();
+    }
+
+    public static Date getPreviousMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.MONTH, -1);
+
+        return calendar.getTime();
     }
 
     public static Date getDateFromString(String date, String format) {

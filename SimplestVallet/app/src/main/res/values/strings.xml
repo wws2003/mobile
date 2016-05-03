@@ -11,6 +11,12 @@
     <string name="tv_start_loading">Trying to login</string>
     <string name="tv_network_error">Sorry, offline mode is not available yet</string>
 
+    <string name="tv_month_amount_preload">Loading...</string>
+    <string name="tv_month_amount">Amount spent in %1$d/%2$s: %3$5.1f</string>
+    <string name="tv_line_chart_description">Spending by dates</string>
+    <string name="tv_pie_chart_label">Pie chart</string>
+    <string name="tv_pie_chart_description">Categories</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="main_action_settings">Settings</string>
@@ -35,7 +41,6 @@
     <string name="tab_chart_title">Spending chart</string>
     <string name="tab_pending_title">Pending entries</string>
 
-
     <string name="tv_load_saved_entry">Or load from saved entries</string>
 
     <string name="et_hint_type">Type</string>
@@ -45,9 +50,6 @@
     <string name="btn_add_entry">Done</string>
     <string name="dlg_add_entry_message">Adding entry</string>
     <string name="dlg_load_amount_message">Loading amounts</string>
-
-    <string name="tv_spent_amount_so_far">Spent amount so far</string>
-    <string name="tv_spent_amount_this_month">Spent amount this month</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

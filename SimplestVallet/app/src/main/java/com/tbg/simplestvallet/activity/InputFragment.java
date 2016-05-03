@@ -120,7 +120,7 @@ public class InputFragment extends Fragment implements View.OnClickListener {
     }
 
     private SVEntry getInputEntry() {
-        SVMoneyQuantity quantity = new SVMoneyQuantity(Double.valueOf(mEtAmount.getText().toString()));
+        SVMoneyQuantity quantity = new SVMoneyQuantity(Float.valueOf(mEtAmount.getText().toString()));
         return new SVEntry(Calendar.getInstance().getTime(),
                 quantity,
                 mEtType.getText().toString(),

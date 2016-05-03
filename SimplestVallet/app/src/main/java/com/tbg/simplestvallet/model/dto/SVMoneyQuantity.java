@@ -7,16 +7,21 @@ import java.util.Locale;
  * Created by wws2003 on 10/24/15.
  */
 public class SVMoneyQuantity {
-    private double mAmount;
+    private float mAmount;
     private Currency mCurrency = Currency.getInstance(Locale.getDefault());
 
-    public SVMoneyQuantity(double amount) {
+    public SVMoneyQuantity(float amount) {
         mAmount = amount;
     }
 
-    public SVMoneyQuantity(double amount, Currency currency) {
+    public SVMoneyQuantity(float amount, Currency currency) {
         mAmount = amount;
         mCurrency = currency;
+    }
+
+    public SVMoneyQuantity(SVMoneyQuantity rhs) {
+        mAmount = rhs.getAmount();
+        mCurrency = rhs.getCurrency();
     }
 
     public SVMoneyQuantity add(SVMoneyQuantity quantity) {
@@ -29,11 +34,11 @@ public class SVMoneyQuantity {
         return new SVMoneyQuantity(mAmount + quantity.mAmount, mCurrency);
     }
 
-    public SVMoneyQuantity add(double amount) {
+    public SVMoneyQuantity add(float amount) {
         return new SVMoneyQuantity(mAmount + amount, mCurrency);
     }
 
-    public SVMoneyQuantity multiply(double times) {
+    public SVMoneyQuantity multiply(float times) {
         return new SVMoneyQuantity(mAmount * times, mCurrency);
     }
 
@@ -41,7 +46,7 @@ public class SVMoneyQuantity {
         return mCurrency;
     }
 
-    public double getAmount() {
+    public float getAmount() {
         return mAmount;
     }
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
@@ -98,7 +99,8 @@ public class StartingActivity extends SVAbstractPreMainActivity {
 
     private void initViews() {
         mViewWrapper = new ViewWrapper((TextView) findViewById(R.id.tv_connectivity_status),
-                (TextView) findViewById(R.id.tv_login_message));
+                (TextView) findViewById(R.id.tv_login_message),
+                (ProgressBar)findViewById(R.id.prb_loading));
     }
 
     private void checkInternetConnection() {
@@ -241,16 +243,19 @@ public class StartingActivity extends SVAbstractPreMainActivity {
     private static class ViewWrapper {
         private TextView mTvNetworkInfo;
         private TextView mTvLoginActionInfo;
+        private ProgressBar mPrbLoggingIn;
 
-        public ViewWrapper(TextView tvNetworkInfo, TextView tvLoginActionInfo) {
+        public ViewWrapper(TextView tvNetworkInfo, TextView tvLoginActionInfo, ProgressBar prbLoggingIn) {
             mTvNetworkInfo = tvNetworkInfo;
             mTvLoginActionInfo = tvLoginActionInfo;
+            mPrbLoggingIn = prbLoggingIn;
         }
 
         void showError() {
             mTvNetworkInfo.setText(SimplestValetApp.getContext().getString(R.string.tv_network_error));
             mTvNetworkInfo.setTextColor(Color.RED);
             mTvLoginActionInfo.setVisibility(View.GONE);
+            mPrbLoggingIn.setVisibility(View.GONE);
         }
 
         void showOK(NetworkInfo networkInfo) {
