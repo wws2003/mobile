@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         tabSpec2.setIndicator(getBaseContext().getString(R.string.tab_chart_title));
 
         TabHost.TabSpec tabSpec3 = tabHost.newTabSpec("tab3");
-        tabSpec3.setIndicator(getBaseContext().getString(R.string.tab_pending_title));
+        tabSpec3.setIndicator(getBaseContext().getString(R.string.tab_search_title));
 
         tabHost.addTab(tabSpec1, InputFragment.class, null);
         tabHost.addTab(tabSpec2, ChartFragment.class, null);
-        tabHost.addTab(tabSpec3, PendingListFragment.class, null);
+        tabHost.addTab(tabSpec3, SearchFragment.class, null);
     }
 
     private boolean onActionSettingClicked() {

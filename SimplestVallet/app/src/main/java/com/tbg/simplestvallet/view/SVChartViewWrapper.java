@@ -220,7 +220,7 @@ public class SVChartViewWrapper {
 
         lineChart.getAxisRight().setDrawLabels(false);
 
-        lineChart.getAxisLeft().setLabelCount(20, false);
+        lineChart.getAxisLeft().setLabelCount(16, false);
         lineChart.getAxisLeft().setAxisMinValue(0.0f);
 
         lineChart.setBackgroundColor(Color.WHITE);

@@ -7,6 +7,7 @@
     <string name="hello_world">Login by</string>
 
     <string name="tv_connectivity_status">Checking internet...</string>
+    <string name="tv_session_expired_warning">Session expired. Trying to create a new one</string>
     <string name="tv_connected_info">Connected to the internet via %1$s</string>
     <string name="tv_start_loading">Trying to login</string>
     <string name="tv_network_error">Sorry, offline mode is not available yet</string>
@@ -16,6 +17,11 @@
     <string name="tv_line_chart_description">Spending by dates</string>
     <string name="tv_pie_chart_label">Pie chart</string>
     <string name="tv_pie_chart_description">Categories</string>
+
+    <string name="tv_search_summary">Found %1$d entries matched for \"%2$s\", total amount %3$.1f </string>
+    <string name="tv_search_summary_error">Search error due to code %1$d </string>
+
+    <string name="srv_hint">Some text in entry...</string>
 
     <string name="action_settings">Settings</string>
 
@@ -39,7 +45,7 @@
 
     <string name="tab_input_title">New entry</string>
     <string name="tab_chart_title">Spending chart</string>
-    <string name="tab_pending_title">Pending entries</string>
+    <string name="tab_search_title">Search</string>
 
     <string name="tv_load_saved_entry">Or load from saved entries</string>
 

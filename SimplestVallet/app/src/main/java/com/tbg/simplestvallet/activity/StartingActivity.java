@@ -153,9 +153,6 @@ public class StartingActivity extends SVAbstractPreMainActivity {
         //Note: oldSheetServiceAccessToken is still the old one !
         final String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, oldSheetServiceAccessToken);
 
-        //Just a test
-        //tryToReLogin(oldSession, sheetServiceAccessAccountName, sheetId);
-
         ITask<Exception> loadSheetTask = new AbstractTask<Exception>() {
             @Override
             public Result<Exception> doExecute() {
@@ -171,6 +168,13 @@ public class StartingActivity extends SVAbstractPreMainActivity {
 
         ITaskDelegate<Exception> loadSheetTaskDelegate = new AbstractTaskResultListener<Exception>() {
             @Override
+            public void onTaskToBeExecuted() {
+                super.onTaskToBeExecuted();
+                //Hide message
+                findViewById(R.id.tv_session_expired_warning).setVisibility(View.INVISIBLE);
+            }
+
+            @Override
             public void onTaskExecuted(Result<Exception> taskResult) {
                 Exception exception = taskResult.getElement();
                 if(exception != null) {
@@ -178,6 +182,8 @@ public class StartingActivity extends SVAbstractPreMainActivity {
                     //Try to re login if possible
                     try {
                         if (oldSession.isAutoReLoginPermitted()) {
+                            //Show message
+                            findViewById(R.id.tv_session_expired_warning).setVisibility(View.VISIBLE);
                             tryToReLogin(oldSession, sheetServiceAccessAccountName, sheetId);
                         }
                         else {

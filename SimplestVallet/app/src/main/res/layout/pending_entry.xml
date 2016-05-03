@@ -9,9 +9,10 @@
         android:id="@+id/tv_item_pending_entry_date"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="1.5"
         android:text="fff"
-        android:gravity="center"/>
+        android:paddingLeft="8dp"
+        android:gravity="left"/>
 
     <TextView
         android:id="@+id/tv_item_pending_entry_type"
@@ -28,5 +29,14 @@
         android:text="eee"
         android:layout_weight="1"
         android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/tv_item_pending_entry_note"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:text="ttttttt"
+        android:layout_weight="2.4"
+        android:gravity="left"
+        android:paddingLeft="2dp"/>
 
 </LinearLayout>

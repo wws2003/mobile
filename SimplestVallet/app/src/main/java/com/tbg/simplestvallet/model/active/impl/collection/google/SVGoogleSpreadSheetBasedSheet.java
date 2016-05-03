@@ -106,7 +106,18 @@ public class SVGoogleSpreadSheetBasedSheet implements ISVEntrySheet {
 
         String structuredQuery = mEntryQueryStringBuilder.build();
         try {
-            mGoogleSpreadSheet.queryItems(structuredQuery, null, entries);
+            mGoogleSpreadSheet.queryItems(structuredQuery, false, null, entries);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void queryFullTextEntries(String query, List<SVEntry> entries) {
+        try {
+            mGoogleSpreadSheet.queryItems(query, true, null, entries);
         } catch (ServiceException e) {
             e.printStackTrace();
         } catch (IOException e) {

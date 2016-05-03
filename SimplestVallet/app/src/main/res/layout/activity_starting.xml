@@ -17,6 +17,19 @@
         />
 
     <TextView
+        android:id="@+id/tv_session_expired_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/tv_session_expired_warning"
+        android:layout_below="@id/tv_connectivity_status"
+        android:textSize="15dp"
+        android:textColor="@color/clr_session_expired_warning"
+        android:visibility="invisible"
+        android:layout_marginTop="25dp"
+        />
+
+    <TextView
         android:id="@+id/tv_login_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

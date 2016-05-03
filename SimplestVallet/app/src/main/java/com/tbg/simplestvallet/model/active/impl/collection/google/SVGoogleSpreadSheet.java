@@ -141,7 +141,8 @@ public class SVGoogleSpreadSheet<T> {
         }
     }
 
-    public void queryItems(String structuredQuery,
+    public void queryItems(String queryText,
+                           boolean isFullTextQuery,
                            ISVGoogleSpreadSheetRowFilter<T> filter,
                            List<T> items) throws ServiceException, IOException {
 
@@ -153,10 +154,14 @@ public class SVGoogleSpreadSheet<T> {
             URL worksheetListFeedURL = worksheet.getListFeedUrl();
 
             ListQuery query = new ListQuery(worksheetListFeedURL);
-            query.setSpreadsheetQuery(structuredQuery);
+            if(isFullTextQuery) {
+                query.setFullTextQuery(queryText);
+            }
+            else  {
+                query.setSpreadsheetQuery(queryText);
+            }
 
             Log.d("---Query feed url", query.getFeedUrl().toString());
-            Log.d("---------Query sq", query.getSpreadsheetQuery().toString());
 
             ListFeed listFeed = mService.query(query, ListFeed.class);
 

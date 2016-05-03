@@ -21,6 +21,9 @@ public interface ISVEntrySheet {
     SVMoneyQuantity getAllEntriesAmount();
 
     void queryEntries(ISVQueryStructure queryStructure, List<SVEntry> entries);
+
+    void queryFullTextEntries(String query, List<SVEntry> entries);
+
     SVMoneyQuantity queryEntriesAmount(ISVQueryStructure queryStructure);
 
     //MARK: For some exceptions

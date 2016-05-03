@@ -40,12 +40,14 @@ public class SVSampleSheet implements ISVEntrySheet {
 
     @Override
     public void queryEntries(ISVQueryStructure queryStructure, List<SVEntry> entries) {
-        //TODO Implement
+    }
+
+    @Override
+    public void queryFullTextEntries(String query, List<SVEntry> entries) {
     }
 
     @Override
     public SVMoneyQuantity queryEntriesAmount(ISVQueryStructure queryStructure) {
-        //TODO Implement
         return new SVMoneyQuantity(0);
     }
 
