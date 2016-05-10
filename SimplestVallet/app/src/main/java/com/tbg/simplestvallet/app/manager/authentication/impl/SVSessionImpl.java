@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class SVSessionImpl implements ISVSession {
 
+    private static final long SV_SESSION_LIFE_CYCLE_IN_MS = 35 * 60 * 1000; //35 minutes for one session
     private static final String SV_SESSION_PERSISTABLE_IDENTIFIER = "0_sv_session_id";
 
     private long mCreatedTime;
@@ -87,6 +88,12 @@ public class SVSessionImpl implements ISVSession {
     public SVCredential getCredential() throws SVInvalidatedSessionException {
         tryToAccess();
         return mCredentialBuilder.build();
+    }
+
+    @Override
+    public boolean isExpired() {
+        long currentTime = DateUtil.getCurrentTime();
+        return currentTime - getLastAccessedTime() > SV_SESSION_LIFE_CYCLE_IN_MS;
     }
 
     //Like getting memento from originator

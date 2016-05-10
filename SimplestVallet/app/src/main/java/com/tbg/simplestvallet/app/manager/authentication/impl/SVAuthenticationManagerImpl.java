@@ -10,7 +10,7 @@ import com.tbg.simplestvallet.persist.abstr.ISVPersistor;
  */
 public class SVAuthenticationManagerImpl implements ISVAuthenticationManager {
 
-    private ISVSession mCurrentSession;
+    private ISVSession mCurrentSession = null;
     private ISVPersistor mSessionPersistor;
 
     public SVAuthenticationManagerImpl(ISVPersistor sessionPersistor) {

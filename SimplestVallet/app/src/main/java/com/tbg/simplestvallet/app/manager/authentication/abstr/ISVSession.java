@@ -4,6 +4,7 @@ import com.tbg.simplestvallet.app.manager.authentication.SVCredential;
 import com.tbg.simplestvallet.persist.abstr.ISVPersistable;
 
 import java.util.List;
+import java.util.concurrent.Exchanger;
 
 /**
  * Created by wws2003 on 4/10/16.
@@ -20,6 +21,8 @@ public interface ISVSession extends ISVPersistable {
 
     long getCreatedTime();
     long getLastAccessedTime();
+
+    boolean isExpired();
 
     //Make the session invalidate and unbound any attributes (when logout...)
     void invalidate();
@@ -48,11 +51,15 @@ public interface ISVSession extends ISVPersistable {
     class SVSessionNotFound extends Exception {
         private static final String MESSAGE = "Session not found";
 
-        public SVSessionNotFound() {
-            super(MESSAGE);
-        }
-
         public SVSessionNotFound(Throwable throwable) {
+            super(MESSAGE, throwable);
+        }
+    }
+
+    class SVSessionExpiredException extends Exception {
+        private static final String MESSAGE = "Session expired";
+
+        public SVSessionExpiredException(Throwable throwable) {
             super(MESSAGE, throwable);
         }
     }

@@ -130,16 +130,38 @@ public class StartingActivity extends SVAbstractPreMainActivity {
 
     private void initialRoute() {
         try {
-            //Try to login to saved account session
-            ISVSession oldSession = mAuthenticationManager.getOldSession();
+            //Try to login to saved account session / current session (if app hasn't been terminated yet)
+            ISVSession currentSession = mAuthenticationManager.getCurrentSession();
+            ISVSession oldSession = currentSession == null ? mAuthenticationManager.getOldSession() : currentSession;
+            boolean isSessionExpired = oldSession.isExpired();
             SVCredential credential = oldSession.getCredential();
             String sheetServiceName = oldSession.getAttributeValue(ISVSession.ATTRIBUTE_KEY_SHEET_SERVICE_NAME);
-            continueOldSession(oldSession, credential, sheetServiceName);
+
+            if (isSessionExpired) {
+                reLoginExpiredSession(oldSession, credential, sheetServiceName);
+            }
+            else {
+                continueOldSession(oldSession, credential, sheetServiceName);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
             toLoginScreen();
         }
+    }
+
+    private void reLoginExpiredSession(final ISVSession oldSession,
+                                       final SVCredential credential,
+                                       final String sheetServiceName) throws ISVSession.SVInvalidatedSessionException, ISVSheetServiceManager.SVSheetNotFoundException {
+
+        final String sheetServiceAccessAccountName = credential.getServiceAccountName(sheetServiceName);
+        final String oldSheetServiceAccessToken = credential.getServiceAccessToken(sheetServiceName);
+        final ISVSheetServiceManager sheetServiceManager = mSheetServiceManagerContainer.reloadSheetForService(sheetServiceName);
+
+        //Note: oldSheetServiceAccessToken is still the old one !
+        final String sheetId = sheetServiceManager.loadSheetId(sheetServiceAccessAccountName, oldSheetServiceAccessToken);
+
+        tryToReLogin(oldSession, sheetServiceAccessAccountName, sheetId);
     }
 
     private void continueOldSession(final ISVSession oldSession,
