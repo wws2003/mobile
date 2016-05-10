@@ -249,6 +249,7 @@ public class SVEntryDataSetFlipDelegate {
                 dialog.setMessage(mContext.getString(R.string.dlg_load_amount_message));
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
                 return dialog;
             }
         };

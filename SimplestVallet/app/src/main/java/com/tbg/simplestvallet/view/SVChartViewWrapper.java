@@ -187,7 +187,7 @@ public class SVChartViewWrapper {
             for (int day = 1; day <= 31; day++) {
                 SVMoneyQuantity amount = entriesLists[i].get(day);
                 if(amount != null) {
-                    Entry c1e1 = new Entry(amount.getAmount(), day);
+                    Entry c1e1 = new Entry(amount.getAmount(), day - 1);
                     chartEntries[i].add(c1e1);
                 }
             }
