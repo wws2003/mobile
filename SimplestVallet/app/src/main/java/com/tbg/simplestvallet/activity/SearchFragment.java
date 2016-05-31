@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -16,7 +16,6 @@ import com.tbg.simplestvallet.activity.delegate.SVEntrySearchDelegate;
 public class SearchFragment extends Fragment {
 
     private SVEntrySearchDelegate mSearchDelegate = null;
-    private SearchView mSearchView = null;
 
     public SearchFragment() {
     }
@@ -27,15 +26,23 @@ public class SearchFragment extends Fragment {
         setupView();
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_pendinglist, container, false);
+    }
+
+    //MARK: Private methods
     private void setupView() {
-        ListView lvPendingEntries = (ListView)getActivity().findViewById(R.id.lv_pending_entries);
+        ExpandableListView expLvSearchEntries = (ExpandableListView)getActivity().findViewById(R.id.explv_search_entries);
         TextView tvSearchSummary = (TextView)getActivity().findViewById(R.id.tv_search_summary);
-        mSearchDelegate = new SVEntrySearchDelegate(getContext(), lvPendingEntries, tvSearchSummary);
+        mSearchDelegate = new SVEntrySearchDelegate(getContext(), expLvSearchEntries, tvSearchSummary);
 
-        mSearchView = (SearchView)getActivity().findViewById(R.id.srv_query);
-        mSearchView.setSubmitButtonEnabled(true);
+        SearchView searchView = (SearchView)getActivity().findViewById(R.id.srv_query);
+        searchView.setSubmitButtonEnabled(true);
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mSearchDelegate.search(query);
@@ -48,12 +55,4 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pendinglist, container, false);
-    }
-
 }

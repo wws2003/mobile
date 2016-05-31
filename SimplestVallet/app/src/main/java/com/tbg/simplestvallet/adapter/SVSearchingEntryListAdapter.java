@@ -19,11 +19,11 @@ import javax.annotation.Nonnull;
 /**
  * Created by wws2003 on 10/29/15.
  */
-public class SearchingEntryListAdapter extends ArrayAdapter<SVEntry> {
+public class SVSearchingEntryListAdapter extends ArrayAdapter<SVEntry> {
 
     private LayoutInflater mLayoutInflater;
 
-    public SearchingEntryListAdapter(Context context, List<SVEntry> objects) {
+    public SVSearchingEntryListAdapter(Context context, List<SVEntry> objects) {
         super(context, 0, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }

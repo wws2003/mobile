@@ -6,13 +6,13 @@
 
     <string name="hello_world">Login by</string>
 
-    <string name="tv_connectivity_status">Checking internet...</string>
+    <string name="tv_connectivity_status">Checking internet&#8230;</string>
     <string name="tv_session_expired_warning">Google access token expired. Trying to create a new one</string>
     <string name="tv_connected_info">Connected to the internet via %1$s</string>
     <string name="tv_start_loading">Trying to login</string>
     <string name="tv_network_error">Sorry, offline mode is not available yet</string>
 
-    <string name="tv_month_amount_preload">Loading...</string>
+    <string name="tv_month_amount_preload">Loading&#8230;</string>
     <string name="tv_month_amount">Amount spent in %1$d/%2$s: %3$5.1f</string>
     <string name="tv_line_chart_description">Spending by dates</string>
     <string name="tv_pie_chart_label">Pie chart</string>
@@ -20,8 +20,10 @@
 
     <string name="tv_search_summary">Found %1$d entries matched for \"%2$s\", total amount %3$.1f </string>
     <string name="tv_search_summary_error">Search error due to code %1$d </string>
+    <string name="tv_search_entries_header">%1$d entries in %2$d/%3$02d. Total amount %4$.1f</string>
+    <string name="tv_search_entries_content">%1$s  &#160;  &#160;  &#160; %2$s  &#160;  &#160; %3$.1f  %4$s</string>
 
-    <string name="srv_hint">Some text in entry...</string>
+    <string name="srv_hint">Some text in entry&#8230;</string>
 
     <string name="action_settings">Settings</string>
 

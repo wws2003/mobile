@@ -19,4 +19,6 @@
     <color name="clr_pie3">#FF10E1</color>
     <color name="clr_pie4">#303F9F</color>
     <color name="clr_pie5">#CEF6F5</color>
+
+    <color name="clr_rll_search_entries_list_header" >#80CEF6EC</color>
 </resources>

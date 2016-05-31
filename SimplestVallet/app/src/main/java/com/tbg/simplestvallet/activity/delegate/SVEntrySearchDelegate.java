@@ -2,14 +2,14 @@ package com.tbg.simplestvallet.activity.delegate;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
 import com.tbg.simplestvallet.app.SimplestValetApp;
 import com.tbg.simplestvallet.model.active.abstr.collection.ISVEntrySheet;
 import com.tbg.simplestvallet.model.dto.SVEntry;
-import com.tbg.simplestvallet.view.SVSearchViewWrapper;
+import com.tbg.simplestvallet.view.SVExpSearchViewWrapper;
 import com.tbg.taskmanager.abstr.delegate.ITaskDelegate;
 import com.tbg.taskmanager.abstr.executor.ITaskExecutor;
 import com.tbg.taskmanager.abstr.task.AbstractTask;
@@ -28,11 +28,11 @@ public class SVEntrySearchDelegate {
     private ITaskExecutor mTaskExecutor = new AsyncTaskBasedTaskExecutorImpl();
 
     private Context mContext;
-    private SVSearchViewWrapper mSearchViewWrapper;
+    private SVExpSearchViewWrapper mSearchViewWrapper;
 
-    public SVEntrySearchDelegate(Context context, ListView lvSearchResults, TextView tvSearchSummary) {
+    public SVEntrySearchDelegate(Context context, ExpandableListView lvSearchResults, TextView tvSearchSummary) {
         mContext = context;
-        mSearchViewWrapper = new SVSearchViewWrapper(context, lvSearchResults, tvSearchSummary);
+        mSearchViewWrapper = new SVExpSearchViewWrapper(context, lvSearchResults, tvSearchSummary);
     }
 
     public void search(String query) {
@@ -78,7 +78,7 @@ public class SVEntrySearchDelegate {
             public void onTaskExecuted(Result<List<SVEntry>> taskResult) {
                 mProgressDialog.dismiss();
                 if (taskResult.getResultCode() == 0) {
-                    mSearchViewWrapper.renderPendingEntryList(query, taskResult.getElement());
+                    mSearchViewWrapper.renderEntriesList(query, taskResult.getElement());
                 }
                 else {
                     mSearchViewWrapper.renderError(taskResult.getResultCode());

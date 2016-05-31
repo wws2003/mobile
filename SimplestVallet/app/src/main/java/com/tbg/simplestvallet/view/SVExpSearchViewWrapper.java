@@ -2,36 +2,34 @@ package com.tbg.simplestvallet.view;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.tbg.simplestvallet.R;
-import com.tbg.simplestvallet.adapter.SVSearchingEntryListAdapter;
+import com.tbg.simplestvallet.adapter.SVSearchExpandableEntriesListAdapter;
 import com.tbg.simplestvallet.model.dto.SVEntry;
 import com.tbg.simplestvallet.model.dto.SVMoneyQuantity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wws2003 on 5/4/16.
+ * Created by wws2003 on 6/1/16.
  */
-public class SVSearchViewWrapper {
+public class SVExpSearchViewWrapper {
 
     private Context mContext;
-    private ListView mLvPendingEntries;
+    private SVSearchExpandableEntriesListAdapter mAdapter;
+
     private TextView mTvSearchSummary;
 
-    private List<SVEntry> mPendingEntries = new ArrayList<>();
-    private ArrayAdapter<SVEntry> mPendingEntriesAdapter;
-
-    public SVSearchViewWrapper(Context context, ListView lvPendingEntries, TextView tvSearchSummary) {
+    public SVExpSearchViewWrapper(Context context,
+                                  ExpandableListView expLvEntries,
+                                  TextView tvSearchSummary) {
         mContext = context;
-        mLvPendingEntries = lvPendingEntries;
+        mAdapter = new SVSearchExpandableEntriesListAdapter(mContext);
+        expLvEntries.setAdapter(mAdapter);
+
         mTvSearchSummary = tvSearchSummary;
-        mPendingEntriesAdapter = new SVSearchingEntryListAdapter(lvPendingEntries.getContext(), mPendingEntries);
-        mLvPendingEntries.setAdapter(mPendingEntriesAdapter);
     }
 
     public void hideSearchSummary() {
@@ -43,12 +41,11 @@ public class SVSearchViewWrapper {
                 matchedEntries.size(),
                 query,
                 getSumAmount(matchedEntries));
+
         mTvSearchSummary.setText(searchSummary);
         mTvSearchSummary.setVisibility(View.VISIBLE);
 
-        mPendingEntries.clear();
-        mPendingEntries.addAll(matchedEntries);
-        mPendingEntriesAdapter.notifyDataSetChanged();
+        mAdapter.retrieveMatchedData(matchedEntries);
     }
 
     public void renderError(int errorCode) {
