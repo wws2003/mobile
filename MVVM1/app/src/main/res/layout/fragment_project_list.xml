@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable name="isLoading" type="boolean"/>
+        <variable name="projectCount" type="int"/>
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/loading_projects"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/loading_projects"
+                android:textAlignment="center"
+                android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/cardview_light_background"
+                android:orientation="vertical"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}">
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                <!-- Title -->
+                <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/project_header1"
+                        android:text="@{String.format(@string/github_projects, projectCount)}"
+                        android:textStyle="bold"
+                        android:layout_marginTop="@dimen/header_vertical_margin"
+                        android:layout_marginBottom="@dimen/header_vertical_margin"
+                        android:textAlignment="center"/>
+
+                <!-- Observe button -->
+                <Button android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/observer_projects"
+                        android:layout_marginTop="@dimen/header_vertical_margin"
+                        android:layout_marginBottom="@dimen/header_vertical_margin"
+                        android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/project_list"
+                    android:contentDescription="@string/project_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
