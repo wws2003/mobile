@@ -1,6 +1,6 @@
-package hpg.org.samplegithubrepobrowser.service.repository
+package hpg.org.samplegithubrepobrowser.model.repository
 
-import hpg.org.samplegithubrepobrowser.service.model.Project
+import hpg.org.samplegithubrepobrowser.model.dto.Project
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

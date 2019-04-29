@@ -1,4 +1,4 @@
-package hpg.org.samplegithubrepobrowser.service.model
+package hpg.org.samplegithubrepobrowser.model.dto
 
 import java.util.*
 
