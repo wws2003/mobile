@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="project" type="hpg.org.samplegithubrepobrowser.service.model.Project"/>
+        <variable name="project" type="hpg.org.samplegithubrepobrowser.model.dto.Project"/>
         <variable name="callback" type="hpg.org.samplegithubrepobrowser.view.callback.ProjectClickCallback"/>
     </data>
 
@@ -38,6 +38,15 @@
                         android:text="@{project.name}"/>
 
                 <TextView
+                        android:id="@+id/id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/project_id"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/project_text"
+                        android:text="@{String.format(@string/id, project.id)}"/>
+
+                <TextView
                         android:id="@+id/languages"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -54,7 +63,7 @@
                         android:text="@{String.format(@string/watchers, project.watchers)}"/>
             </LinearLayout>
 
-            <!-- Observe checkbox -->
+            <!-- Interested checkbox -->
             <CheckBox android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentEnd="true"/>

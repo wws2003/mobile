@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import hpg.org.samplegithubrepobrowser.R
 import hpg.org.samplegithubrepobrowser.databinding.ProjectListItemBinding
-import hpg.org.samplegithubrepobrowser.service.model.Project
+import hpg.org.samplegithubrepobrowser.model.dto.Project
 import hpg.org.samplegithubrepobrowser.view.callback.ProjectClickCallback
 
 class ProjectAdapter(private val projectClickCallback: ProjectClickCallback?) :

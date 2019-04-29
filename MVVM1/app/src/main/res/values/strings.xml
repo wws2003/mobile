@@ -1,23 +1,40 @@
 <resources>
     <string name="app_name">MVVM Github Client</string>
+    <string name="title_project_list">All projects</string>
+    <string name="title_interested_project_list">Interested</string>
     <string name="loading_projects">Loading projects …</string>
+
+    <!-- Description text -->
     <string name="projects_list">Project list</string>
     <string name="project_name">Title</string>
-    <string name="github_projects">Total %d Projects!!</string>
-    <string name="observer_projects">Observe</string>
+    <string name="project_id">ID</string>
+    <string name="observer_projects">Interest</string>
     <string name="project_list">Project List</string>
-    <string name="languages">Programming language: %s</string>
-    <string name="watchers">Watchers: %s</string>
-    <string name="openIssues">Open Issues: %s</string>
-    <string name="created_at">Created at: %s</string>
-    <string name="updated_at">Updated at: %s</string>
-    <string name="clone_url">Clone URL: %s</string>
     <string name="project_language">Project Language</string>
+    <string name="project_forks">Project Forks</string>
     <string name="project_watchers">Project Watchers</string>
+    <string name="project_created_at">Project Created at</string>
+    <string name="project_updated_at">Project Updated at</string>
+    <string name="project_pushed_at">Project Pushed at</string>
     <string name="project_description">Project Description</string>
     <string name="open_issues">Issues</string>
     <string name="loading_project">Loading Project …</string>
     <string name="github_user_name">Tsutou</string>
+
+    <!-- Content text -->
+    <string name="github_projects">Total %d Projects</string>
+    <string name="id">ID: %d</string>
+    <string name="languages">Programming language: %s</string>
+    <string name="forks">Forks: %d</string>
+    <string name="watchers">Watchers: %s</string>
+    <string name="openIssues">Open Issues: %s</string>
+    <string name="created_at">Created at: %s</string>
+    <string name="updated_at">Updated at: %s</string>
+    <string name="pushed_at">Pushed at: %s</string>
+    <string name="clone_url">Clone URL: %s</string>
+
+
+    <string name="TODO">TODO Add content</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Retrieval failed....</string>

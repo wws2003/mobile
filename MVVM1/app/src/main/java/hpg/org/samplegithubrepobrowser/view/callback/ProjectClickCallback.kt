@@ -1,6 +1,6 @@
 package hpg.org.samplegithubrepobrowser.view.callback
 
-import hpg.org.samplegithubrepobrowser.service.model.Project
+import hpg.org.samplegithubrepobrowser.model.dto.Project
 
 /**
  * Interface for the action of clicking on a project in the list

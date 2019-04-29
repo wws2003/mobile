@@ -8,5 +8,5 @@
     <dimen name="project_text">16sp</dimen>
     <dimen name="logo_width">150dp</dimen>
     <dimen name="logo_height">125dp</dimen>
-    <dimen name="header_vertical_margin">20dp</dimen>
+    <dimen name="header_vertical_margin">16dp</dimen>
 </resources>

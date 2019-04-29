@@ -7,12 +7,12 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.databinding.ObservableField
 import hpg.org.samplegithubrepobrowser.R
-import hpg.org.samplegithubrepobrowser.service.model.Project
-import hpg.org.samplegithubrepobrowser.service.repository.ProjectRepository
+import hpg.org.samplegithubrepobrowser.model.dto.Project
+import hpg.org.samplegithubrepobrowser.model.repository.ProjectRemoteRepository
 
 class ProjectViewModel(application: Application, mProjectID: String) : AndroidViewModel(application) {
 
-    val observableProject: LiveData<Project> = ProjectRepository
+    val observableProject: LiveData<Project> = ProjectRemoteRepository
         .instance
         .getProjectDetails(application.getString(R.string.github_user_name), mProjectID)
 

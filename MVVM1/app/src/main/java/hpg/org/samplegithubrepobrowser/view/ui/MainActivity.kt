@@ -1,36 +1,36 @@
 package hpg.org.samplegithubrepobrowser.view.ui
 
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import hpg.org.samplegithubrepobrowser.R
-import hpg.org.samplegithubrepobrowser.service.model.Project
+import hpg.org.samplegithubrepobrowser.view.adapter.ViewPagerAdapter
+import hpg.org.samplegithubrepobrowser.view.callback.BackPressedListener
 
 class MainActivity : AppCompatActivity() {
+
+    private var pagerAdapter: ViewPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null) {
-            // Show fragment for project list
-            val fragment = ProjectListFragment.forProjectList()
+        val pager = findViewById<ViewPager>(R.id.pager)
+        pagerAdapter = ViewPagerAdapter(supportFragmentManager, this)
 
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fragment_container, fragment, ProjectListFragment.TAG_OF_PROJECT_LIST_FRAGMENT)
-                .commit()
+        pager.adapter = pagerAdapter
+    }
+
+    override fun onBackPressed() {
+        var eventConsumed = false
+        for (fragment in supportFragmentManager.fragments) {
+            if (fragment is BackPressedListener && fragment.onBackPressed()) {
+                eventConsumed = true
+                break
+            }
+        }
+        if (!eventConsumed) {
+            super.onBackPressed()
         }
     }
-
-    // Show project
-    fun show(project: Project) {
-        val projectFragment = ProjectFragment.forProject(project.name)
-
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack("project")
-            .replace(R.id.fragment_container, projectFragment, null)
-            .commit()
-    }
-
 }

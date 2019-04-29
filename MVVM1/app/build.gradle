@@ -7,10 +7,12 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "hpg.org.samplegithubrepobrowser"
-        minSdkVersion 19
+        // Upgrade to sdk21 (Lollipop) to prevent multidex error (https://developer.android.com/studio/build/multidex)
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -39,7 +41,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:27.1.1"
 
     // retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
     // gson
     implementation 'com.google.code.gson:gson:2.8.4'
@@ -51,7 +53,7 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
     // Other
-    implementation "com.squareup.okhttp3:okhttp:3.10.0"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
     implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

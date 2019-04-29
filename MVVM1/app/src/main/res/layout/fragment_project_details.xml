@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <import type="android.view.View"/>
-
         <variable name="isLoading" type="boolean"/>
         <variable name="projectViewModel" type="hpg.org.samplegithubrepobrowser.viewmodel.ProjectViewModel"/>
     </data>
 
     <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background">
 
         <TextView
                 android:id="@+id/loading_project"
@@ -39,7 +38,7 @@
                     android:layout_width="@dimen/logo_width"
                     android:layout_height="@dimen/logo_height"
                     android:src="@drawable/github"
-                    android:contentDescription="TODO"/>
+                    android:contentDescription="@string/TODO"/>
 
             <TextView
                     android:id="@+id/name"
@@ -69,6 +68,14 @@
                     android:text="@{String.format(@string/languages, projectViewModel.project.language)}"/>
 
             <TextView
+                    android:id="@+id/project_forks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/project_forks"
+                    android:textSize="@dimen/project_text"
+                    android:text="@{String.format(@string/forks, projectViewModel.project.forks)}"/>
+
+            <TextView
                     android:id="@+id/project_watchers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,12 +91,11 @@
                     android:textSize="@dimen/project_text"
                     android:text="@{String.format(@string/openIssues, projectViewModel.project.open_issues)}"/>
 
-
             <TextView
                     android:id="@+id/project_created_at"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="Created At"
+                    android:contentDescription="@string/project_created_at"
                     android:textSize="@dimen/project_text"
                     android:text="@{String.format(@string/created_at, projectViewModel.project.created_at)}"/>
 
@@ -97,9 +103,17 @@
                     android:id="@+id/project_updated_at"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="Updated At"
+                    android:contentDescription="@string/project_updated_at"
                     android:textSize="@dimen/project_text"
                     android:text="@{String.format(@string/updated_at, projectViewModel.project.updated_at)}"/>
+
+            <TextView
+                    android:id="@+id/project_pushed_at"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/project_pushed_at"
+                    android:textSize="@dimen/project_text"
+                    android:text="@{String.format(@string/pushed_at, projectViewModel.project.pushed_at)}"/>
 
             <TextView
                     android:id="@+id/clone_url"

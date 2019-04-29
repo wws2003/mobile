@@ -4,8 +4,8 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import hpg.org.samplegithubrepobrowser.R
-import hpg.org.samplegithubrepobrowser.service.model.Project
-import hpg.org.samplegithubrepobrowser.service.repository.ProjectRepository
+import hpg.org.samplegithubrepobrowser.model.dto.Project
+import hpg.org.samplegithubrepobrowser.model.repository.ProjectRemoteRepository
 
 /**
  * Response for binding data from repository of List<Project>
@@ -17,7 +17,7 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
     /**
      * Just a data holder
      */
-    private var projectListObservable: LiveData<List<Project>> = ProjectRepository
+    private var projectListObservable: LiveData<List<Project>> = ProjectRemoteRepository
         .instance
         .getProjectList(getApplication<Application>().getString(R.string.github_user_name))
 
