@@ -13,16 +13,9 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, context: Context) :
 
     private val tabNameMap: MutableMap<Int, String> = HashMap()
 
-    private var selectedProjectName: String? = null
-
     init {
         tabNameMap[0] = context.getString(R.string.title_project_list)
         tabNameMap[1] = context.getString(R.string.title_interested_project_list)
-    }
-
-    fun setSelectedProjectId(projectName: String?) {
-        this.selectedProjectName = projectName
-        notifyDataSetChanged()
     }
 
     /**
