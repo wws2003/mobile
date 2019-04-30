@@ -32,6 +32,7 @@ data class Project(val userName: String) {
     var watchers: Int = 0
     var default_branch: String? = null
 
-    // Try to add some app-defined attributes here
+    // Try to add some app-defined attributes here - the core representation of 2-way databinding is possibly right here
+    var interested: Boolean? = null
     var localOrder: Int? = null
 }

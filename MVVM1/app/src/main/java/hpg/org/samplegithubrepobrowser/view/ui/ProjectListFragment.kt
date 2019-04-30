@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +14,17 @@ import hpg.org.samplegithubrepobrowser.databinding.FragmentProjectListBinding
 import hpg.org.samplegithubrepobrowser.model.dto.Project
 import hpg.org.samplegithubrepobrowser.view.adapter.ProjectAdapter
 import hpg.org.samplegithubrepobrowser.view.callback.BackPressedListener
+import hpg.org.samplegithubrepobrowser.view.callback.InterestClickCallback
 import hpg.org.samplegithubrepobrowser.view.callback.ProjectClickCallback
 import hpg.org.samplegithubrepobrowser.viewmodel.ProjectListViewModel
 
-class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListener {
+class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListener, InterestClickCallback {
 
     private var projectAdapter: ProjectAdapter? = null
 
     private var binding: FragmentProjectListBinding? = null
+
+    private var viewModel: ProjectListViewModel? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate view
@@ -32,7 +34,8 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
         projectAdapter = ProjectAdapter(this)
 
         // Bind adapter to view
-        requireNotNull(binding).projectList.adapter = projectAdapter
+        binding!!.projectList.adapter = projectAdapter
+        binding!!.callback = this
 
         // Return view
         return requireNotNull(binding).root
@@ -41,9 +44,14 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         // Assign viewModel
-        val viewModel = ViewModelProviders.of(this).get(ProjectListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(ProjectListViewModel::class.java)
+        binding?.viewModel = viewModel
         // Start to observe ViewModel
-        observeViewModel(viewModel)
+        viewModel?.loadProjects(this, Observer { projects ->
+            projects?.let { prjs ->
+                projectAdapter?.setProjectList(prjs)
+            }
+        })
     }
 
     override fun onClick(project: Project) {
@@ -68,31 +76,11 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
         return false
     }
 
-    private fun observeViewModel(projectListViewModel: ProjectListViewModel) {
-        // Link to the LifeCycleOwner, add observer
-        // Observer only receive event in the state of STARTED or RESUMED
-        projectListViewModel.getProjectListObservable()
-            .observe(this, Observer { projects ->
-                if (projects != null) {
-                    // Log for test
-                    Log.d(LOG_TAG, "Number of project retrieved: " + projects.size)
-                    for (project in projects) {
-                        Log.d(LOG_TAG, "Project: " + project.full_name)
-                    }
-                    // Turn-off loading and set data to adapter
-                    projectListViewModel.setIsLoading(false)
-                    projectListViewModel.setProjectCount(projects.size)
-                    projectAdapter!!.setProjectList(projects)
-                }
-            })
+    override fun onBtnInterestClicked() {
+        viewModel?.saveInterestedProjects()
     }
 
     companion object {
-        // Serve as const static field
-        // val TAG_OF_PROJECT_LIST_FRAGMENT = "ProjectListFragment"
-
-        val LOG_TAG: String = ProjectListFragment::class.java.name
-
         /**
          * New fragment instance
          */

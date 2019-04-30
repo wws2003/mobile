@@ -3,15 +3,15 @@ package hpg.org.samplegithubrepobrowser.model.repository
 import android.arch.lifecycle.LiveData
 import hpg.org.samplegithubrepobrowser.model.dto.Project
 
-internal interface ProjectLocalRepository {
+interface InterestedProjectRepository {
     /**
      * Save project into local persistence storage
-     * Return the number of project saved
+     * Return the id of project saved
      */
-    fun saveProject(project: Project): LiveData<Int>
+    fun saveInterestedProject(project: Project): LiveData<Long>
 
     /**
      * Load saved projects of one user
      */
-    fun loadProjects(userName: String): LiveData<List<Project>>
+    fun loadInterestedProjects(userName: String): LiveData<List<Project>>
 }

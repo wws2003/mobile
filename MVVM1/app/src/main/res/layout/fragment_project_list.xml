@@ -6,6 +6,7 @@
     <data>
         <import type="android.view.View"/>
         <variable name="viewModel" type="hpg.org.samplegithubrepobrowser.viewmodel.ProjectListViewModel"/>
+        <variable name="callback" type="hpg.org.samplegithubrepobrowser.view.callback.InterestClickCallback"/>
     </data>
 
     <FrameLayout android:id="@+id/fl_project_list"
@@ -45,19 +46,21 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
                             android:textSize="@dimen/project_header1"
-                            android:text="@{String.format(@string/github_projects, viewModel.projectCount)}"
+                            android:text="@{String.format(@string/github_projects, viewModel.projectCount())}"
                             android:textStyle="bold"
                             android:layout_marginTop="@dimen/header_vertical_margin"
                             android:layout_marginBottom="@dimen/header_vertical_margin"
                             android:textAlignment="center"/>
 
-                    <!-- Observe button -->
+                    <!-- Interest button -->
                     <Button android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/observer_projects"
+                            android:onClick="@{() ->  callback.onBtnInterestClicked()}"
                             android:layout_marginTop="@dimen/header_vertical_margin"
                             android:layout_marginBottom="@dimen/header_vertical_margin"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            tools:ignore="RelativeOverlap"/>
                 </RelativeLayout>
 
                 <android.support.v7.widget.RecyclerView

@@ -33,8 +33,23 @@ class ProjectFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // Assign viewModel
 
+        // Assign viewModel
+        val viewModel = getViewModel()
+
+        // Wire to view
+        binding!!.projectViewModel = viewModel
+
+        // Start to observe ViewModel
+        viewModel.loadProject(this, Observer { project ->
+            // Do nothing at all for now ?
+        })
+    }
+
+    /**
+     * Get the ViewModel instance
+     */
+    private fun getViewModel(): ProjectViewModel {
         //DI to create instance with projectID parameter
         assert(arguments != null)
         val factory = ProjectViewModel.Factory(
@@ -42,29 +57,7 @@ class ProjectFragment : Fragment() {
             requireNotNull(arguments).getString(KEY_PROJECT_ID)!!
         )
 
-        val viewModel = ViewModelProviders.of(this, factory).get(ProjectViewModel::class.java)
-
-        // Loading
-        viewModel.setIsLoading(true)
-
-        // Wire to view
-        binding!!.projectViewModel = viewModel
-
-        // Start to observe ViewModel
-        observeViewModel(viewModel)
-    }
-
-    /**
-     * Observe livedata bound to the ViewModel
-     */
-    private fun observeViewModel(viewModel: ProjectViewModel) {
-        viewModel.observableProject.observe(this, Observer { project ->
-            if (project != null) {
-                // Set attribute here is just to update view actually
-                viewModel.setIsLoading(false)
-                viewModel.setProject(project)
-            }
-        })
+        return ViewModelProviders.of(this, factory).get(ProjectViewModel::class.java)
     }
 
     companion object FFF {

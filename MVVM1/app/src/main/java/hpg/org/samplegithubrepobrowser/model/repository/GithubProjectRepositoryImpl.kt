@@ -10,15 +10,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/**
- * Data provider for ViewModel
- * Wrap response into LiveData object
- * Create service instance in constructor
- */
-class ProjectRemoteRepository private constructor() {
-
+class GithubProjectRepositoryImpl : GithubProjectRepository {
     // Data service
-    private var gitHubService: GitHubService
+    private var githubService: GithubService
 
     init {
         val retrofit = Retrofit.Builder()
@@ -27,13 +21,13 @@ class ProjectRemoteRepository private constructor() {
             .build()
 
         // Do not need to have explicit implementation class
-        gitHubService = retrofit.create(GitHubService::class.java)
+        githubService = retrofit.create(GithubService::class.java)
     }
 
-    fun getProjectList(userId: String): LiveData<List<Project>> {
+    override fun getProjectList(userId: String): LiveData<List<Project>> {
         val data = MutableLiveData<List<Project>>()
         // Enqueue async request
-        gitHubService.getProjectList(userId)
+        githubService.getProjectList(userId)
             .enqueue(object : Callback<List<Project>> {
                 override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>?) {
                     if (response != null) {
@@ -51,10 +45,10 @@ class ProjectRemoteRepository private constructor() {
         return data
     }
 
-    fun getProjectDetails(userId: String, projectName: String): LiveData<Project> {
+    override fun getProjectDetails(userId: String, projectName: String): LiveData<Project> {
         val data = MutableLiveData<Project>()
 
-        gitHubService.getProjectDetail(userId, projectName)
+        githubService.getProjectDetail(userId, projectName)
             .enqueue(object : Callback<Project> {
                 override fun onResponse(call: Call<Project>, response: Response<Project>?) {
                     if (response != null) {
@@ -70,14 +64,6 @@ class ProjectRemoteRepository private constructor() {
                 }
             })
         return data
-    }
-
-    companion object {
-        // Get instance as singleton
-        val instance: ProjectRemoteRepository
-            @Synchronized get() {
-                return ProjectRemoteRepository()
-            }
     }
 
     private fun simulateDelay() {

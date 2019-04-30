@@ -43,7 +43,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/project_id"
-                        android:textStyle="bold"
                         android:textSize="@dimen/project_text"
                         android:text="@{String.format(@string/id, project.id)}"/>
 
@@ -67,6 +66,7 @@
             <!-- Interested checkbox -->
             <CheckBox android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
+                      android:checked="@={project.interested}"
                       android:layout_alignParentEnd="true"
                       android:visibility="@{project.localOrder == null ? View.VISIBLE : View.GONE}"/>
 
