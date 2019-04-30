@@ -43,10 +43,12 @@ class ProjectFragment : Fragment() {
         )
 
         val viewModel = ViewModelProviders.of(this, factory).get(ProjectViewModel::class.java)
-        binding!!.projectViewModel = viewModel
 
         // Loading
-        binding!!.isLoading = true
+        viewModel.setIsLoading(true)
+
+        // Wire to view
+        binding!!.projectViewModel = viewModel
 
         // Start to observe ViewModel
         observeViewModel(viewModel)
@@ -58,7 +60,8 @@ class ProjectFragment : Fragment() {
     private fun observeViewModel(viewModel: ProjectViewModel) {
         viewModel.observableProject.observe(this, Observer { project ->
             if (project != null) {
-                requireNotNull(binding).isLoading = false
+                // Set attribute here is just to update view actually
+                viewModel.setIsLoading(false)
                 viewModel.setProject(project)
             }
         })

@@ -31,4 +31,7 @@ data class Project(val userName: String) {
     var open_issues: Int = 0
     var watchers: Int = 0
     var default_branch: String? = null
+
+    // Try to add some app-defined attributes here
+    var localOrder: Int? = null
 }

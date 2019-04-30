@@ -3,6 +3,8 @@ package hpg.org.samplegithubrepobrowser.viewmodel
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableInt
 import hpg.org.samplegithubrepobrowser.R
 import hpg.org.samplegithubrepobrowser.model.dto.Project
 import hpg.org.samplegithubrepobrowser.model.repository.ProjectRemoteRepository
@@ -21,7 +23,20 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
         .instance
         .getProjectList(getApplication<Application>().getString(R.string.github_user_name))
 
+    var isLoading = ObservableBoolean(true)
+
+    var projectCount = ObservableInt(0)
+
     fun getProjectListObservable(): LiveData<List<Project>> {
         return projectListObservable
+    }
+
+    // Some setter
+    fun setProjectCount(prjCnt: Int) {
+        this.projectCount.set(prjCnt)
+    }
+
+    fun setIsLoading(loading: Boolean) {
+        this.isLoading.set(loading)
     }
 }

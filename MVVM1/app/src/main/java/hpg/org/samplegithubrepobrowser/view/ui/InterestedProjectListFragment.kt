@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import hpg.org.samplegithubrepobrowser.R
 import hpg.org.samplegithubrepobrowser.databinding.FragmentInterestedProjectListBinding
+import hpg.org.samplegithubrepobrowser.viewmodel.InterestedProjectListViewModel
 
 class InterestedProjectListFragment : Fragment() {
 
@@ -20,12 +21,15 @@ class InterestedProjectListFragment : Fragment() {
             container,
             false
         )
-
         // Init values
-        binding!!.isLoading = true
-
+        binding!!.isLoading = false
         return binding!!.root
     }
+
+    private fun observeViewModel(viewModel: InterestedProjectListViewModel) {
+        // TODO Implement
+    }
+
 
     companion object {
         /**

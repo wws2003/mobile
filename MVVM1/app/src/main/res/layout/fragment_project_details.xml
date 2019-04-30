@@ -4,7 +4,6 @@
 
     <data>
         <import type="android.view.View"/>
-        <variable name="isLoading" type="boolean"/>
         <variable name="projectViewModel" type="hpg.org.samplegithubrepobrowser.viewmodel.ProjectViewModel"/>
     </data>
 
@@ -20,7 +19,7 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/loading_project"
                 android:textAlignment="center"
-                android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"/>
+                android:visibility="@{projectViewModel.isLoading() ? View.VISIBLE : View.GONE}"/>
 
         <LinearLayout
                 android:layout_marginStart="@dimen/item_horizontal_margin"
@@ -31,7 +30,7 @@
                 android:padding="5dp"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:orientation="vertical"
-                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}">
+                android:visibility="@{projectViewModel.isLoading() ? View.GONE : View.VISIBLE}">
 
             <ImageView
                     android:id="@+id/imageView"

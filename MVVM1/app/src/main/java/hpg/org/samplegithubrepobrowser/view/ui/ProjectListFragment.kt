@@ -33,9 +33,6 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
 
         // Bind adapter to view
         requireNotNull(binding).projectList.adapter = projectAdapter
-        // Initialize isLoading as true
-        requireNotNull(binding).isLoading = true
-        requireNotNull(binding).projectCount = 0
 
         // Return view
         return requireNotNull(binding).root
@@ -83,8 +80,8 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
                         Log.d(LOG_TAG, "Project: " + project.full_name)
                     }
                     // Turn-off loading and set data to adapter
-                    binding!!.isLoading = false
-                    binding!!.projectCount = projects.size
+                    projectListViewModel.setIsLoading(false)
+                    projectListViewModel.setProjectCount(projects.size)
                     projectAdapter!!.setProjectList(projects)
                 }
             })

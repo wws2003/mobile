@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
@@ -26,6 +25,11 @@ android {
     }
 }
 
+ext.support_version = "27.1.1"
+ext.arch_runtime_version = "1.1.1"
+ext.arch_version = "1.1.1"
+ext.room_version = "1.1.1"
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -34,12 +38,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // Layout
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
+    implementation "com.android.support:recyclerview-v7:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation "com.android.support:cardview-v7:27.1.1"
-    implementation "com.android.support:recyclerview-v7:27.1.1"
-
+    
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
@@ -48,9 +52,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
     // Android Architecture Components
-    implementation "android.arch.lifecycle:extensions:1.1.1"
-    implementation "android.arch.lifecycle:runtime:1.1.1"
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+    implementation "android.arch.lifecycle:runtime:$arch_runtime_version"
+    implementation "android.arch.lifecycle:extensions:$arch_version"
+    kapt "android.arch.lifecycle:compiler:$arch_version"
+
+    // ROOM
+    implementation "android.arch.persistence.room:runtime:$arch_runtime_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     // Other
     implementation "com.squareup.okhttp3:okhttp:3.12.0"
