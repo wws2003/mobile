@@ -16,37 +16,46 @@ class ProjectAdapter(private val projectClickCallback: ProjectClickCallback?) :
     // Some models inside
     private var projectList: List<Project>? = null
 
+    // Backed models to detect changes
+    private var backedProjectList: List<Project>? = null
+
     /**
      * Apply difference in project list to recycle view
+     * The params projects is used for 2-way binding so subjected to be mutated by the ViewModel
      */
-    fun setProjectList(projectList: List<Project>) {
+    fun setProjectList(projects: List<Project>) {
         if (this.projectList == null) {
-            this.projectList = projectList
+            this.projectList = projects
+            this.backedProjectList = cloneProjectList(projects)
             // Notify (but whom ?)
-            notifyItemRangeInserted(0, projectList.size)
+            notifyItemRangeInserted(0, projects.size)
         } else {
             val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int {
-                    return requireNotNull(this@ProjectAdapter.projectList).size
+                    return requireNotNull(this@ProjectAdapter.backedProjectList).size
                 }
 
                 override fun getNewListSize(): Int {
-                    return projectList.size
+                    return projects.size
                 }
 
                 override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    return requireNotNull(this@ProjectAdapter.projectList)[oldItemPosition].id == projectList[newItemPosition].id
+                    return requireNotNull(this@ProjectAdapter.backedProjectList)[oldItemPosition].id == projects[newItemPosition].id
                 }
 
                 override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    val project = projectList[newItemPosition]
-                    val old = projectList[oldItemPosition]
+                    val project = projects[newItemPosition]
+                    val old = requireNotNull(this@ProjectAdapter.backedProjectList)[oldItemPosition]
 
-                    return project.id == old.id && project.git_url == old.git_url
+                    return project.id == old.id
+                            && project.git_url == old.git_url
+                            && project.interested == old.interested
+                            && project.localOrder == old.localOrder
                 }
             })
 
-            this.projectList = projectList
+            this.projectList = projects
+            this.backedProjectList = cloneProjectList(projects)
 
             // Apply difference to recycle view
             diff.dispatchUpdatesTo(this)
@@ -79,6 +88,14 @@ class ProjectAdapter(private val projectClickCallback: ProjectClickCallback?) :
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         holder.binding.project = requireNotNull(projectList)[position]
         holder.binding.executePendingBindings()
+    }
+
+    private fun cloneProjectList(projectList: List<Project>): List<Project> {
+        val clonedProjects = ArrayList<Project>()
+        for (project in projectList) {
+            clonedProjects.add(project.copy(owner = project.owner?.copy()))
+        }
+        return clonedProjects
     }
 
     /**

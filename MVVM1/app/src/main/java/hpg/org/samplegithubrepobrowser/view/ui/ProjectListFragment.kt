@@ -47,11 +47,7 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
         viewModel = ViewModelProviders.of(this).get(ProjectListViewModel::class.java)
         binding?.viewModel = viewModel
         // Start to observe ViewModel
-        viewModel?.loadProjects(this, Observer { projects ->
-            projects?.let { prjs ->
-                projectAdapter?.setProjectList(prjs)
-            }
-        })
+        viewModel?.loadProjects(this, getObserverForAdapter())
     }
 
     override fun onClick(project: Project) {
@@ -77,7 +73,18 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
     }
 
     override fun onBtnInterestClicked() {
-        viewModel?.saveInterestedProjects()
+        viewModel?.saveInterestedProjects(this, getObserverForAdapter())
+    }
+
+    /**
+     * Get the projects list adapter just to fill the adapter
+     */
+    private fun getObserverForAdapter(): Observer<List<Project>> {
+        return Observer { interestedProjects ->
+            interestedProjects?.let { prjs ->
+                projectAdapter?.setProjectList(prjs)
+            }
+        }
     }
 
     companion object {

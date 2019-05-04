@@ -12,22 +12,30 @@ import java.util.concurrent.Callable
 
 class InterestedProjectRepositoryImpl(private val dao: InterestedProjectDao) : InterestedProjectRepository {
 
-    override fun saveInterestedProject(project: Project): LiveData<Long> {
+    override fun saveInterestedProjects(projects: List<Project>): LiveData<List<Long>> {
         // TODO Implement properly
         return getLiveDataFromDao(Function { daoInstance ->
-            val entity = InterestedProjectEntity(project.userName, project.id, project.name)
-            daoInstance.insert(entity)
+            val savedIds = ArrayList<Long>()
+            for (project in projects) {
+                val entity = InterestedProjectEntity(project.owner!!.id, project.id, project.name)
+                // TODO Handle the case insert failed by throwing exception
+                if (daoInstance.insert(entity) > 0) {
+                    savedIds.add(project.id)
+                }
+            }
+
+            savedIds
         })
     }
 
-    override fun loadInterestedProjects(userName: String): LiveData<List<Project>> {
+    override fun loadInterestedProjects(): LiveData<List<Project>> {
         return getLiveDataFromDao(Function { daoInstance ->
             // Select by userName
-            val interestedProjectEntities = daoInstance.selectByUser(userName)
+            val interestedProjectEntities = daoInstance.selectAll()
             val interestedProjects = ArrayList<Project>()
             for (projectEntity in interestedProjectEntities) {
-                val project = Project(userName)
-                project.id = projectEntity.projectID
+                val project = Project()
+                project.id = projectEntity.projectId
                 interestedProjects.add(project)
             }
             interestedProjects

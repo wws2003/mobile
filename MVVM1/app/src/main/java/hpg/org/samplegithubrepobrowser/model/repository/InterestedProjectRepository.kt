@@ -6,12 +6,12 @@ import hpg.org.samplegithubrepobrowser.model.dto.Project
 interface InterestedProjectRepository {
     /**
      * Save project into local persistence storage
-     * Return the id of project saved
+     * Return the ids of projects saved
      */
-    fun saveInterestedProject(project: Project): LiveData<Long>
+    fun saveInterestedProjects(projects: List<Project>): LiveData<List<Long>>
 
     /**
-     * Load saved projects of one user
+     * Load all saved projects
      */
-    fun loadInterestedProjects(userName: String): LiveData<List<Project>>
+    fun loadInterestedProjects(): LiveData<List<Project>>
 }

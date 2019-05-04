@@ -11,7 +11,6 @@ import android.util.Log
 import hpg.org.samplegithubrepobrowser.MainApp
 import hpg.org.samplegithubrepobrowser.R
 import hpg.org.samplegithubrepobrowser.model.dto.Project
-import hpg.org.samplegithubrepobrowser.view.ui.ProjectListFragment
 
 /**
  * Response for binding data from repository of List<Project>
@@ -31,17 +30,35 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
 
     private var projectCount = ObservableInt(0)
 
+    private var currentProjectList: List<Project>? = null
+
     /**
      * Called from View to save interested project.
      * This system follows the approach
      */
-    fun saveInterestedProjects() {
-        // Test first
+    fun saveInterestedProjects(lifeCycleOwner: LifecycleOwner, projectListObserver: Observer<List<Project>>) {
+        val projectsToSave = ArrayList<Project>()
         for (project in projectListObservable.value!!) {
             project.interested?.let {
-                Log.d("ProjectListViewModel", "Project interested " + project.name)
+                projectsToSave.add(project)
             }
         }
+
+        val interestedProjectRepository = MainApp.getRepositoryContainer().getInterestedProjectRepository()
+        interestedProjectRepository.saveInterestedProjects(projectsToSave)
+            .observe(lifeCycleOwner, Observer { savedIds ->
+                // Mark projects as interested
+                for (prj in currentProjectList ?: ArrayList()) {
+                    // TODO Handle the local order
+                    // Perform Model observation
+                    if (savedIds?.contains(prj.id) == true) {
+                        prj.interested = true
+                        prj.localOrder = 1
+                        Log.d(LOG_TAG, "Saved id " + prj.localOrder + " " + prj.interested)
+                    }
+                }
+                projectListObserver.onChanged(currentProjectList)
+            })
     }
 
     /**
@@ -55,8 +72,9 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
                     // Also update other attribute
                     setIsLoading(false)
                     setProjectCount(projects.size)
+                    currentProjectList = projects
                     // Notify observer
-                    projectListObserver.onChanged(projects)
+                    projectListObserver.onChanged(currentProjectList)
                 }
             })
     }
@@ -83,17 +101,11 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
         // Log for test
         Log.d(LOG_TAG, "Number of project retrieved: " + projects.size)
         for (project in projects) {
-            Log.d(LOG_TAG, "Project: " + project.full_name)
+            Log.d(LOG_TAG, "Project: " + project.full_name + " " + project.owner?.id)
         }
     }
 
     companion object {
         val LOG_TAG: String = ProjectListViewModel::class.java.name
-        /**
-         * New fragment instance
-         */
-        fun forProjectList(): ProjectListFragment {
-            return ProjectListFragment()
-        }
     }
 }

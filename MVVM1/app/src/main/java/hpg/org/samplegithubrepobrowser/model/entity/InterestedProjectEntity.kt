@@ -7,8 +7,8 @@ import android.support.annotation.NonNull
 
 @Entity(
     tableName = "TBL_INTERESTED_PROJECT",
-    primaryKeys = ["USER_NAME", "PROJECT_ID"],
-    indices = [Index("USER_NAME", "PROJECT_ID")]
+    primaryKeys = ["USER_ID", "PROJECT_ID"],
+    indices = [Index("USER_ID", "PROJECT_ID")]
 )
 data class InterestedProjectEntity(
     // Do not use ID of SQLite
@@ -16,13 +16,13 @@ data class InterestedProjectEntity(
 
     // Consider the primary keys consist of 2 columns: user_name and project_id
 
-    @ColumnInfo(name = "USER_NAME")
+    @ColumnInfo(name = "USER_ID")
     @NonNull
-    var userName: String,
+    var userId: Long,
 
     @ColumnInfo(name = "PROJECT_ID")
     @NonNull
-    var projectID: Long,
+    var projectId: Long,
 
     @ColumnInfo(name = "PROJECT_NAME")
     var projectName: String?

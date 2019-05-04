@@ -6,11 +6,11 @@ import android.arch.lifecycle.LiveData
 import hpg.org.samplegithubrepobrowser.MainApp
 import hpg.org.samplegithubrepobrowser.model.dto.Project
 
-class InterestedProjectListViewModel(app: Application, userName: String) : AndroidViewModel(app) {
+class InterestedProjectListViewModel(app: Application) : AndroidViewModel(app) {
 
     private var interestedProjectListObservable: LiveData<List<Project>>? = MainApp.getRepositoryContainer()
         .getInterestedProjectRepository()
-        .loadInterestedProjects(userName)
+        .loadInterestedProjects()
 
     fun getInterestedProjectListObservable(): LiveData<List<Project>> {
         return interestedProjectListObservable!!
