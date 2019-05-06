@@ -53,10 +53,9 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
     override fun onClick(project: Project) {
         if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) && activity is MainActivity) {
             // Show project detail from MainActivity
-            // (activity as MainActivity).show(project)
             childFragmentManager.beginTransaction()
                 .addToBackStack("project")
-                .add(R.id.fl_project_list, ProjectFragment.forProject(project.name), "project")
+                .add(R.id.fl_project_list, ProjectFragment.forProject(project.owner?.login!!, project.name), "project")
                 .commit()
         }
     }

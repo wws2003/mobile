@@ -5,14 +5,15 @@ import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import hpg.org.samplegithubrepobrowser.R
-import hpg.org.samplegithubrepobrowser.databinding.ListItemProjectBinding
+import hpg.org.samplegithubrepobrowser.databinding.ListItemInterestedProjectBinding
 import hpg.org.samplegithubrepobrowser.view.callback.ProjectClickCallback
 
-class ProjectAdapter(projectClickCallback: ProjectClickCallback?) : AbstractProjectAdapter(projectClickCallback) {
+class InterestedProjectAdapter(projectClickCallback: ProjectClickCallback?) :
+    AbstractProjectAdapter(projectClickCallback) {
 
     @Override
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
-        (holder.binding as ListItemProjectBinding).project = requireNotNull(getProjectList())[position]
+        (holder.binding as ListItemInterestedProjectBinding).project = requireNotNull(getProjectList())[position]
         holder.binding.executePendingBindings()
     }
 
@@ -26,9 +27,9 @@ class ProjectAdapter(projectClickCallback: ProjectClickCallback?) : AbstractProj
         // Create binding based on layout resource file
         val binding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.list_item_project, parent,
+            R.layout.list_item_interested_project, parent,
             false
-        ) as ListItemProjectBinding
+        ) as ListItemInterestedProjectBinding
 
         // Also set callback for binding (the callback is declared in layout file)
         binding.callback = projectClickCallback

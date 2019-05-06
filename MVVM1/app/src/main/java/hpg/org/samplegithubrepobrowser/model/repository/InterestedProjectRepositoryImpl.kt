@@ -35,7 +35,29 @@ class InterestedProjectRepositoryImpl(private val dao: InterestedProjectDao) : I
             val interestedProjects = ArrayList<Project>()
             for (projectEntity in interestedProjectEntities) {
                 val project = Project()
+                // Set attributes
                 project.id = projectEntity.projectId
+                project.name = project.name
+                // TODO Owner and other info !!
+                // Add to result list
+                interestedProjects.add(project)
+            }
+            interestedProjects
+        })
+    }
+
+    override fun loadInterestedProjects(userId: Long): LiveData<List<Project>> {
+        return getLiveDataFromDao(Function { daoInstance ->
+            // Select by userName
+            val interestedProjectEntities = daoInstance.selectByUser(userId)
+            val interestedProjects = ArrayList<Project>()
+            for (projectEntity in interestedProjectEntities) {
+                val project = Project()
+                // Set attributes
+                project.id = projectEntity.projectId
+                project.name = project.name
+                // TODO Owner and other info !!
+                // Add to result list
                 interestedProjects.add(project)
             }
             interestedProjects

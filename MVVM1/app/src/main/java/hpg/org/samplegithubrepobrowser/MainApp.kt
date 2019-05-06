@@ -15,6 +15,11 @@ class MainApp : Application() {
     }
 
     companion object {
+
+        val GITHUB_USER_NAME = "Tsutou"
+
+        val GITHUB_USER_ID = 29670270L
+
         private var repositoryContainer: RepositoryContainer = RepositoryContainer()
 
         fun getRepositoryContainer(): RepositoryContainer {

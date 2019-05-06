@@ -5,14 +5,14 @@ import android.arch.lifecycle.*
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import hpg.org.samplegithubrepobrowser.MainApp
-import hpg.org.samplegithubrepobrowser.R
 import hpg.org.samplegithubrepobrowser.model.dto.Project
 
-class ProjectViewModel(application: Application, projectName: String) : AndroidViewModel(application) {
+class ProjectViewModel(application: Application, userName: String, projectName: String) :
+    AndroidViewModel(application) {
 
     private val observableProject: LiveData<Project> = MainApp.getRepositoryContainer()
         .getGithubProjectRepository()
-        .getProjectDetails(application.getString(R.string.github_user_name), projectName)
+        .getProjectDetails(userName, projectName)
 
     private var project = ObservableField<Project>()
 
@@ -51,13 +51,13 @@ class ProjectViewModel(application: Application, projectName: String) : AndroidV
     /**
      * Factory to create instance
      */
-    class Factory(private val application: Application, private val projectID: String) :
+    class Factory(private val application: Application, private val userName: String, private val projectID: String) :
         ViewModelProvider.NewInstanceFactory() {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
-            return ProjectViewModel(application, projectID) as T
+            return ProjectViewModel(application, userName, projectID) as T
         }
     }
 }

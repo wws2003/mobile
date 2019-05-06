@@ -9,7 +9,7 @@ import hpg.org.samplegithubrepobrowser.model.dto.Project
  * Create service instance in constructor
  */
 interface GithubProjectRepository {
-    fun getProjectList(userId: String): LiveData<List<Project>>
+    fun getProjectList(userName: String): LiveData<List<Project>>
 
-    fun getProjectDetails(userId: String, projectName: String): LiveData<Project>
+    fun getProjectDetails(userName: String, projectName: String): LiveData<Project>
 }

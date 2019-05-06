@@ -16,6 +16,8 @@ import java.util.*
 
 private const val KEY_PROJECT_ID = "project_id"
 
+private const val KEY_USER_NAME = "user_name"
+
 class ProjectFragment : Fragment() {
 
     private var binding: FragmentProjectDetailsBinding? = null
@@ -54,6 +56,7 @@ class ProjectFragment : Fragment() {
         assert(arguments != null)
         val factory = ProjectViewModel.Factory(
             Objects.requireNonNull<FragmentActivity>(activity).application,
+            requireNotNull(arguments).getString(KEY_USER_NAME)!!,
             requireNotNull(arguments).getString(KEY_PROJECT_ID)!!
         )
 
@@ -64,10 +67,11 @@ class ProjectFragment : Fragment() {
         /**
          * Create new fragment with the parameter (projectID)
          */
-        fun forProject(projectID: String): ProjectFragment {
+        fun forProject(userName: String, projectID: String): ProjectFragment {
             val fragment = ProjectFragment()
             val args = Bundle()
 
+            args.putString(KEY_USER_NAME, userName)
             args.putString(KEY_PROJECT_ID, projectID)
             fragment.arguments = args
 

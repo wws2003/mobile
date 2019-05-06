@@ -14,4 +14,9 @@ interface InterestedProjectRepository {
      * Load all saved projects
      */
     fun loadInterestedProjects(): LiveData<List<Project>>
+
+    /**
+     * Load project by userId
+     */
+    fun loadInterestedProjects(userId: Long): LiveData<List<Project>>
 }
