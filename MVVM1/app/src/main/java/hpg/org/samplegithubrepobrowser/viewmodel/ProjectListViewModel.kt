@@ -41,6 +41,7 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
         val interestedProjectRepository = MainApp.getRepositoryContainer().getInterestedProjectRepository()
         interestedProjectRepository.saveInterestedProjects(projectsToSave)
             .observe(lifeCycleOwner, Observer { savedIds ->
+                val interestedProjects: MutableList<Project> = ArrayList()
                 // Mark projects as interested
                 for (prj in currentProjectList ?: ArrayList()) {
                     // TODO Handle the local order properly
@@ -48,22 +49,21 @@ class ProjectListViewModel(application: Application) : AndroidViewModel(applicat
                     if (savedIds?.contains(prj.id) == true) {
                         prj.interested = true
                         prj.localOrder = 1
+                        interestedProjects.add(prj)
                     }
                 }
                 projectListObserver.onChanged(currentProjectList)
                 // Also update session
-                currentProjectList?.let {
-                    MainApp.getRepositoryContainer()
-                        .getInterestedProjectSession()
-                        .remember(it)
-                }
+                MainApp.getRepositoryContainer()
+                    .getInterestedProjectSession()
+                    .remember(interestedProjects)
             })
     }
 
     /**
-     * Started to be observed by the View
+     * Load projects for observation
      */
-    fun loadProjects(lifeCycleOwner: LifecycleOwner, projectListObserver: Observer<List<Project>>) {
+    fun loadProjectsForObservation(lifeCycleOwner: LifecycleOwner, projectListObserver: Observer<List<Project>>) {
         projectListObservable
             .observe(lifeCycleOwner, Observer { projects ->
                 if (projects != null) {

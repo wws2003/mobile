@@ -47,7 +47,7 @@ class ProjectListFragment : Fragment(), ProjectClickCallback, BackPressedListene
         viewModel = ViewModelProviders.of(this).get(ProjectListViewModel::class.java)
         binding?.viewModel = viewModel
         // Start to observe ViewModel
-        viewModel?.loadProjects(this, getObserverForAdapter())
+        viewModel?.loadProjectsForObservation(this, getObserverForAdapter())
     }
 
     override fun onClick(project: Project) {

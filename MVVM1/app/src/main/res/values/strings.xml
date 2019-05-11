@@ -24,6 +24,7 @@
 
     <!-- Content text -->
     <string name="github_projects">Total %d Projects</string>
+    <string name="github_interested_projects">Total %d interested projects</string>
     <string name="id">ID: %d</string>
     <string name="local_order">No: %d</string>
     <string name="languages">Programming language: %s</string>
