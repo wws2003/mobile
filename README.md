@@ -1,5 +1,5 @@
 ## Overview
-Mobile projects for <strong>personal usage</strong> and <strong>practicing</strong>. However, currently (2016/05/03) there are only 2 small Android apps. 
+Mobile projects for <strong>personal usage</strong> and <strong>practicing</strong>. However, currently (2019/05/12) there are only 2 small Android apps. 
 
 ## Applications
 1. ***ProjectXClient***  
