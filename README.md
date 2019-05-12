@@ -11,4 +11,5 @@ Simple application using Google Drive API to work with the Google Speadsheets th
 
  This project uses MPAndroidChart library [https://github.com/PhilJay/MPAndroidChart](https://github.com/PhilJay/MPAndroidChart) to create charts.
 
-
+3. ***MVVM1***  
+Project created for the purpose of practicing MVVM model (in the sense of Android architecture components, LiveData, ViewModel, etc.) and Kotlin language
